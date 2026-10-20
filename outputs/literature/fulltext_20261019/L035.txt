@@ -1,0 +1,1242 @@
+
+===== PDF PAGE 1 =====
+3434
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+and (c) shows the ROC curves of the GMSF and the MSF for dif-
+ferent values of SNR, N, and M with non-Gaussian and nonindepen-
+dent noise (generated from Laplacian PDF). In all the examples, the
+improvements of the GMSF with respect to the MSF are evident and
+the inﬂuence of the parameter value follows the expected behavior. In
+Fig. 4(a), we can see how the PD increases with the SNR. It must be
+noticed that the increase is not very signiﬁcant for the MSF, thus indi-
+cating that the SNR should be much higher to compensate the degrada-
+tion of the MSF in presence of dependent noise. Similarly, in Fig. 4(b),
+as expected, the PD also improves with the observation size N since the
+normal behavior of any detector implies that the test statistic increases
+the SNR gain with N. Again, we can observe how the enhancement
+in PD when using the MSF is not as signiﬁcant as the one obtained
+with the GMSF. Finally, Fig. 4(c) shows the inﬂuence of varying M,
+the number of involved sinusoids (dimension of the subspace). As ex-
+pected, the PD increases in the GMSF case when the subspace becomes
+more restrictive (lower dimension), that is the signal bandwidth be-
+comes narrower, although in MSF this effect is insigniﬁcant in com-
+parison with GMSF.
+As a general conclusion, it is shown that the degradation of the MSF
+due to the presence of nonindependent noise cannot be easily compen-
+sated by increasing the SNR, the observation size N or by reducing
+the signal subspace dimension M. Therefore, the use of the GMSF is
+presented as a practical solution to this problem.
+IV. CONCLUSION
+We have introduced a generalization of the matched subspace ﬁlters
+for the detection of unknown signals in a background of non-Gaussian,
+nonindependent noise. To do so the already known detector based on
+the Rao test, which is applicable to non-Gaussian and independent
+noise, is modiﬁed to include a previous linear transformation based
+on ICA. In order to obtain general applicability of the proposed test,
+a nonparametric estimation of the noise PDF is used after the linear
+transformation. Thereby, the properties of the Rao test are preserved
+for any kind of non-Gaussian noise distribution. Several experiments
+were conducted with simulated examples in order to evaluate the MSF
+in comparison to the GMSF. The study of the resulting ROC curves
+show the performance enhancement obtained with the generalized so-
+lution, and, more speciﬁcally that the degradation of the MSF in pres-
+ence of dependent noise cannot be easily compensated except by using
+the GMSF.
+REFERENCES
+[1] L. L. Scharf, Statistical Signal Processing: Detection, Estimation, and
+Time Series Analysis.
+Reading, MA: Addison-Wesley, 1991.
+[2] L. L. Scharf and B. Friedlander, “Matched subspace detectors,” IEEE
+Trans. Signal Process., vol. 42, no. 8, pp. 2146–2157, 1994.
+[3] M. N. Desai and R. S. Mangoubi, “Robust Gaussian and non-Gaussian
+matched subspace detection,” IEEE Trans. Signal Process., vol. 51, no.
+12, pp. 3115–3127, Dec. 2003.
+[4] S. M. Kay, Fundamentals of Statistical Signal Processing: Detection
+Theory, 1st ed.
+Englewood Cliffs, NJ: Prentice-Hall, 1998.
+[5] A. De Maio and S. Iommelli, “Coincidence of the Rao test, Wald
+test, and GLRT in partially homogeneous environment,” IEEE Signal
+Process. Lett., vol. 15, no. 1, pp. 385–388, 2008.
+[6] A. De Maio, S. M. Kay, and A. Farina, “On the invariance, coincidence,
+and statistical equivalence of the GLRT, Rao test, and Wald test,” IEEE
+Trans. Signal Process., vol. 58, no. 4, pp. 1967–1979, Apr. 2010.
+[7] T.-W. Lee, Independent Component Analysis: Theory and Applica-
+tions, 1st ed.
+Norwell, MA: Kluwer, 1998.
+[8] A. Hyvrinen, “Independent component analysis: Algorithms and appli-
+cations,” Neural Netw., vol. 13, no. 4–5, pp. 411–430, 2000.
+[9] J. Moragues, L. Vergara, J. Gosálbez, and I. Bosch, “An extended en-
+ergy detector for non-Gaussian and non-independent noise,” Signal
+Process., vol. 89, no. 4, p. 656, 2009.
+[10] D. W. Scott and S. R. Sain, “Multidimensional density estimation,”
+in Handbook of Statistics, C. R. Rao and E. J. Wegman, Eds.
+Am-
+sterdam, The Netherlands: Elsevier, 2004, vol. 23, Data Mining and
+Computational Statistics, pp. 229–263.
+An Asymptotically Efﬁcient Estimator for TDOA and
+FDOA Positioning of Multiple Disjoint Sources in the
+Presence of Sensor Location Uncertainties
+Ming Sun and K. C. Ho
+Abstract—This correspondence considers the problem of locating
+multiple disjoint sources using time differences of arrival (TDOAs) and
+frequency differences of arrival (FDOAs) in the presence of sensor posi-
+tion and velocity errors. Previous work applies to one source only with
+suboptimum performance for near source, or requires joint estimation of
+the source and sensor locations that could be computation demanding.
+Through nonlinearly transforming the measurements and converting
+them with respect to the inaccurate sensor locations, we have developed
+an algebraic solution to this problem. The solution is shown analytically
+to achieve the Cramér–Rao lower bound (CRLB) performance over small
+noise region and does not require joint estimation with sensor locations.
+Index Terms—Disjoint sources, frequency difference of arrival (FDOA),
+sensor location uncertainty, source localization, time difference of arrival
+(TDOA).
+I. INTRODUCTION
+For several decades, the problem of source localization using time
+differences of arrival (TDOAs) has received considerable interest
+in many ﬁelds, such as radar, sonar, navigation, and sensor net-
+works [1]–[4]. Modern localization system often uses dynamic mobile
+platforms as receivers. Mobile platform has the advantage of creating
+frequency differences of arrival (FDOA) from the Doppler effect due
+to the relative motion between the source and receivers, which can be
+exploited to improve the localization accuracy. An undesirable effect
+is that the mobile receivers will have errors in their positions and
+velocities.
+Localization of a stationary or moving source using TDOA and
+FDOA is not a trivial task due to the nonlinear nature of the estima-
+tion problem [5]–[8]. Ho and Xu [7] utilized the advantage of having
+TDOA available in forming the FDOA solution equation and as a result
+came up with a closed-form solution to solve the localization problem
+that achieves the Cramér–Rao lower bound (CRLB) performance
+at small noise region. Reference [9] proposed another closed-form
+estimator by exploiting the multidimentional scaling analysis. In the
+presence of sensor location errors, [8] extended the method in [7] to
+account for the uncertainty in sensor locations. The resulted estimator
+Manuscript received October 01, 2010; revised February 25, 2011; accepted
+March 02, 2011. Date of publication March 22, 2011; date of current version
+June 15, 2011. The associate editor coordinating the review of this manuscript
+and approving it for publication was Prof. James Lam.
+The authors are with the Department of Electrical and Computer Engineering,
+University of Missouri, Columbia, MO 65211 USA (e-mail: msxqc@mail.mis-
+souri.edu; hod@missouri.edu).
+Digital Object Identiﬁer 10.1109/TSP.2011.2131135
+1053-587X/$26.00 © 2011 IEEE
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+3435
+is able to reach the CRLB accuracy for a distant but not a near source.
+Sun et al. [10] applied the total least-squares method to this problem.
+However, their solution cannot attain the CRLB accuracy for either
+distant or near source. All of these works consider one source only.
+We address in this correspondence the problem of the localization of
+multiple disjoint sources, where the disjointness could come from time,
+frequency or both so that their positioning parameters (e.g., TDOA) can
+be obtained separately, but noise correlation could exist among them.
+This is a simpler problem than non-disjoint source localization where
+the sources could interact with one another and no separate positioning
+parameters can be obtained. An interesting observation about the mul-
+tiple disjoint sources is that they exhibit the same sensor location error
+and it is possible to reduce the performance loss caused by sensor lo-
+cation error. The recent work [11] explored this notion and developed
+an approximately efﬁcient estimator to locate multiple disjoint sources
+using TDOA with sensor position uncertainty. The method has high
+computation complexity because it requires hypothesized source loca-
+tions and estimates jointly the sensor and source positions. In the situa-
+tion where only the source locations are of interest or limited computa-
+tion capacity is available, applying this estimator could be prohibitive.
+Other alternatives for multiple disjoint source estimation such as itera-
+tive maximum likelihood estimator [12] may suffer from the problems
+of local convergence and divergence.
+This correspondence proposes an estimator for the localization of
+multiple disjoint moving sources using TDOAs and FDOAs when the
+sensor locations, in both positions and velocities, have errors. The ap-
+proach taken here is not to obtain the source locations individually
+which is possible because we have separate measurements for different
+sources, but rather to estimate all the source locations together simulta-
+neously. The purpose is to improve performance by suppressing better
+the sensor locations errors. In addition, estimating them together is
+able to account for the possible noise correlation in the positioning
+parameters of different sources to achieve better results. We ﬁrst es-
+tablish the pseudolinear equations by introducing nuisance parameters
+and solve them by using a two-stage processing approach. The pro-
+posed estimator has closed-form and does not require joint estimation
+with sensor locations. Furthermore, it is proven analytically to reach the
+CRLB performance for both distant and near sources when the noise
+level is small. This correspondence is an extension of the early work
+[8] by considering the localization of multiple disjoint sources rather
+than a single source. The idea is similar to [8] by using weighting ma-
+trix to account for the sensor position error. However, the solution de-
+velopment is better and different, leading to the result that even for the
+single source scenario our estimator reaches the CRLB performance no
+matter where the source is while the one in [8] can only attain the CRLB
+accuracy for distant source only. The developed estimator here is much
+more computationally attractive than the one in [11] because joint es-
+timation with sensor positions and the use of hypothesized source po-
+sitions are not needed. Furthermore, [11] only examines TDOA local-
+ization of stationary sources with ﬁxed sensors.
+The rest of the correspondence is organized as follows. Section II
+formulates the localization problem mathematically. In Section III,
+the proposed solution is developed. Section IV conducts the perfor-
+mance analysis. The special case of locating stationary sources using
+TDOA is elaborated in Section V. The theoretical developments are
+supported by simulation in Section VI. Section VII concludes the
+correspondence.
+II. LOCALIZATION SCENARIO
+The localization scenario is 3-D, and it consists of a total
+of K sources whose unknown positions and velocities are uo
+i
+and _uo
+i ; i
+=
+1; 2; . . . ; K. The unknown vector to be found is
+o
+=
+[oT
+1 ; oT
+2 ; . . . ; oT
+K ]T , where o
+i
+=
+[uoT
+i ; _uoT
+i ]T is the
+location parameter of source i. o is estimated through the use
+of M sensors that measure the emitted signals from the sources.
+The positions and velocities of the sensors are represented by
+so = [soT
+1 ; soT
+2 ; . . . ; soT
+M ]T and _so = [_soT
+1 ; _soT
+2 ; . . . ; _soT
+M ]T , where
+so
+j and _so
+j are the location parameter of sensor j; j = 1; 2; . . . ; M.
+In this study, so and _so are not known and only the noisy values
+are available, i.e., s
+=
+[sT
+1 ; sT
+2 ; . . . ; sT
+M]T
+=
+so + s and
+_s = [_sT
+1 ; _sT
+2 ; . . . ; _sT
+M]T
+= _so + _s, where s and _s are the
+position and velocity errors. The sensor location vector is represented
+by  = [sT ; _sT ]T = o + . Here  = [sT ; _sT ]T is assumed
+to be a zero-mean Gaussian random vector with covariance matrix
+Q. The TDOA and FDOA measurements are extracted from the
+received signals to estimate the unknown vector o.
+The TDOA measurement between a sensor pair j and 1 from source
+i is denoted by
+rj1;i = ro
+j1;i + rj1;i;
+i = 1; 2; . . . ; K;
+j = 2; 3; . . . ; M
+(1)
+where rj1;i is the TDOA noise. Let ro
+j;i be the true distance between
+source i and sensor j,
+ro
+j;i = kuo
+i  so
+jk
+(2)
+where k  k represents the 2-norm. Then, the true TDOA ro
+j1;i is
+ro
+j1;i = ro
+j;i  ro
+1;i. Note that the TDOAs have already been mul-
+tiplied with the known signal propagation speed. The TDOA vector
+for source i is ri = [r21;i; r31;i; . . . ; rM1;i]T = ro
+i + ri, where
+ri = [r21;i; r31;i; . . . ; rM1;i]T is the noise vector.
+The FDOA between a sensor pair j and 1 from source i, after mul-
+tiplied by the signal propagation speed and divided by the center fre-
+quency, is
+_rj1;i = _ro
+j1;i +  _rj1;i = _ro
+j;i  _ro
+1;i +  _rj1;i
+(3)
+where _ro
+j;i is the true range rate between source i and sensor j; _ro
+j;i =
+T
+u ;s ( _uo
+i  _so
+j) and a;b = (a  b)=ka  bk denotes the unit vector
+pointing from b to a. The collection of all FDOAs for source i forms
+_ri = [ _r21;i; _r31;i; . . . ; _rM1;i]T = _ro
+i + _ri.
+Putting the TDOAs and FDOAs of source i together gives i =
+[rT
+i ; _rT
+i ]T = o
+i + i, where i = [rT
+i ; _rT
+i ]T . The collection
+of all measurements is denoted by the 2K(M  1)  1 vector  =
+[T
+1 ; T
+2 ; . . . ; T
+K]T = o + .  is assumed to be a zero-mean
+Gaussian random vector with covariance matrix Q. We further as-
+sume that  and  are independent of each other.
+The objective is to estimate o as accurately as possible using the
+measurement vector  together with the noisy sensor positions and ve-
+locities .
+III. CLOSED-FORM SOLUTION
+The proposed estimator is derived based on the pseudolinear
+equations for TDOA and FDOA. They are created by nonlinearly
+transforming the measurements and introducing nuisance parameters.
+The pseudolinear equations will be expressed in terms of the noisy
+sensor locations. The solution equations will be solved using a two
+stage approach [8] and the noise in sensor locations will be accounted
+for through the use of weighting matrix.
+A. Pseudo Linear Equations
+The TDOA measurement is rj1;i, whose true value is ro
+j1;i deﬁned
+below (2) and we have ro
+j1;i + ro
+1;i = ro
+j;i. After squaring both sides
+and substituting ro
+j;i and ro
+1;i from (2), we have for j = 2; 3; . . . ; M
+ro2
+j1;i + soT
+1 so
+1  soT
+j so
+j + 2 so
+j  so
+1
+T uo
+i + 2ro
+j1;iro
+1;i = 0: (4)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+3436
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+Since only the noisy values of ro
+j1;i and so
+l are available, we express
+them as ro
+j1;i = rj1;i   rj1;i and so
+l = sl   sl; l = 1; j. Note that
+ro
+1;i = kuo
+i   so
+1k which is also dependent on the true value so
+1. Thus,
+expanding ro
+1;i around the noisy sensor position s1 and retaining up to
+the linear term of s1,
+ro
+1;i ' kuo
+i   s1k + T
+u ;s s1 = ^ro
+1;i + T
+u ;s s1
+(5)
+where ^ro
+1;i = kuo
+i   s1k. Thus, (4) becomes
+ro
+j;irj1;i + dT
+j;is1 + (uo
+i   sj)T sj
+= 0:5 r2
+j1;i + sT
+1 s1   sT
+j sj
+  (s1   sj)T uo
+i + rj1;i^ro
+1;i:
+(6)
+In (6), dj;i =  (uo
+i   s1)   rj1;iu ;s and all the second order error
+terms have been ignored. (6) is the TDOA pseudolinear equation with
+unknowns uo
+i and ^ro
+1;i, and ^ro
+1;i is the nuisance parameter.
+The FDOA equation in terms of the measurements and the available
+sensor locations can be obtained by taking the time derivative of (6),
+ro
+j;i _rj1;i + _ro
+j;irj1;i + ( _uo
+i   _sj)T sj + _dT
+j;is1
++ (uo
+i   sj)T _sj + dT
+j;i_s1
+= rj1;i _rj1;i + _sT
+1 s1   _sT
+j sj   (_s1   _sj)T uo
+i
++ _rj1;i^ro
+1;i   (s1   sj)T _uo
+i + rj1;i^_r
+o
+1;i:
+(7)
+Note that  _rj1;i is the FDOA measurement noise as shown in (3),
+and _s1 and _sj are the errors in the sensor velocities. dj;i is de-
+ﬁned below (6) and _dj;i is the time derivative of dj;i which is equal to
+_dj;i =  (I33 + (rj1;i=^ro
+1;i)P?
+
+)( _uo
+i   _s1)   _rj1;iu ;s , where
+P?
+
+= I33   u ;s T
+u ;s
+is the orthogonal projection matrix
+of u ;s . Equation (7) is the FDOA pseudolinear equation with un-
+knowns uo
+i ; ^ro
+1;i; _uo
+i and ^_r
+o
+1;i. ^ro
+1;i and ^_r
+o
+1;i are the nuisance variables
+to ensure that (7) is linear.
+We would like to point out that the pseudolinear (6) and (7) derived
+here are different from those in [8]. The pseudolinear equations in [8]
+do not expand ro
+1;i and _ro
+1;i in terms of the available sensor location
+s1 and _s1, which results in a much more complicated weighting ma-
+trix W2. It also prevents the solution in [8] from reaching the CRLB
+performance for near source. The new pseudolinear equations indeed
+enable the development of an estimator that attains the CRLB accuracy
+for both distant and near sources.
+B. Algorithm
+Stage-1: Deﬁne the unknown vector for source i as o
+1;i
+=
+[uoT
+i ; ^ro
+1;i; _uoT
+i ; ^_r
+o
+1;i]T where ^ro
+1;i and ^_r
+o
+1;i are the nuisance parame-
+ters. The matrix equation of o
+1;i from TDOA is obtained by stacking
+(6) for j = 2; 3; . . . ; M together
+"t;i = ht;i   Gt;i o
+1;i
+(8)
+where ht;i
+=
+0:5[r2
+21;i + sT
+1 s1   sT
+2 s2; r2
+31;i + sT
+1 s1  sT
+3 s3; . . . ; r2
+M1;i+sT
+1 s1  sT
+MsM]T and Gt;i is an (M  1)8 matrix
+whose (j 1)th row is [(s1 sj)T ;  rj1;i; 0T
+31; 0]; j = 2; 3; . . . ; M.
+On the left-hand side of (8), "t;i is deﬁned as
+"t;i
+= Bs;i
+O(M1)(M1) i + Ds;i
+O(M1)3M 
+(9)
+where Bs;i
+=
+diag([ro
+2;i; ro
+3;i; . . . ; ro
+M;i]T ) and Ds;i is an
+(M   1)  3M matrix whose (j   1)th row, j = 2; 3; . . . ; M,
+is [dT
+j;i; 0T
+3(j2)1; (uo
+i   sj)T ; 0T
+3(Mj)1].
+Stacking (7) for j = 2; 3; . . . ; M together yields the matrix equation
+for o
+1;i from FDOA,
+"f;i = hf;i   Gf;i o
+1;i
+(10)
+where hf;i
+=
+[r21;i _r21;i + _sT
+1 s1   _sT
+2 s2; r31;i _r31;i + _sT
+1 s1  _sT
+3 s3; . . . ; rM1;i _rM1;i + _sT
+1 s1   _sT
+MsM]T and Gf;i is an (M  1)8
+matrix whose (j   1)th row is [(_s1   _sj)T ;   _rj1;i; (s1  sj)T ;  rj1;i]; j
+=
+2; 3; . . . ; M. On the left-hand side of (10),
+"f;i is
+"f;i
+= [ _Bs;i
+Bs;i]i + [ _Ds;i
+Ds;i]
+(11)
+where
+_Bs;i
+=
+diag([ _ro
+2;i; _ro
+3;i; . . . ; _ro
+M;i]T );
+_Ds;i is an (M  1)  3M matrix whose (j   1)th row, j
+=
+2; 3; . . . ; M, is
+[ _dT
+j;i; 0T
+3(j2)1; ( _uo
+i   _sj)T ; 0T
+3(Mj)1] and Bs;i and Ds;i are
+deﬁned below (9).
+Stacking (8) over (10) yields the composite matrix equation for
+source i from both TDOA and FDOA measurements,
+"1;i = h1;i   G1;i o
+1;i
+(12)
+where h1;i = [hT
+t;i; hT
+f;i]T and G1;i = [GT
+t;i; GT
+f;i]T . The noise
+vector "1;i is
+"1;i = "T
+t;i; "T
+t;i
+T
+= B1;ii + D1;i
+(13)
+where
+B1;i =
+Bs;i
+O
+_Bs;i
+Bs;i
+;
+D1;i =
+Ds;i
+O
+_Ds;i
+Ds;i
+:
+(14)
+Equation (13) explicitly indicates the measurements from different
+sources have the common sensor location error .
+Stacking (12) for i
+=
+1; 2; . . . ; K gives the entire ma-
+trix equation with respect to the composite unknown vector
+ o
+1 = [ oT
+1;1; oT
+1;2; . . . ; oT
+1;K]T ,
+"1 = h1   G1 o
+1
+(15)
+where h1 = [hT
+1;1; hT
+1;2; . . . ; hT
+1;K]T and G1 is a block diagonal ma-
+trix G1 = diag(G1;1; G1;2; . . . ; G1;K). The composite noise vector
+"1 is
+"1 = B1 + D1
+(16)
+where
+B1
+is
+a
+block
+diagonal
+matrix
+B1
+=
+diag(B1;1; B1;2; . . . ; B1;K) and D1 = [DT
+1;1; DT
+1;2; . . . ; DT
+1;K]T .
+The WLS solution to (15) is
+ 1 =
+GT
+1 W1G1
+1
+GT
+1 W1h1
+(17)
+where W1 is the weighting matrix obtained from (16)
+W1 = E "1"T
+1
+1
+'
+B1QBT
+1 + D1QDT
+1
+1
+:
+(18)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+3437
+The fact that  and  are independent has been used and the noise
+in D1 is neglected.
+When the noise in G1 and D1 is small enough to be ignored, after
+substituting (15) into (17) for h1 and using (18), the covariance matrix
+of 1 can be approximated by
+cov( 1) '
+GT
+1 W1G1
+ 1
+:
+(19)
+Stage-2: This stage exploits the relationship between (^ro
+1;i; ^_r
+o
+1;i) and
+(uo
+i ; _uo
+i ) that has been neglected in the ﬁrst stage to improve the local-
+ization accuracy.
+Let 1;i(p : q) be a column subvector formed by the pth to qth
+elements of 1;i. Note that 1;i(1 : 3) is an estimate of uo
+i . Expressing
+it as 1;i(1 : 3) = uo
+i +  1;i(1 : 3) and after subtracting s1,
+2(uo
+i  s1)   1;i(1 : 3) ' ( 1;i(1 : 3)  s1)
+( 1;i(1 : 3)  s1)  (uo
+i  s1)  (uo
+i  s1)
+(20)
+where the symbol  denotes the Schur product (element by el-
+ement multiplication) and the second order error term has been
+ignored. 1;i(4) is an estimate of ^ro
+1;i that can be expressed as
+ 1;i(4) = ^ro
+1;i +  1;i(4), where ^ro
+1;i = kuo
+i  s1k. After squaring
+both sides and ignoring the second order error term,
+2^ro
+1;i 1;i(4) ' 2
+1;i(4)  (uo
+i  s1)T (uo
+i  s1) :
+(21)
+In a similar manner, we construct the velocity related equations,
+( _uo
+i  _s1)   1;i(1 : 3) + (uo
+i  s1)   1;i(5 : 7)
+' ( 1;i(1 : 3)  s1)  ( 1;i(5 : 7)  _s1)
+ (uo
+i  s1)  ( _uo
+i  _s1)
+(22)
+and
+^_r
+o
+1;i 1;i(4) + ^ro
+1;i 1;i(8)
+' 1;i(4) 1;i(8)  (uo
+i  s1)T ( _uo
+i  _s1) :
+(23)
+Putting (20)–(23) together gives the matrix equation with respect to
+the unknown vector o
+2;i for source i
+"2;i = h2;i  G2;i o
+2;i
+(24)
+where
+h2;i =
+( 1;i(1 : 3)  s1)  ( 1;i(1 : 3)  s1)
+ 2
+1;i(4)
+( 1;i(1 : 3)  s1)  ( 1;i(5 : 7)  _s1)
+ 1;i(4) 1;i(8)
+ o
+2;i =
+(uo
+i  s1)  (uo
+i  s1)
+(uo
+i  s1)  ( _uo
+i  _s1)
+(25)
+and
+G2;i = diag(H; H):
+(26)
+G2;i is a block diagonal matrix and H = [I33; 131]T . The noise
+vector "2;i is
+"2;i = B2;i 1;i
+(27)
+where
+B2;i =
+2diag
+(uo
+i s1)T ; ^ro
+1;i
+O44
+diag
+( _uo
+i _s1)T ; ^_r
+o
+1;i
+diag
+(uo
+i s1)T ; ^ro
+1;i
+:
+(28)
+Deﬁning o
+2 = [ oT
+2;1; oT
+2;2; . . . ; oT
+2;K]T and stacking (24) for i =
+1; 2; . . . ; K yield
+"2 = h2  G2 o
+2
+(29)
+where h2 = [hT
+2;1; hT
+2;2; . . . ; hT
+2;K]T and G2 = diag(G2;1; G2;2;
+. . . ; G2;K). The equation error "2 is
+"2 = B2 1;
+B2 = diag(B2;1; B2;2; . . . ; B2;K):
+(30)
+The WLS solution to (29) is
+ 2 =
+GT
+2 W2G2
+ 1
+GT
+2 W2h2:
+(31)
+The weighting matrix W2 is, upon using (30) and (19),
+W2 = E "2"T
+2
+ 1
+' B T
+2
+GT
+1 W1G1
+B 1
+2 :
+(32)
+We have based on (31) and (29),
+cov( 2) =
+GT
+2 W2G2
+ 1
+:
+(33)
+The ﬁnal position and velocity estimates of source i are
+ui = i
+ 2;i(1 : 3) + s1;
+_ui = 2;i(4 : 6):= 2;i(1 : 3) + _s1:
+(34)
+i = diag(sign( 1;i(1 : 3)  s1)) and sign() denotes the signum
+function. The purpose of i is to eliminate the sign ambiguity caused
+by the square operation and := denotes the element by element division.
+ 2;i is related to i = [uT
+i ; _uT
+i ]T through the relationship above
+(24). Taking differential yields
+ = B 1
+3  2
+(35)
+where
+B3 = diag(B3;1; B3;2; . . . ; B3;M);
+B3;i =
+2diag ([uo
+i  s1])
+O33
+diag ([ _uo
+i  _s1])
+diag ([uo
+i  s1])
+:
+(36)
+We have immediately from (35) that, after ignoring the sensor location
+noise in B3 when taking expectation
+cov() = E[T ] ' B 1
+3 cov( 2)B T
+3
+(37)
+where cov( 2) is deﬁned in (33).
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+3438
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+In summary, the proposed algorithm includes the following steps: i)
+ﬁnd 1 from (17) using W1 in (18); ii) compute 2 using (31), where
+W2 is given in (32); iii) obtain the ﬁnal source location estimate 
+from (34). Note that W1 and W2 depend on the true source locations.
+In implementing the algorithm, W1 = Q 1
+
+is used ﬁrst in (17) to
+obtain an initial estimate of the source locations. They are then used
+to generate W1 and a better 1. W2 is obtained using the ﬁrst stage
+solution 1.
+IV. PERFORMANCE ANALYSIS
+In this Section, we show that under the small noise condition, the
+covariance matrix (37) of the proposed estimate  is approximately
+equal to the CRLB, i.e.,
+cov() ' CRLB(o)
+(38)
+where CRLB(o) is given by (43) in Appendix A.
+After using (33), (32) and (18) in sequence, (37) can be reduced to
+cov() ' GT
+3
+Q+G4QGT
+4
+ 1
+G3
+ 1
+= ( ~X ~Y~Z 1 ~YT ) 1
+(39)
+where
+G3 = B 1
+1 G1B 1
+2 G2B3;
+G4 = B 1
+1 D1
+(40)
+~X = GT
+3 Q 1
+ G3;
+~Y = GT
+3 Q 1
+ G4;
+~Z = Q 1
+
++ GT
+4 Q 1
+ G4:
+(41)
+Note that the matrix inversion lemma has been used to obtain the last
+equality in (39).
+Let us deﬁne the following conditions,
+C1) jrj1;ij=ro
+j;i ' 0 and j _rj1;ij=ro
+j;i ' 0; j = 2; 3; . . . ; M; i =
+1; 2; . . . ; K;
+C2)
+ksjk=ro
+j;i ' 0 and k_sjk=ro
+j;i ' 0; j = 1; 2; . . . ; M; i =
+1; 2; . . . ; K.
+They can be satisﬁed if the measurement noise and the sensor location
+errors are sufﬁciently small or the sources are far away from the sensor
+array. Appendix B shows that if C1 and C2 are satisﬁed,
+G3 ' (@o=@o);
+G4 ' (@o=@o):
+(42)
+A comparison of (39) and (41) with (43)-(44) validates (38).
+V. TDOA ONLY LOCALIZATION
+When the sources and sensors are stationary, only TDOAs are avail-
+able for localization. The measurement vector becomes i = ri, the
+sensor location vector is  = s and they are used to estimate the source
+location o
+i = uo
+i . We shall summarize the algorithm development and
+performance analysis for TDOA only localization.
+In stage one, the unknown vector o
+1;i is redeﬁned as o
+1;i
+=
+[uoT
+i ; ^ro
+1;i]T . For the TDOA equation (8) of source i; "t;i = Bs;ii+
+Ds;i, the (j  1)th row of Gt;i is [(s1  sj)T ; rj1;i]; j =
+2; 3; . . . ; M and the deﬁnitions of all other variables are the same
+as before. (12) contains the TDOA component only and hence
+h1;i = ht;i and G1;i = Gt;i. The equation error (13) is "1;i = "t;i,
+Fig. 1. Localization geometry.
+where B1;i = Bs;i and D1;i = Ds;i. The subsequent development in
+this stage is exactly the same as that in Section III-B.
+In stage two, the unknown vector is o
+2;i = (uo
+i  s1)  (uo
+i  s1).
+Only (20) and (21) are used to yield the matrix equation (24), where
+h2;i = [(( 1;i(1 : 3)  s1)  ( 1;i(1 : 3)  s1))T ; 2
+1;i(4)]T and
+G2;i = H. The matrix B2;i in (27) becomes B2;i = 2diag([(uo
+i 
+s1)T ; ^ro
+1;i]). Once 2;i is obtained, the ﬁnal estimate of the ith source
+location is ui = i
+ 2;i(1 : 3) + s1 and i is given below (34).
+The covariance matrix cov() has the same form as the one in (37),
+where the diagonal blocks of B3 are now B3;i = 2diag([uo
+i  s1]).
+The performance analysis follows the same procedure as in
+Section IV and (38) holds true for the TDOA only localization
+as well. Here, the partial derivatives in (45) and (46) become
+@o
+i =@o
+i
+=
+@ro
+i =@uo
+i and @o
+i =@o
+=
+@ro
+i =@so and only
+jrj1;ij=ro
+j;i ' 0 in C1) and ksjk=ro
+j;i ' 0 in C2) are needed for
+the proof in Appendix B.
+Both the proposed algorithm and the method in [11] utilize the two-
+stage approach to obtain closed-form solution where the complexity is
+dominated by the ﬁrst stage. The main difference between them lies in
+the ﬁrst stage where the proposed estimator ﬁnds the source position
+only while [11] jointly estimates the source and sensor positions. Their
+ﬁrst stages essentially compute the WLS solution which requires the
+inverse of a matrix having a size equal to 4K in the proposed algo-
+rithm (3K for the K source coordinates in 3-D and 1 auxiliary vari-
+able for each source) and 4K + 3M in the case of [11] where 3M
+comes from the estimation of M sensor positions. Therefore, the com-
+putation complexity is O((4K)3) for the proposed solution and it is
+O((4K + 3M)3) for the method in [11], where M needs to be larger
+than 4 in 3-D positioning. The difference in complexity could be very
+signiﬁcant when M=K is large.
+While the proposed algorithm can be easily adapted to the case for
+TDOA only localization, the modiﬁcation for the FDOA only case is
+not straightforward and reformulating the entire approach is needed.
+VI. SIMULATIONS
+The sensor array settings in [8] are used in the simulation. As
+shown in Fig. 1, there are M
+=
+6 sensors and their true posi-
+tions and velocities are listed in Table I. In generating the sim-
+ulation results, the noisy sensor locations are created by adding
+to the true values zero-mean white Gaussian noise with covari-
+ance matrix Q
+=
+diag(Rs; _Rs) where Rs
+=
+2
+sR and
+_Rs =
+_2
+sR. Unless explicitly indicated, _2
+s = 0:12
+s and R =
+diag([10; 10; 10; 2; 2; 2; 10; 10; 10; 40; 40; 40; 20; 20; 20; 3; 3; 3]).
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+3439
+TABLE I
+TRUE POSITIONS (IN METERS) AND
+VELOCITIES (IN METERS/SECOND) OF SENSORS
+Fig. 2. Performance comparison for case one.
+The TDOAs and FDOAs for a given source are generated with co-
+variance matrix Q = diag(Jt; Jf) where Jt = 2
+t J and Jf = 2
+fJ.
+J is an (M   1)  (M   1) matrix with diagonal elements equal to
+1 and all other elements 0.5. The measurements from different sources
+are independent of each other in this particular simulation study. In
+all simulations, 2
+t is ﬁxed at 10 4 m2 and 2
+f is set to 10 6 (m/s)2.
+The proposed solution is implemented using the procedure described
+below (37). The localization accuracy for position estimate of source
+i is computed via MSE(ui) =
+N
+l=1 klui   uo
+i k2=N, where lui is
+the estimate of uo
+i at ensemble l. For velocity estimate, MSE( _ui) =
+N
+l=1 kl _ui   _uo
+i k2=N. The number of ensemble runs N is 5000.
+Three simulation cases are considered: 1) TDOA and FDOA lo-
+calization of one source at position uo
+1 = [314; 483; 209]T m and
+with velocity _uo
+1 = [ 20; 15; 40]T m/s; 2) TDOA and FDOA local-
+ization of two sources positioned at uo
+1 = [314; 483; 209]T m and
+uo
+2 = [600; 650; 550]T m with velocities _uo
+1 = [ 20; 15; 40]T m/s
+and _uo
+2 = [40;  20; 15]T m/s; 3) TDOA localization of two sources at
+positions uo
+1 = [314; 483; 209]T m and uo
+2 = [600; 650; 550]T m.
+Fig. 2 plots MSE(u1) and MSE( _u1) from the proposed algorithm
+(cross symbols) and the traces of CRLB(uo
+1) and CRLB( _uo
+1) (solid
+lines) as a function of 2
+s for case one. For comparison purpose, the
+method in [8] is also implemented and the localization accuracy is
+shown as squares in Fig. 2. It is clear that the proposed algorithm
+achieves the CRLB accuracy for both source position and velocity es-
+timates when 2
+s is less than  6 in log scale. The solution from [8]
+cannot attain the CRLB accuracy for this near source even when 2
+s is
+as small as  30 in log scale. The proposed method has about 2 dB per-
+formance improvement over that in [8] before the thresholding effect
+occurs.
+Fig. 3. Performance comparison for case two. The smaller MSE curves are for
+the source at u and the others are for the source at u .
+Fig. 4. Performance comparison for case three.
+The simulation results for case two are given in Fig. 3. The estima-
+tion accuracies of the two sources are shown separately. The curves
+with smaller MSE are for the source at uo
+1 and the others are for the
+source at uo
+2. The proposed algorithm provides optimum performance
+for both sources as predicted by theory.
+The performance comparison of the proposed method with the one in
+[11] for case three is shown in Fig. 4. They all achieve the CRLB accu-
+racy when 2
+s is lower than  6 in log scale and the proposed algorithm
+has higher MSE after the thresholding effect has occurred. However,
+the proposed algorithm does not require hypothesized source positions
+and joint source and sensor location estimation, and it has much less
+computational complexity.
+VII. CONCLUSION
+In this correspondence, a closed-form solution is proposed to locate
+multiple disjoint sources in the presence of random sensor location er-
+rors. A set of pseudolinear equations from TDOA and FDOA measure-
+ments is established with respect to the available but noisy sensor lo-
+cations and they are solved by the two-stage approach. Although no
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+3440
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 7, JULY 2011
+joint estimation with the sensor locations is applied, performance anal-
+ysis shows that the proposed estimator achieves the CRLB accuracy
+for both distant and near sources asymptotically in the sense of sufﬁ-
+ciently small measurement noise and sensor location errors where the
+conditions C1) and C2) can be satisﬁed.
+A possible extension of the current work is to reduce the sensor loca-
+tion uncertainty by using the estimated source locations. This is a sub-
+ject for further study in our research. The study in this correspondence
+only considers Gaussian sensor location errors for ease of illustration
+and CRLB evaluation. We plan to consider different kinds of sensor
+location errors in our future work.
+APPENDIX A
+THE RESULT OF CRLB(o)
+The CRLB(o) has been derived in [8] for a single source and it is
+generalized to the multiple source scenario as follows,
+CRLB(o) = (X   YZ 1YT ) 1
+(43)
+where
+X = (@o=@o)T Q 1
+ (@o=@o)
+Y = (@o=@o)T Q 1
+ (@o=@o)
+Z = Q 1
+
++ (@o=@o)T Q 1
+ (@o=@o):
+(44)
+Unless explicitly indicated, i = 1; 2; . . . ; K and j = 2; 3; . . . ; M in
+the following equations. (@o=@o) is a 2K(M   1)  6K block
+diagonal matrix
+(@o=@o)
+= diag ((@o
+1=@o
+1) ; (@o
+2=@o
+2) ; . . . ; (@o
+K=@o
+K))
+where
+@o
+i
+@o
+i
+=
+@r
+@u
+@r
+@ _u
+@ _r
+@u
+@ _r
+@ _u
+:
+(45)
+(@ro
+i =@ _uo
+i ) = O(M 1)3; (@ro
+i =@uo
+i ) = (@ _ro
+i =@ _uo
+i ) and its (j 1)th
+row is [T
+u ;s  T
+u ;s ]. The (j  1)th row of (@ _ro
+i =@uo
+i ) is [%T
+u ;s  %T
+u ;s ] where %u ;s
+=
+_u _s
+r
+ _r
+r
+u ;s .
+(@o=@o) is a 2K(M   1)  6M matrix
+(@o=@o) = (@o
+1=@o)T ; (@o
+2=@o)T ; . . . ; (@o
+K=@o)T
+T
+where
+@o
+i
+@o =
+@r
+@s
+@r
+@ _s
+@ _r
+@s
+@ _r
+@ _s
+:
+(46)
+(@ro
+i =@_so) = O(M1)3M; (@ro
+i =@so) = (@ _ro
+i =@_so) and its (j  1)th row is [T
+u ;s ; 0T
+3(j2)1;  T
+u ;s ; 0T
+3(Mj)1]. The (j   1)th
+row of (@ _ro
+i =@so) is [%T
+u ;s ; 0T
+3(j2)1;  %T
+u ;s ; 0T
+3(Mj)1].
+APPENDIX B
+PROOF OF (42)
+After substituting the deﬁnitions of the related matrices B1; G1; B2;
+G2 and B3 to G3 deﬁned in (40) and simplifying, we have
+G3 = diag(G3;1; G3;2; . . . ; G3;K)
+(47)
+where G3;i = B1
+1;iG1;iB1
+2;iG2;iB3;i. Substituting the deﬁnitions of
+B1 and D1 into G4 given in (40) yields
+G4 = GT
+4;1; GT
+4;2; . . . ; GT
+4;K
+T
+(48)
+where G4;i = B1
+1;iD1;i.
+Under C1) and C2), substituting the relevant matrices into G3;i and
+G4;i and comparing with the partial derivatives in Appendix A,
+we
+have,
+after
+some
+straightforward
+algebraic
+manipulations,
+G3;i
+'
+(@o
+i =@o
+i ) and G4;i
+'
+ (@o
+i =@o). As a result,
+(42) is validated under the conditions C1 and C2.
+REFERENCES
+[1] E. Weinstein, “Optimal source localization and tracking from passive
+array measurements,” IEEE Trans. Acoust., Speech, Signal Process.,
+vol. ASSP-30, pp. 69–76, Feb. 1982.
+[2] T. Li, A. Ekpenyong, and Y.-F. Huang, “Source localization and
+tracking using distributed asynchronous sensors,” IEEE Trans. Signal
+Process., vol. 54, pp. 3991–4003, Oct. 2006.
+[3] D. Carevic, “Automatic estimation of multiple target positions and ve-
+locities using passive TDOA measurements of transients,” IEEE Trans.
+Signal Process., vol. 55, pp. 424–436, Feb. 2007.
+[4] S. Gezici, T. Zhi, G. Giannakis, H. Kobayashi, A. Molisch, H. Poor,
+and Z. Sahinoglu, “Localization via ultra-wideband radios: A look at
+positioning aspects for future sensor networks,” IEEE Signal Process.
+Mag., vol. 22, pp. 70–84, Jul. 2005.
+[5] W. H. Foy, “Position-location solution by Taylor-series estimation,”
+IEEE Trans. Aerosp. Electron. Syst., vol. AES-12, pp. 187–194, Mar.
+1976.
+[6] R. O. Schmidt, “An algorithm for two-receiver TDOA/FDOA emitter
+location,” ESL, Inc., Tech. Memo., vol. TM-1229, May 1980.
+[7] K. C. Ho and W. Xu, “An accurate algebraic solution for moving source
+location using TDOA and FDOA measurements,” IEEE Trans. Signal
+Process., vol. 52, pp. 2453–2463, Sep. 2004.
+[8] K. C. Ho, X. Lu, and L. Kovavisaruch, “Source localization using
+TDOA and FDOA measurements in the presence of receiver location
+errors: Analysis and solution,” IEEE Trans. Signal Process., vol. 55,
+pp. 684–696, Feb. 2007.
+[9] H. W. Wei, R. Peng, Q. Wan, Z. X. Chen, and S. F. Ye, “Multidi-
+mensional scaling analysis for passive moving target localization with
+TDOA and FDOA measurements,” IEEE Trans. Signal Process., vol.
+58, pp. 1677–1688, Mar. 2010.
+[10] X. Y. Sun, J. D. Li, P. Y. Huang, and J. Y. Pang, “Total least-squares
+solution of active target localization using TDOA and FDOA measure-
+ments in WSN,” in Proc. IEEE 22nd Int. Conf. Adv. Inf. Netw. Appl.
+(AINAW), Okinawa, Mar. 2008, pp. 995–999.
+[11] L. Yang and K. C. Ho, “An approximately efﬁcient TDOA localization
+algorithm in closed-form for locating multiple disjoint sources with
+erroneous sensor positions,” IEEE Trans. Signal Process., vol. 57, pp.
+4598–4615, Dec. 2009.
+[12] A. Weiss and B. Friedlander, “Array shape calibration using sources
+in unknown locations: A maximum likelihood approach,” IEEE Trans.
+Acoust., Speech, Signal Process., vol. ASSP-37, pp. 1958–1966, Dec.
+1989.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:18 UTC from IEEE Xplore.  Restrictions apply. 

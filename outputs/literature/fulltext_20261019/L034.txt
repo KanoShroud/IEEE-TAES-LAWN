@@ -1,0 +1,1317 @@
+
+===== PDF PAGE 1 =====
+684
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+Source Localization Using TDOA and FDOA
+Measurements in the Presence of Receiver
+Location Errors: Analysis and Solution
+K. C. Ho, Senior Member, IEEE, Xiaoning Lu, Student Member, IEEE, and L. Kovavisaruch, Member, IEEE
+Abstract—The accuracy of a source location estimate is very
+sensitive to the accurate knowledge of receiver locations. This
+paper performs analysis and develops a solution for locating
+a moving source using time-difference-of-arrival (TDOA) and
+frequency-difference-of-arrival (FDOA) measurements in the
+presence of random errors in receiver locations. The anal-
+ysis starts with the Cramér–Rao lower bound (CRLB) for the
+problem, and derives the increase in mean-square error (MSE) in
+source location estimate if the receiver locations are assumed cor-
+rect but in fact have error. A solution is then proposed that takes
+the receiver error into account to reduce the estimation error,
+and it is shown analytically, under some mild approximations, to
+achieve the CRLB accuracy for far-ﬁeld sources. The proposed
+solution is closed form, computationally efﬁcient, and does not
+have divergence problem as in iterative techniques. Simulations
+corroborate the theoretical results and the good performance of
+the proposed method.
+Index Terms—Frequency difference of arrival (FDOA), receiver
+location uncertainty, source localization, time difference of arrival
+(TDOA).
+I. INTRODUCTION
+S
+OURCE localization is a classical problem in radar and
+sonar [1], [2]. Recently, there has been renewed interest
+in this research, mainly driven by the emergency 911 location
+ability imposed to wireless services [3], [4] as well as sensor
+network applications [5]. Source localization can be based on
+time-of-arrival (TOA), time-difference-of-arrival (TDOA), or
+angle-of-arrival (AOA) measurements, or a combination of
+them. When the source and/or receivers are moving, frequency
+differences of arrival (FDOAs) can also be exploited to improve
+location accuracy [6]. This paper focuses on TDOA localization
+for a stationary source, and TDOA and FDOA localization for
+a moving source.
+Source localization is a nontrivial problem because the mea-
+surements are nonlinearly related to the source location param-
+eters. Over the years, many algorithms have been proposed for
+Manuscript received February 26, 2005; revised January 12, 2006. The as-
+sociate editor coordinating the review of this manuscript and approving it for
+publication was Dr. Martin Haardt.
+K. C. Ho and X. Lu are with the Electrical and Computer Engineering
+Department, University of Missouri-Columbia, MO 65211 USA (e-mail:
+hod@missouri.edu; xlhtc@mizzou.edu).
+L. Kovavisaruch was with the Electrical and Computer Engineering Depart-
+ment, University of Missouri-Columbia, MO 65211 USA. She is now with the
+Department of Telecommunication of National Electronics and Computer Tech-
+nology Center, Thailand (e-mail: la-or.kovavisaruch@nectec.or.th).
+Digital Object Identiﬁer 10.1109/TSP.2006.885744
+the problem, including the iterative Taylor-series method [7]
+and the closed-form solution methods [6], [8]–[20]. The closed-
+form solution is attractive because it does not require initial so-
+lution guesses and does not have divergence problem as com-
+pared to the iterative techniques. Regardless of the localization
+algorithms used, the source location accuracy can be very sen-
+sitive to the accurate knowledge of the receiver positions and
+velocities. A slight error in receiver locations can lead to a big
+error in source location estimate.
+In practice, the receiver locations may not be known exactly.
+For instance, in sensor network applications, the sensor nodes
+are deployed randomly whose exact positions are often not
+available. In modern localization applications, the receivers can
+be airplanes or unmanned aerial vehicles (UAVs) [21] whose
+positions and velocities may not be precisely known. As a
+result, the inaccuracy in receiver locations needs to be taken
+into account in practical environments.
+The performance degradation created by receiver location
+uncertainty has been known for a while in direction-of-arrival
+(DOA) estimation. Rockah and Schultheiss [22], [23] improved
+the DOA estimation accuracy in the presence of sensor position
+error through array shape calibration using several sources
+of unknown locations. Tseng et al. [24] proposed the projec-
+tion-rotation-scaling (PROS) method to estimate the steering
+vector in uncalibrated arrays, which is used to improve the
+source DOA estimates. Viberg and Swindlehurst [25] proposed
+the maximum a posteriori noise subspace ﬁtting (MAP-NSF)
+method to reduce DOA estimation errors when receiving sensor
+positions have uncertainty. Chen et al. [26] used the Toeplitz
+approximation to ﬁnd the AOA in the presence of sensor posi-
+tion errors. These methods are for estimating DOA of the source
+only, rather than locating the source in a unique coordinate
+point. Furthermore, the receivers and sources are assumed sta-
+tionary. This paper addresses the problem of locating in unique
+coordinates the position and velocity of an emitting source in
+the presence of random receiver location errors. A recent work
+by Jakoby et al. [27] examines the accuracy of joint source and
+sensor location estimation through Cramér–Rao lower bound
+(CRLB) for locating a stationary source in shallow water, but
+no explicit estimation algorithm is given.
+The purpose of the paper is twofold. First, it provides the
+analysis of how much degradation the source location accu-
+racy is with respect to the amount of receiver location errors.
+Second, it proposes an explicit closed-form solution to the lo-
+cation problem to improve the estimation accuracy. The anal-
+ysis begins with the CRLB and examines the increase in CRLB
+1053-587X/$25.00 © 2006 IEEE
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+HO et al.: SOURCE LOCALIZATION USING TDOA AND FDOA MEASUREMENTS
+685
+Fig. 1. Source location scenario.
+due to the receiver location errors. It then investigates the mean-
+square error (MSE) of the source location estimate obtained
+from an algorithm that assumes perfect knowledge of the re-
+ceiver locations, but, in fact, they have errors. The signiﬁcant
+difference in MSE and CRLB in the presence of receiver lo-
+cation errors then motivates the development of a new method
+that takes the receiver location error into account to improve
+accuracy. The proposed solution is closed form, computation-
+ally attractive, and does not require initial solution guesses as
+in the iterative approaches. Most important, the solution accu-
+racy is shown analytically, under some mild approximations, to
+achieve the CRLB, when the source is far ﬁeld and the noise is
+Gaussian.
+The paper is organized as follow. Section II provides the loca-
+tion scenario and introduces the symbols used. Section III per-
+forms the CRLB and MSE analysis in the presence of receiver
+location errors. Section IV presents the proposed closed-form
+solution together with an analysis to show that the location ac-
+curacy attains the CRLB for far-ﬁeld source and Gaussian noise.
+Section V contains the simulation results to support the theoret-
+ical development, and Section VI is the conclusion.
+II. LOCATION SCENARIO
+We shall consider the general case of moving source local-
+ization using TDOA and FDOA measurements. The situation of
+stationary source and receivers is a special case in which the ve-
+locities are zeros and only TDOA measurements are applicable.
+The results for TDOA only localization will be given wherever
+appropriate.
+The location geometry is shown in Fig. 1, where
+receivers at locations
+with veloci-
+ties
+are used to locate an emitting
+source at position
+and velocity
+through TDOA and FDOA mea-
+surements. The receiver positions and velocities are perturbed
+as
+and
+during the
+TDOA and FDOA measurements.
+and
+are not known to
+an estimator, and only the nominal values
+and
+are available
+for processing.
+For notation simplicity, if we collect the receiver posi-
+tions and velocities as the vector
+, where
+and
+,
+then the receiver location error vector is
+where
+,
+,
+, and
+. In this study, we assume
+is zero-mean Gaussian
+distributed with covariance matrix
+We shall, in general, use the superscript “ ” to denote the true
+value of a variable.
+Let
+be the true distance between the source and receiver ,
+i.e.,
+(1)
+where
+represents the 2-norm. If
+is the signal propagation
+speed, then the TDOA measurements between receiver pair
+and 1 is
+(2)
+where
+is the TDOA noise that is assumed to be zero-mean
+Gaussian. Since there are
+receivers, the total TDOA measure-
+ments are
+.
+Let
+be the true range rate between the source and receiver
+. It is equal to, by taking the time derivative of (1),
+(3)
+The FDOA between receiver pair and 1 is the range rate divided
+by the signal propagation speed
+(4)
+where
+is the FDOA noise that is assumed to be zero-mean
+Gaussian. The collection of FDOA measurements forms
+.
+Putting the two sets of measurements together, we have the
+total measurements vector
+. The corresponding
+measurement error vector is
+, which is zero-
+mean Gaussian with covariance matrix
+The measurement noise
+is assumed to be independent of the
+receiver location noise
+. This assumption is valid if the two
+kinds of noises are from different sources, and they may not be
+independent in general. This assumption is made here for ease of
+illustration only. The analysis and the proposed solution do not
+require such an assumption and the results for correlated noises
+can be obtained with slight modiﬁcations in a very straightfor-
+ward manner. The task is to estimate the source position
+and
+velocity
+, using the TDOA and FDOA measurements
+to-
+gether with the inaccurate receiver positions and velocities
+.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+686
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+III. CRLB AND MSE
+This section ﬁrst evaluates the CRLB and then compares it
+with the CRLB when receiver location error is absent. The com-
+parison will indicate how sensitive the source location accuracy
+is with respect to the receiver location error. Second, the source
+location MSE will be derived when using an optimum algorithm
+(in the sense of achieving CRLB) that assumes no receiver lo-
+cation error to estimate
+and
+, but, in fact, receiver locations
+have error. The results will indicate whether there is a need to
+develop a new algorithm to account for the receiver location
+noise in order to achieve the CRLB.
+A. CRLB
+Both the measurement vector
+and the receiver location
+vector
+are Gaussian distributed, and they are independent
+of each other. Hence, the logarithm of the probability density
+function of the data vector
+is
+(5)
+where
+and
+are constants, and
+is the unknown
+parameter vector equal to
+. Note
+that
+and
+in
+represent the parameters of the true receiver
+position and velocity vectors, not the known and inaccurate
+nominal receiver position and velocity vectors.
+The CRLB of
+is equal to [28]
+CRLB
+(6)
+and the details in evaluating the partial derivative is given in
+Appendix I. The CRLB
+is a
+square matrix, in which
+only the upper left 6
+6 submatrix corresponds to the CRLB of
+the source location vector
+that is of interest to
+us. When grouping
+as
+, where
+represents
+the receiver parameter vector, we can express (6) in submatrix
+form as
+CRLB
+(7)
+where from (5)
+(8)
+TABLE I
+NOMINAL POSITIONS (IN METERS) AND VELOCITIES
+(IN METERS/SECOND) OF RECEIVERS
+The partial derivatives
+and
+are given in
+(55)–(56) and (57)–(58), respectively. Invoking the partitioned
+matrix inversion formula [29] gives
+CRLB
+(9)
+Note that
+is the CRLB of the source location vector
+when
+there is no receiver position and velocity noise [6]. Hence, the
+second term in (9) represents the increase in CRLB in the pres-
+ence of receiver location error. The trace of (9) is the minimum
+possible source location MSE that any linear unbiased estimator
+can achieve.
+To obtain some insight, we have evaluated (9) using the re-
+ceiver location given in [6], with one additional receiver. The
+nominal receiver positions and velocities are shown in Table I.
+The TDOA noise power is
+and the FDOA noise
+power is
+.
+is
+where
+is a
+matrix with
+in the diag-
+onal and
+in all other elements [6], and
+.
+is
+where
+,
+, and
+.
+Fig. 2 plots the traces of CRLB
+and CRLB
+(the sum
+of the ﬁrst to the third diagonal elements and that of the fourth
+to the sixth diagonal elements of CRLB
+, respectively) as
+increases for a near-ﬁeld source at
+m with a velocity of
+m/s. The traces of
+the CRLBs for
+and
+when there is no receiver location
+noise [6] is also shown for comparison. As
+increases,
+the estimation accuracy deviates farther and farther away
+from the case without receiver location error. Even at a very
+small receiver error power of
+, the increase
+in CRLB for position
+is 6.19 dB and that for velocity
+is 9.77 dB. Fig. 3 is the results for a far-ﬁeld source
+at
+m and
+m/s. The noise powers in the receivers are unequal with
+m
+and
+. The observation is similar, and the increase
+in CRLB is much more dramatic for a far-ﬁeld source as
+compared to a near-ﬁeld source.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+HO et al.: SOURCE LOCALIZATION USING TDOA AND FDOA MEASUREMENTS
+687
+Fig. 2. Comparisons of the CRLBs with and without receiver location error for
+a near-ﬁeld moving source.
+Fig. 3. Comparisons of the CRLBs with and without receiver location error for
+a far-ﬁeld moving source.
+Fig. 4 gives the results for TDOA localization of a sta-
+tionary far-ﬁeld source at
+m. In this
+case,
+,
+, and
+and the partial deriva-
+tives can be found in Appendix I. Reference [30] con-
+tains more details for evaluating the CRLB in this special
+case. Furthermore,
+and
+, where
+m .The observation here is consistent with the moving source
+case. For instance, at
+, the location MSE is increased
+by about 10 dB.
+In general, the increase in CRLB depends on the speciﬁc lo-
+cation geometry. When the location geometry becomes worse,
+such as the receivers are closer to each other or the source is far
+away, the larger will be the increase in CRLB with respect to
+the case of no receiver location error. To obtain a more accurate
+source location estimate, the receiver locations should be well
+controlled to minimize their location uncertainty.
+Fig. 4. Comparisons of the CRLBs with and without receiver location error for
+a far-ﬁeld stationary source.
+B. Source Location MSE Without Accounting for
+Receiver Location Errors
+This subsection examines the MSE in source location esti-
+mate when an estimator assumes the receiver locations are ac-
+curate but in fact have errors. A generic estimator based on
+Taylor-series linearization [7] is used to derive the MSE. This
+estimator achieves the CRLB accuracy after convergence to the
+global minimum when the receiver locations are accurate. Al-
+though the linearization method is used to obtain the MSE, the
+MSE formula is applicable to and is the same for any location
+estimator reaching the CRLB when there is no receiver location
+error, including the closed-form solution method given in [6].
+The derivation begins by deﬁning two quantities parameter-
+ized on the source location vector
+where
+and
+are the nominal but inaccurate receiver posi-
+tions and velocities known to the estimator. Assuming an initial
+source location vector
+that is close to the true
+solution is available. Expanding (see equation at the bottom of
+the next page) with respect to
+through Taylor-series yields
+(10)
+where the second and higher order terms are ignored and
+(11)
+and
+have the same form as
+and
+given in (55) and (56), except that in (55)–(56)
+and
+are replaced by
+and
+. To be exact,
+and
+in (55) and (56) should also be replaced by
+and
+. When
+the initial guess
+is close to the true solution, the receiver
+location noise will be multiplied with
+, which results
+in second-order error term. Hence, the error in using
+and
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+688
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+in
+instead of
+and
+can be ignored. Subtracting (10)
+from the measurement vector
+gives the error
+We ﬁnd
+by minimizing
+where
+is the weighting matrix. Taking derivative with re-
+spect to
+and setting the gradient to zero yields the solution
+If we choose
+to be the true solution
+, then the estimation
+error is
+(12)
+We now simplify
+further in order to obtain the MSE.
+The elements of
+are
+and
+,
+. From (2)
+(13)
+Putting
+and applying Taylor-series expansion up
+to the ﬁrst-order term
+and hence
+(14)
+where
+is deﬁned in (1) and
+is a unit vector
+pointing to the direction of
+. Equation (14) indicates
+that the residual error contains not only the measurement noise,
+but also the error from the receiver locations projected along
+the direction of the range vectors between the source and the
+receivers.
+Similarly, it can be veriﬁed that
+where
+. Thus
+(15)
+and
+The th row,
+of
+and
+are
+Fig. 5. Comparisons of the CRLB and the source location accuracy when as-
+suming no receiver location noise, near-ﬁeld moving source and equal receiver
+location noise power.
+Putting (15) into (12) and taking expectation shows that the es-
+timator
+is unbiased (when the higher order error terms are ig-
+nored) because
+and
+are zero mean, although the receiver
+location errors are ignored. Multiplying (12) with its transpose,
+taking expectation and using (15) for simplifying yields
+(16)
+Note from (8) and (11) that the ﬁrst term in (16) is
+, which is
+the CRLB when there is no receiver location noise. The second
+term therefore represents the additional error resulted from re-
+ceiver location uncertainty. The trace of the second term is the
+increase in MSE.
+Fig. 5 shows, as
+increases, the trace of the upper left 3
+3
+submatrix of
+, which is the source position MSE, and
+the trace of the lower 3
+3 submatrix, which is the source ve-
+locity MSE. They are denoted using dashed–dotted lines. The
+same simulation scenario as in Fig. 2 was used. To verify the
+theoretical result (16), the location algorithm presented in [6]
+was used to estimate the source location and the MSE results
+are shown in cross symbols. The MSE values from theory and
+simulation match very well. The CRLB from (9) that has re-
+ceiver position noise is also depicted for comparison. Although
+the velocity MSE is close to the CRLB, the position MSE is
+quite worse than the CRLB.
+Fig. 6 is the case for the far-ﬁeld source as in Fig. 3. The dif-
+ference with the CRLB becomes bigger as the receiver is farther
+away from the receivers. The decrease in accuracy with respect
+to the CRLB is about 5 dB for both position and velocity when
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+HO et al.: SOURCE LOCALIZATION USING TDOA AND FDOA MEASUREMENTS
+689
+Fig. 6. Comparisons of the CRLB and the source location accuracy when as-
+suming no receiver location noise, far-ﬁeld moving source and unequal receiver
+location noise power.
+Fig. 7. Comparisons of the CRLB and the source location accuracy when as-
+suming no receiver location noise, far-ﬁeld stationary source and unequal re-
+ceiver location noise power.
+the receiver location noise power
+is bigger than
+m .
+Fig. 7 is for the stationary source situation as in Fig. 4, and the
+observations are consistent with those in Fig. 6. The conclusion
+is that one cannot simply ignore the receiver location noise if it
+is comparable to the noise in the measurement vector
+, and it
+has to be taken into account in an estimation algorithm to im-
+prove accuracy.
+IV. CLOSED-FORM SOLUTION
+It is well known that the maximum-likelihood (ML) estimate
+can achieve the CRLB accuracy. Because of the nonlinear rela-
+tionship between the measurements and the source location, ML
+estimation requires numerical grid search which is time con-
+suming. Gradient based iterative technique through lineariza-
+tion such as Taylor-series method can be used instead of grid
+search. Iterative technique requires good initial guesses close
+to the true solution and could suffer from divergence problem.
+Most importantly, both approaches require the estimation of re-
+ceiver locations in conjunction with the source location in order
+to reach the CRLB accuracy, although only the source location
+is of interest.
+In practice, the number of receivers can be large. Let us con-
+sider a moderate value of
+as an example. Instead of esti-
+mating six parameters for the source, an additional
+36 pa-
+rameters for the receivers are also needed to be estimated. This
+will make numerical grid search very difﬁcult, if not impossible,
+in such a high-dimensional space, or big numerical linearization
+error and possibly singularity problem in Taylor-series iterative
+method. We shall propose here a closed-form solution to the
+estimation problem. The interesting aspect of the proposed so-
+lution is that it estimates only the source location parameters.
+Most importantly, it can achieve the CRLB accuracy. We shall
+ﬁrst describe the proposed solution, then an analysis will follow
+together with a proof that the solution accuracy reaches CRLB
+for far-ﬁeld source.
+A number of variables will be used in the solution deriva-
+tion and analysis. We shall refresh some symbols deﬁned be-
+fore and introduce some new ones.
+and
+are the noisy position and velocity of receiver , and
+its position and velocity errors are
+and
+.
+and
+represent the unknown position and velocity
+of the source.
+and
+are the TDOA and FDOA (differen-
+tial range and differential range rate) measurements between re-
+ceiver pair
+and 1, and their measurement noise values are
+and
+.
+is the error vector by collecting the receiver po-
+sition and velocity errors
+and
+,
+, and
+has a covariance matrix
+. Similarly,
+is the error vector
+formed from the collection of measurement noise
+and
+,
+, and its covariance matrix is
+.
+and
+are
+the range and range rate from the source to receiver . In formu-
+lating the weighted least-squares solution,
+represents the equa-
+tion error vector,
+denotes the regressand,
+is the regressor
+matrix,
+is the weighting matrix, and
+is the corresponding
+solution. Subscripts will appear on ,
+,
+,
+, and
+to denote
+the quantities from TDOA or FDOA measurements, or from ﬁrst
+or second stage of the algorithm processing. Finally,
+is used
+to denote the true value of
+.
+A. Algorithm
+The proposed solution follows the general framework in [6] to
+solve the nonlinear problem. The method in [6] is for no receiver
+location errors, and here we derive the solution in the presence
+of receiver location errors. The proposed method has two stages.
+The ﬁrst stage transforms the nonlinear measurement equation
+to a pseudo linear one by introducing nuisance parameters. After
+solving the pseudolinear equations, the nuisance parameter es-
+timates are utilized to reﬁne the source location estimate in the
+second stage.
+1) First Stage: Our solution development begins with the
+relationship that the range difference is
+, or
+. Squaring both sides and substituting (1) yields the
+TDOA equation
+(17)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+690
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+In terms of the noisy quantities by putting
+and
+, where
+is the range difference measurements
+and
+is the noisy receiver
+position, we have
+(18)
+for
+, where the second-order error terms have
+been ignored and
+. The subscript is used to represent
+the equation error from TDOA measurements. Collecting
+into
+and using the second line
+of (18) forms
+(19)
+where
+...
+...
+...
+...
+...
+(20)
+and
+is a 3
+1 vector of zeros. From the ﬁrst line of (18), we
+have in vector form (21)–(22) shown at the bottom of the page.
+is the measurement noise vector and is deﬁned below (4).
+is the receiver location noise vector deﬁned before (1).
+The time derivative of (19) yields the FDOA equation
+(23)
+Putting
+,
+,
+, and
+, we have after ignoring the second-order error
+terms
+(24)
+The subscript
+is used to denote the equation error from FDOA
+measurements.
+By collecting
+as
+, we have from the
+second line of (24), the matrix equation
+(25)
+where
+...
+...
+...
+...
+...
+(26)
+and
+is deﬁned in (20).
+From the ﬁrst line of (24),
+can be expressed in terms of the
+noise vectors
+and
+as
+(27)
+where we have (28) shown at the bottom of the page, and
+and
+are deﬁned in (22).
+(21)
+(22)
+(28)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+HO et al.: SOURCE LOCALIZATION USING TDOA AND FDOA MEASUREMENTS
+691
+Now collecting
+and
+from (19) and (25) to form
+yields the vector equation from both TDOA and
+FDOA measurements
+(29)
+where
+,
+, and
+,
+,
+, and
+are deﬁned in (20) and (26). Note that (29) is a set
+of nonlinear equations with respect to
+and
+, since
+and
+are related to them through the nonlinear relationships (1)
+and (3). However, if we consider
+and
+to be unrelated to
+and
+, (29) becomes linear with respect to
+. As a result,
+can be estimated by the weighted least-squares (LS) method
+whose solution is [28]
+(30)
+where
+is the weighting matrix chosen as [28]
+From (21) and (27)
+(31)
+where
+(32)
+As a result, the weighting matrix is
+(33)
+If we subtract both sides of (30) by the true value
+and use
+(29), the estimation error of
+is
+(34)
+Note that
+is equal to the inverse of the covariance matrix of
+. The covariance matrix of
+is, therefore, assuming small
+measurement noise so that the noise in
+can be ignored
+(35)
+2) Second Stage: The ﬁrst to the third elements and the ﬁfth
+to the seventh elements of
+are the position and velocity es-
+timates of the source. These estimates are not accurate because
+the ﬁrst stage solution
+in (30) assumes
+and
+are unrelated, but in fact they are related to each other through
+(1) and (3). The second stage improves the accuracy of
+and
+through another weighted LS minimization using the computed
+values of
+and
+in the ﬁrst stage.
+The estimation error of
+is
+. By expressing
+as
+, we have
+(36)
+where
+represents a column subvector that contains the
+ﬁrst three elements of
+and the symbol
+denotes the Schur
+product (element by element multiplication). Next, noting from
+the deﬁnition of
+in (20) that
+, using
+(1), substituting
+and ignoring second-order error
+term gives
+(37)
+Similarly, we have
+(38)
+and
+(39)
+As a result, from (36)–(39), we form the equation error vector
+(40)
+is a 3
+3 zero matrix and
+is a 3
+1 zero vector, and
+(41)
+Equation (40) is a set of linear equations with respect to
+,
+whose weighted LS solution is [28]
+(42)
+is the weighting matrix given by, upon using (40)
+(43)
+where from (31) and (34)
+has been used.
+To examine the covariance of the second-stage solution
+,
+subtracting both sides of (42) by
+and using (40) gives
+(44)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+692
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+Hence, noting that
+is the inverse of the covariance matrix
+of
+(45)
+Once
+is available, the remaining task is to remap it into
+and
+. It is straightforward to deduce from the deﬁnition of
+in (40) that
+(46)
+where
+whose purpose is to avoid sign
+ambiguity from square-root operations, and “ ” represents el-
+ement by element division.
+To summarize, the steps to compute the source location es-
+timate are 1) ﬁnd
+from (30), where
+is deﬁned in (33),
+2) compute
+using (42), where
+is deﬁned in (43), and 3)
+obtain
+and
+from (46). The weighting matrices
+and
+require the true source location that is not known. In practice,
+we shall ﬁrst set
+to
+and use (30) to obtain an initial
+estimate of
+and
+. They are then used to obtain
+so that
+a better estimate of
+can be found. The true source location
+in
+will then be substituted by the solution in
+instead.
+The approximation of
+and
+may result in some degra-
+dation in performance. Our plentiful simulation results indicate
+that the location accuracy is relatively insensitive to the noise
+in the weighting matrices, and the decrease in the solution ac-
+curacy by generating
+and
+in this manner appears to be
+insigniﬁcant.
+There are some practical issues that need to be considered
+when implementing the proposed algorithm. First, the proposed
+method needs to approximate
+and
+using the noisy
+quantities. Although there is no mathematically substantiated
+argument to support that the approximation does not introduce
+much loss in accuracy, some previous work [31] indicates
+that the performance degradation due to the approximation
+of weighting matrices is insigniﬁcant. Second, the proposed
+method requires accurate knowledge of the covariance matrices
+from the measurements
+and from receiver locations
+.
+They are usually obtained during calibration by using a source
+of known location and by measuring the amounts of perturba-
+tions in the receiver locations. Some scattering models from
+the environment may also help to determine the covariance
+matrices. The sensitivity of the inaccurate knowledge of
+and
+on the performance of the proposed solution is a subject
+for further study.
+B. Analysis
+We shall establish the theoretical covariance matrix of the
+proposed solution, and compare it with the CRLB. By taking
+the differential of the deﬁnition of
+in (40), we can relate the
+error in the proposed solution with that in
+(47)
+Note that
+and
+act as constant in the second stage, and
+therefore
+and
+do not appear in (47). From (41), the
+equation error in the second-stage
+is zero mean (when the
+noise is small) and so does
+in (44). Thus,
+is also zero
+mean, and the solution estimate is unbiased over a small noise
+region. Multiplying (47) with its transpose yields the covariance
+matrix of
+for the proposed solution
+(48)
+where
+is given in (45),
+is deﬁned in (43), and it is
+dependent on
+given in (33).
+We now compare
+with the CRLB. In the case of far-
+ﬁeld source, we shall show that
+approaches the CRLB
+with insigniﬁcant differences. For near-ﬁeld source, it is not
+easy to compare
+with the CRLB because of the tedious
+form of
+. However, the simulation results in the next
+section show that the proposed method can reach the CRLB for
+near-ﬁeld source in most cases as well under Gaussian noise,
+when the reference (the ﬁrst) receiver is not chosen to have the
+largest receiver noise power.
+For far-ﬁeld source, the following two conditions are
+satisﬁed:
+i
+ii
+(49)
+The ﬁrst condition simply indicates that the ranges of the
+source to different receivers are approximately the same since
+the source is very far away form the receivers. The second
+condition states that the range rate relative to the range is close
+to zero, which is again valid if the range is large.
+From (22), (31), and (32), it can be seen that
+is proportional
+to
+and so does
+given in (34). Hence, the ﬁrst term of
+in (41) dominates and
+. Thus, from the ﬁrst line of
+(43)
+(50)
+After substituting (45) and (50), (48) becomes
+(51)
+When applying the matrix inversion Lemma [32],
+in (33)
+can be expressed as
+(52)
+where
+. Hence, using (35) and (52) in (51) yields
+(53)
+where
+.
+The inverse of the CRLB in (9) is, through matrix inversion
+Lemma [32]
+CRLB
+(54)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 10 =====
+HO et al.: SOURCE LOCALIZATION USING TDOA AND FDOA MEASUREMENTS
+693
+Fig. 8. Comparisons of the CRLB and the source location accuracy of the
+proposed method, near-ﬁeld moving source and equal receiver location noise
+power.
+where
+,
+, and
+are deﬁned in (8). Comparing (53) and (54)
+indicates that they are of the same form. It has been shown in
+[6] that
+and hence the difference between them
+is
+in (53) versus
+in (54).
+Interestingly enough, under the two approximations for far-
+ﬁeld source in (49), Appendix II shows that
+and
+are
+nearly the same. The farther the source, the closer the two will
+be. As a result, the covariance matrix of the proposed estimator
+achieves the CRLB for far-ﬁeld source and Gaussian noise.
+We have presented here the solution and analysis for moving
+source location using TDOA and FDOA. Stationary source lo-
+calization using TDOA is a special case and [30] contains some
+details on the solution. It can be shown theoretically that the so-
+lution accuracy achieves CRLB as well for far-ﬁeld source.
+V. SIMULATIONS
+This section contains simulation results of the proposed solu-
+tion, compares its performance with the CRLB and corroborates
+the theoretical development. The simulation scenario contains
+6 receivers, and their nominal positions and velocities are given
+in Table I. The procedures described below (46) are used to ob-
+tain the proposed solution. The results for both moving source
+location using TDOAs and FDOAs, and stationary source loca-
+tion using TDOAs are given, as well as near-ﬁeld and far-ﬁeld
+scenarios.
+A. Moving Source
+Fig. 8 gives the estimation accuracy of the proposed
+method for a near-ﬁeld source located at
+m with velocity
+m/s. The estimation accu-
+racy is deﬁned as MSE
+and
+MSE
+, where
+and
+denote
+the estimated source position and velocity at ensemble
+and
+5000 is the number of ensemble runs. The location sce-
+nario and noise settings are the same as that in Fig. 5. The cross
+Fig. 9. Comparisons of the CRLB and the source location accuracy of the
+proposed method, far-ﬁeld moving source and unequal receiver location noise
+power.
+Fig. 10. Comparisons of the CRLB and the source location accuracy of the
+proposed method, far-ﬁeld stationary source and unequal receiver location noise
+power.
+symbol represents simulation results, the dashed–dotted line
+represents the theoretical MSE from (48), and the solid line is
+the CRLB. It is evident from the ﬁgure that we are able to reach
+the CRLB for near-ﬁeld source in this simulation case. The
+results for the algorithm without accounting for the receiver
+location errors are in Fig. 5. Comparing Figs. 5 and 8 when
+m , the new method achieves about 2 dB reduction
+in the source position MSE with respect to the one that does
+not account for the receiver location errors.
+Fig. 9 is the result for a far-ﬁeld source located at
+m with velocity
+m/s.
+The location scenario corresponds to that in Fig. 6, where the
+receivers have different location noise powers. The location ac-
+curacy is generally worse for a far-ﬁeld source than a near-ﬁeld
+source. The theoretical MSE curve overlaps with the CRLB.
+Again, the simulation results agree with the theoretical MSE
+very well. As expected from the theory, the proposed solution
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 11 =====
+694
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+meets the CRLB before the thresholding effect occurs. Com-
+paring with Fig. 6 that contains the results for the algorithm
+that does not take the receiver location noise into account, the
+improvement is about 5 dB in the position and velocity MSEs
+when
+m and before the thresholding effects occurs.
+B. Stationary Source
+The same location geometry is utilized as in the moving
+source case, except that the velocities are set to zero and only
+TDOA measurements are used. Fig. 10 is the result for the
+far-ﬁeld scenario as in Fig. 7. It is evident that the proposed
+method is able to attain the accuracy set by the CRLB in the
+presence of receiver location error, when the noise power is
+moderate. Comparing with the location accuracy from the
+algorithm that assumes that the receiver location error is
+zero, the improvement in position MSE is about 5 dB when
+m and before the thresholding effect occurs.
+VI. CONCLUSION
+Source localization using TDOA and FDOA measurements
+require very precise knowledge of the receiver locations. A
+small error in the receiver locations can lead to a signiﬁcant
+decrease in source location accuracy, especially under poor lo-
+cation geometry [large geometric dilution of precision (GDOP)]
+and far-ﬁeld source scenarios. We have derived analytically the
+increase in CRLB due to random and Gaussian receiver location
+noise, and the increase in location MSE when an algorithm
+assumes receiver locations are accurate but in fact have errors.
+To minimize the effect of receiver error, we developed an al-
+gebraic solution to improve the source location estimate. The
+proposed solution is closed form, computationally attractive,
+and not iterative. The solution accuracy is shown theoretically,
+under some mild approximations, and verify by simulations to
+attain the CRLB for far-ﬁeld source and Gaussian noise.
+APPENDIX I
+EVALUATION OF THE CRLB
+The CRLB formula with receiver location error is given in (7)
+and (8). Noting that
+, where
+and
+, the right-hand side of (8) involves the par-
+tial derivatives of
+and
+with respect to
+,
+, , and . For no-
+tation simplicity, we deﬁne
+matrices
+and
+as follow, where the
+rows of
+and
+,
+,
+are
+and
+The partial derivatives of
+and
+with respect to the unknown
+parameters are
+(55)
+where
+and
+(56)
+(57)
+(58)
+(59)
+(60)
+(61)
+Now, the elements on the right-hand side of (8) are deﬁned
+by
+where
+and
+are any elements in the set
+.
+(62)
+(63)
+(64)
+(65)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 12 =====
+HO et al.: SOURCE LOCALIZATION USING TDOA AND FDOA MEASUREMENTS
+695
+The scenario of stationary source with TDOA is a special
+case, which involves (55), (57), (59), and (60) only.
+APPENDIX II
+After evaluating
+, where
+and
+are de-
+ﬁned in (32), and comparing it with
+deﬁned in (57)
+and (58), it can be shown that the two only differ in the ﬁrst
+three columns and the lower half of the middle three columns
+as shown below: see equations (62)–(65) shown at the bottom
+of the previous page.
+Under the two far-ﬁeld conditions given in (49), it is clear that
+(62)–(63) are nearly equal to (64)–(65). The differences are be-
+coming smaller as the source is farther away from the receivers.
+Hence,
+for a far-ﬁeld source.
+REFERENCES
+[1] G. C. Carter, “Time delay estimation for passive sonar signal pro-
+cessing,” IEEE Trans. Acoust., Speech, Signal Process., vol. ASSP-29,
+pp. 462–470, Jun. 1981.
+[2] E. Weinstein, “Optimal source localization and tracking from passive
+array measurements,” IEEE Trans. Acoust., Speech, Signal Process.,
+vol. ASSP-30, pp. 69–76, Feb. 1982.
+[3] T. S. Rappaport, J. H. Reed, and B. D. Woerner, “Position location
+using wireless communications on highways of the future,” IEEE
+Commun. Mag., vol. 14, pp. 33–41, Oct. 1996.
+[4] J. J. Caffery and G. L. Stuber, “Overview of radiolocation in CDMA
+cellular systems,” IEEE Commun. Mag., vol. 16, pp. 38–45, Apr. 1998.
+[5] J. C. Chen, Y. Kung, and R. E. Hudson, “Source localization and beam-
+forming,” IEEE Signal Process. Mag., vol. 19, pp. 33–39, Mar. 2002.
+[6] K. C. Ho and W. Xu, “An accurate algebraic solution for moving source
+location using TDOA and FDOA measurements,” IEEE Trans. Signal
+Process., vol. 52, no. 9, pp. 2453–2463, Sep. 2004.
+[7] W. H. Foy, “Position-location solution by Taylor-series estimation,”
+IEEE Trans. Aerosp. Electron. Syst., vol. AES-12, pp. 187–194, Mar.
+1976.
+[8] R. O. Schmidt, “An algorithm for two-receiver TDOA/FDOA emitter
+location,” in ESL, Inc., Tech. Memo., May 1980, vol. TM-1229.
+[9] D. J. Torrieri, “Statistical theory of passive location systems,” IEEE
+Trans. Aerosp. Electron. Syst., vol. AES-20, pp. 183–198, Mar. 1984.
+[10] S. Bancroft, “An algebraic solution of the GPS equations,” IEEE Trans.
+Aerosp. Electron. Syst., vol. AES-21, pp. 224–232, Jan. 1985.
+[11] B. Friedlander, “A passive localization algorithm and and its accuracy
+analysis,” IEEE J. Ocean. Eng., vol. OE-12, pp. 234–245, Jan. 1987.
+[12] J. O. Smith and J. S. Abel, “Closed-form least-squares source location
+estimation from range-difference measurements,” IEEE Trans. Acoust.,
+Speech, Signal Process., vol. ASSP-35, pp. 1661–1669, Dec. 1987.
+[13] T. T. Ha and R. C. Robertson, “Geostationary satellite navigation sys-
+tems,” IEEE Trans. Aerosp. Electron. Syst., vol. AES-23, pp. 247–254,
+Mar. 1987.
+[14] L. O. Krause, “A direct solution to GPS-type navigation equations,”
+IEEE Trans. Aerosp. Electron. Syst., vol. AES-23, pp. 224–232, Mar.
+1987.
+[15] H. C. Schau and A. Z. Robinson, “Passive source localization
+employing intersecting spherical surfaces from time-of-arrival differ-
+ences,” IEEE Trans. Acoust., Speech, Signal Process., vol. ASSP-35,
+pp. 1223–1225, Aug. 1987.
+[16] W. W. Smith and P. G. Steffes, “Time delay techniques for satellite
+interference location system,” IEEE Trans. Aerosp. Electron. Syst., vol.
+25, pp. 224–230, Mar. 1989.
+[17] J. S. Abel, “A divide and conquer approach to least-squares estima-
+tion,” IEEE Trans. Aerosp. Electron. Syst., vol. 26, pp. 423–427, Mar.
+1990.
+[18] B. T. Fang, “Simple solutions for hyperbolic and related position ﬁxes,”
+IEEE Trans. Aerosp. Electron. Syst., vol. 26, pp. 748–753, Sep. 1990.
+[19] J. S. Abel, “Existence and uniqueness of GPS solutions,” IEEE Trans.
+Aerosp. Electron. Syst., vol. 27, pp. 952–956, Nov. 1991.
+[20] Y. T. Chan and K. C. Ho, “A simple and efﬁcient estimator for hy-
+perbolic location,” IEEE Trans. Signal Process., vol. 42, no. 8, pp.
+1905–1915, Aug. 1994.
+[21] B. M. Kaspar, Advanced Tactical Targeting Technology (AT3)
+DARPA/SPO [Online]. Available: www.darpa.mil.
+[22] Y. Rockah and P. M. Schultheiss, “Array shape calibration using
+sources in unknown location, Part I: Far-ﬁeld source,” IEEE Trans.
+Acoust., Speech, Signal Process., vol. ASSP-35, pp. 286–299, Mar.
+1987.
+[23] ——, “Array shape calibration using sources in unknown location,
+Part II: Near-ﬁeld source and estimator implementation,” IEEE Trans.
+Acoust., Speech, Signal Process., vol. ASSP-35, pp. 724–735, Jun.
+1987.
+[24] C. Y. Tseng, D. D. Feldman, and L. J. Grifﬁths, “Steering vector es-
+timation in uncalibrated arrays,” IEEE Trans. Signal Process., vol. 43,
+no. 6, pp. 1937–1412, Jun. 1995.
+[25] M. Viberg and A. L. Swindlehurst, “A Bayesian approach to auto-cal-
+ibration for parametric array signal processing,” IEEE Trans. Signal
+Process., vol. 42, no. 12, pp. 3495–3506, Dec. 1994.
+[26] Y. M. Chen, J. H. Lee, and C. C. Yeh, “Two-dimensional angle-of-
+arrival estimation for uniform planar array with sensor position errors,”
+Proc. Inst. Elect. Eng.—Radar, Signal Process., vol. 140, no. 1, pp.
+37–42, Feb. 1993.
+[27] A. Jakoby, J. Goldberg, and H. Messer, “Source localization in shallow
+water in the presence of sensor location uncertainty,” IEEE J. Ocean.
+Eng., vol. 25, pp. 331–336, Jul. 2000.
+[28] S. M. Kay, Fundamentals of Statistical Signal Process., Estimation
+Theory.
+Englewood Cliffs, NJ: Prentice-Hall, 1993.
+[29] L. L. Scharf, Statistical Signal Process., Detection, Estimation and
+Time Series Analysis.
+Reading, MA: Addison-Wesley, 1991.
+[30] K. C. Ho, L. Kovavisaruch, and H. Parikh, “Source localization using
+TDOA with erroneous receiver positions,” in Proc. IEEE Acoust.,
+Speech, Signal Process., May 2004, vol. 3, pp. 453–456.
+[31] P. Stoica and K. Sharman, “Maximum likelihood methods for direction
+of arrival estimation,” IEEE Trans. Acoust., Speech, Signal Process.,
+vol. 38, pp. 1132–1143, Jul. 1990.
+[32] S. Haykin, Adaptive Filter Theory.
+Englewood Cliffs, NJ: Prentice-
+Hall, 2002.
+K. C. Ho (S’89–M’91–SM’00) was born in Hong
+Kong. He received the B.Sc. degree (ﬁrst-class hons.)
+in electronics and the Ph.D. degree in electronic engi-
+neering from the Chinese University of Hong Kong,
+Hong Kong, in 1988 and 1991, respectively.
+He was a Research Associate in the Royal Military
+College of Canada from 1991 to 1994. He joined
+the Bell-Northern Research, Montreal, QC, Canada,
+in 1995 as a Member of Scientiﬁc Staff. He was
+a faculty member in the Department of Electrical
+Engineering at the University of Saskatchewan, SK,
+Canada, from September 1996 to August 1997. Since September 1997, he has
+been with the University of Missouri-Columbia, where he is currently an Asso-
+ciate Professor in the Electrical and Computer Engineering Department. He is
+also an Adjunct Associate Professor at the Royal Military College of Canada.
+He has three United States patents, three Canadian patents, and two European
+patents and two Japanese patents in the area of mobile communications.
+His research interests are in statistical signal processing, source localization,
+subsurface object detection, wavelet transform, wireless communications, and
+the development of efﬁcient adaptive signal processing algorithms for various
+applications including land mine detection, echo cancellation, and time delay
+estimation.
+Dr. Ho is currently serving as an Associate Editor of the IEEE TRANSACTIONS
+ON SIGNAL PROCESS. and the IEEE SIGNAL PROCESS. LETTERS. He was the re-
+cipient of the Croucher Foundation Studentship from 1988 to 1991. He received
+the Junior Faculty Research Award from College of Engineering of the Univer-
+sity of Missouri-Columbia in 2003. He has been active in the development of
+the ITU Standard Recommendation G.168: Digital Network Echo Cancellers
+since 1995. He is the editor of the ITU Standard Recommendation G.168.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 13 =====
+696
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 55, NO. 2, FEBRUARY 2007
+Xiaoning Lu (S’05) received the B.S.E.E. degree
+from Xi’an Jiaotong University, Xi’an, China, in
+2000 and M.S.E.E. degree from Southeast Uni-
+versity, Nanjing, China, in 2002. She is currently
+working towards the Ph.D. degree at the Department
+of Electrical and Computer Engineering, University
+of Missouri-Columbia.
+Her research interests include source localiza-
+tion, adaptive signal processing, statistical signal
+processing, estimation and detection theory, channel
+coding, and wireless communications.
+L. Kovavisaruch (S’05–M’06) received the B.S. de-
+gree from King Mongkut’s Institute of Technology
+Ladkrabang in 1993; M.Sc. degrees in electrical en-
+gineering from the University of Southern California
+in 2001 and Imperial College, London, U.K., in 1995;
+and the Ph.D. degree in electrical engineering from
+the University of Missouri-Columbia in 2005 with
+sponsorship from the government of Thailand,
+From 1996 to 1998, she was a Switching Engineer
+at Siemens, Limited, Thailand, working for a wireless
+telecommunication client in Thailand. From 1993 to
+1994, she was a Switching Engineer at TelecomAsia Corporation, Thailand. She
+is currently working as a Researcher in the Department of Telecommunication of
+National Electronics and Computer Technology Center, Thailand. Her research
+interests are passive localization and short-range communications.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:37 UTC from IEEE Xplore.  Restrictions apply. 

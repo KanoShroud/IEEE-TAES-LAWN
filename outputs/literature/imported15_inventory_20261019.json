@@ -1,0 +1,316 @@
+[
+  {
+    "id": "L034",
+    "doi": "10.1109/TSP.2006.885744",
+    "items": [
+      {
+        "key": "XJWKJR46",
+        "title": "Source localization using TDOA and FDOA measurements in the presence of receiver location errors: analysis and solution",
+        "pdfs": [
+          {
+            "key": "8KGMNQK6",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/8KGMNQK6/Source%20localization%20using%20TDOA%20and%20FDOA%20measurements%20in%20the%20presence%20of%20receiver%20location%20errors%20an-Ho%20%E7%AD%89-2007.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "83C5X8TG"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L035",
+    "doi": "10.1109/TSP.2011.2131135",
+    "items": [
+      {
+        "key": "H9UJ49V3",
+        "title": "An asymptotically efficient estimator for TDOA and FDOA positioning of multiple disjoint sources in the presence of sensor location uncertainties",
+        "pdfs": [
+          {
+            "key": "YDTWN3EF",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/YDTWN3EF/An%20asymptotically%20efficient%20estimator%20for%20TDOA%20and%20FDOA%20positioning%20of%20multiple%20disjoint%20sources%20in-Sun%E5%92%8CHo-2011.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "83C5X8TG"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L036",
+    "doi": "10.1109/TSP.2013.2271750",
+    "items": [
+      {
+        "key": "SUEUP8Q9",
+        "title": "TDOA source localization in the presence of synchronization clock bias and sensor position errors",
+        "pdfs": [
+          {
+            "key": "N5Y3CHHZ",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/N5Y3CHHZ/TDOA%20source%20localization%20in%20the%20presence%20of%20synchronization%20clock%20bias%20and%20sensor%20position%20errors-Wang%E5%92%8CHo-2013.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "SAUVC7E6"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L037",
+    "doi": "10.1016/j.sigpro.2018.06.009",
+    "items": [
+      {
+        "key": "IAP9HXKA",
+        "title": "Single-step localization using multiple moving arrays in the presence of observer location errors",
+        "pdfs": [
+          {
+            "key": "HLB9JN7N",
+            "title": "ScienceDirect Full Text PDF",
+            "path": "file:///F:/Zotero/storage/HLB9JN7N/Single-step%20localization%20using%20multiple%20moving%20arrays%20in%20the%20presence%20of%20observer%20location%20errors-Yin%20%E7%AD%89-2018.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "9WFV9PDM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L038",
+    "doi": "10.1016/j.dsp.2019.06.001",
+    "items": [
+      {
+        "key": "SQRN8ZUF",
+        "title": "Iterative constrained weighted least squares estimator for TDOA and FDOA positioning of multiple disjoint sources in the presence of sensor position and velocity uncertainties",
+        "pdfs": [
+          {
+            "key": "6ZKZM3NH",
+            "title": "ScienceDirect Full Text PDF",
+            "path": "file:///F:/Zotero/storage/6ZKZM3NH/Iterative%20constrained%20weighted%20least%20squares%20estimator%20for%20TDOA%20and%20FDOA%20positioning%20of%20multiple%20dis-Wang%20%E7%AD%89-2019.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "83C5X8TG"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L039",
+    "doi": "10.1109/TVT.2020.3026975",
+    "items": [
+      {
+        "key": "GR6GHV6I",
+        "title": "Impact of UAV wobbling on the air-to-ground wireless channel",
+        "pdfs": [
+          {
+            "key": "599XPYSL",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/599XPYSL/Impact%20of%20UAV%20wobbling%20on%20the%20air-to-ground%20wireless%20channel-Banagar%20%E7%AD%89-2020.pdf",
+            "status": 302
+          }
+        ],
+        "collections": []
+      }
+    ]
+  },
+  {
+    "id": "L040",
+    "doi": "10.1109/TVT.2024.3436046",
+    "items": [
+      {
+        "key": "HNE5BZGP",
+        "title": "Fundamentals of wobbling and hardware impairments-aware air-to-ground channel model",
+        "pdfs": [
+          {
+            "key": "24HWCEPL",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/24HWCEPL/Fundamentals%20of%20wobbling%20and%20hardware%20impairments-aware%20air-to-ground%20channel%20model-Banagar%E5%92%8CDhillon-2024.pdf",
+            "status": 302
+          }
+        ],
+        "collections": []
+      }
+    ]
+  },
+  {
+    "id": "L041",
+    "doi": "10.1109/TSP.2011.2128311",
+    "items": [
+      {
+        "key": "EVWD6GVH",
+        "title": "Direct geolocation of wideband emitters based on delay and doppler",
+        "pdfs": [
+          {
+            "key": "WQ22JB95",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/WQ22JB95/Direct%20geolocation%20of%20wideband%20emitters%20based%20on%20delay%20and%20doppler-Weiss-2011.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "9WFV9PDM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L042",
+    "doi": "10.1109/TSP.2024.3520909",
+    "items": [
+      {
+        "key": "5UPEJY7R",
+        "title": "Target localization and sensor self-calibration of position and synchronization by range and angle measurements",
+        "pdfs": [
+          {
+            "key": "W9DP82RD",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/W9DP82RD/Target%20localization%20and%20sensor%20self-calibration%20of%20position%20and%20synchronization%20by%20range%20and%20angle%20m-Jia%20%E7%AD%89-2025.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "83C5X8TG",
+          "LC8I7QCM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L043",
+    "doi": "10.1109/TWC.2023.3289970",
+    "items": [
+      {
+        "key": "TQUX9ESG",
+        "title": "Joint sensor array path planning and attitude determination for optimal emitter localization",
+        "pdfs": [
+          {
+            "key": "7JX5DF5V",
+            "title": "PDF",
+            "path": "file:///F:/Zotero/storage/7JX5DF5V/Joint%20sensor%20array%20path%20planning%20and%20attitude%20determination%20for%20optimal%20emitter%20localization-Li%20%E7%AD%89-2024.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "LC8I7QCM",
+          "9WFV9PDM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L044",
+    "doi": "10.1109/JSEN.2024.3481644",
+    "items": [
+      {
+        "key": "UQ7FU9VM",
+        "title": "Direct trajectory estimation of moving emitters with distributed stations and performance analysis to station location errors",
+        "pdfs": [
+          {
+            "key": "TUME2C3C",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/TUME2C3C/Direct%20trajectory%20estimation%20of%20moving%20emitters%20with%20distributed%20stations%20and%20performance%20analysis%20t-Ren%20%E7%AD%89-2024.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "9WFV9PDM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L045",
+    "doi": "10.1109/JIOT.2025.3552540",
+    "items": [
+      {
+        "key": "DPL56N6R",
+        "title": "Source localization based on FDOA and TDOA with bounded sensor location errors and changing carrier frequency",
+        "pdfs": [
+          {
+            "key": "WUKA6SH9",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/WUKA6SH9/Source%20localization%20based%20on%20FDOA%20and%20TDOA%20with%20bounded%20sensor%20location%20errors%20and%20changing%20carrier-Kim-2025.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "83C5X8TG",
+          "SAUVC7E6"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L046",
+    "doi": "10.1007/s11045-018-0579-z",
+    "items": [
+      {
+        "key": "86964M7Y",
+        "title": "Performance analysis and improvement of direct position determination based on doppler frequency shifts in presence of model errors: case of known waveforms",
+        "pdfs": [
+          {
+            "key": "377Z98S9",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/377Z98S9/Performance%20analysis%20and%20improvement%20of%20direct%20position%20determination%20based%20on%20doppler%20frequency%20shi-Wang%20%E7%AD%89-2019.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "9WFV9PDM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L047",
+    "doi": "10.1186/s13634-018-0555-7",
+    "items": [
+      {
+        "key": "NX2P63ZR",
+        "title": "Robust direct position determination methods in the presence of array model errors",
+        "pdfs": [
+          {
+            "key": "VM89PYS6",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/VM89PYS6/Robust%20direct%20position%20determination%20methods%20in%20the%20presence%20of%20array%20model%20errors-Wang%20%E7%AD%89-2018.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "9WFV9PDM"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L048",
+    "doi": "10.1109/LSP.2020.2965822",
+    "items": [
+      {
+        "key": "JA8T5JP9",
+        "title": "Semidefinite programming methods for alleviating clock synchronization bias and sensor position errors in TDOA localization",
+        "pdfs": [
+          {
+            "key": "UZXDZ7H7",
+            "title": "Full Text PDF",
+            "path": "file:///F:/Zotero/storage/UZXDZ7H7/Semidefinite%20programming%20methods%20for%20alleviating%20clock%20synchronization%20bias%20and%20sensor%20position%20erro-Zou%E5%92%8CLiu-2020.pdf",
+            "status": 302
+          }
+        ],
+        "collections": [
+          "SAUVC7E6"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,417 @@
+{
+  "date": "2026-10-19",
+  "scope": "L034-L048, both user-imported batches",
+  "root_collection_key": "5ZJ9WUQZ",
+  "root_collection_name": "低空强弱源定位研究｜文献精读分级",
+  "child_collections": {
+    "01 核心文献": "AE2533KG",
+    "02 重要支撑": "84I5XANS",
+    "03 条件补充": "R559LCKM"
+  },
+  "counts": {
+    "01 核心文献": 7,
+    "02 重要支撑": 5,
+    "03 条件补充": 3
+  },
+  "unique_papers": 15,
+  "pdf_pages_total": 240,
+  "checks": {
+    "exact_doi_matches": true,
+    "one_tier_per_item": true,
+    "all_requested_items_present": true,
+    "original_memberships_retained": true,
+    "pdf_hashes_unchanged": true
+  },
+  "items": [
+    {
+      "id": "L034",
+      "item_key": "XJWKJR46",
+      "attachment_key": "8KGMNQK6",
+      "tier": "02 重要支撑",
+      "collection_key": "84I5XANS",
+      "original_collections": [
+        "83C5X8TG"
+      ],
+      "current_collections": [
+        "83C5X8TG",
+        "84I5XANS"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 13,
+      "limitations": "无需显式估计全部站点；单源测量层，不含盲时频校准"
+    },
+    {
+      "id": "L035",
+      "item_key": "H9UJ49V3",
+      "attachment_key": "YDTWN3EF",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "83C5X8TG"
+      ],
+      "current_collections": [
+        "83C5X8TG",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 7,
+      "limitations": "来源可分；多源受益与低维估计已有前序"
+    },
+    {
+      "id": "L036",
+      "item_key": "SUEUP8Q9",
+      "attachment_key": "N5Y3CHHZ",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "SAUVC7E6"
+      ],
+      "current_collections": [
+        "SAUVC7E6",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 13,
+      "limitations": "未知目标校准传递已有；单传感器独立时钟不满足组内差分"
+    },
+    {
+      "id": "L037",
+      "item_key": "IAP9HXKA",
+      "attachment_key": "HLB9JN7N",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "9WFV9PDM"
+      ],
+      "current_collections": [
+        "9WFV9PDM",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 19,
+      "limitations": "M=1仍保留时延Doppler；需重查可辨性与共享CFO"
+    },
+    {
+      "id": "L038",
+      "item_key": "SQRN8ZUF",
+      "attachment_key": "6ZKZM3NH",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "83C5X8TG"
+      ],
+      "current_collections": [
+        "83C5X8TG",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 27,
+      "limitations": "disjoint测量；原算法至少五站；收敛不是无条件保证"
+    },
+    {
+      "id": "L039",
+      "item_key": "GR6GHV6I",
+      "attachment_key": "599XPYSL",
+      "tier": "02 重要支撑",
+      "collection_key": "84I5XANS",
+      "original_collections": [],
+      "current_collections": [
+        "84I5XANS"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 6,
+      "limitations": "悬停信道分析；相干时间依赖参数"
+    },
+    {
+      "id": "L040",
+      "item_key": "HNE5BZGP",
+      "attachment_key": "24HWCEPL",
+      "tier": "02 重要支撑",
+      "collection_key": "84I5XANS",
+      "original_collections": [],
+      "current_collections": [
+        "84I5XANS"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 17,
+      "limitations": "正式期刊PDF；悬停下行信道，非运动接收网络定位"
+    },
+    {
+      "id": "L041",
+      "item_key": "EVWD6GVH",
+      "attachment_key": "WQ22JB95",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "9WFV9PDM"
+      ],
+      "current_collections": [
+        "9WFV9PDM",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 9,
+      "limitations": "已知统计谱；已分析同步误差，但不是多源未知偏差联合校准"
+    },
+    {
+      "id": "L042",
+      "item_key": "5UPEJY7R",
+      "attachment_key": "W9DP82RD",
+      "tier": "02 重要支撑",
+      "collection_key": "84I5XANS",
+      "original_collections": [
+        "83C5X8TG",
+        "LC8I7QCM"
+      ],
+      "current_collections": [
+        "83C5X8TG",
+        "LC8I7QCM",
+        "84I5XANS"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 16,
+      "limitations": "静止站运动目标；差分等价不能直接迁到IQ"
+    },
+    {
+      "id": "L043",
+      "item_key": "TQUX9ESG",
+      "attachment_key": "7JX5DF5V",
+      "tier": "03 条件补充",
+      "collection_key": "R559LCKM",
+      "original_collections": [
+        "LC8I7QCM",
+        "9WFV9PDM"
+      ],
+      "current_collections": [
+        "LC8I7QCM",
+        "9WFV9PDM",
+        "R559LCKM"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 14,
+      "limitations": "阵列角度模型；姿态规划不等于单天线随机抖动校准"
+    },
+    {
+      "id": "L044",
+      "item_key": "UQ7FU9VM",
+      "attachment_key": "TUME2C3C",
+      "tier": "03 条件补充",
+      "collection_key": "R559LCKM",
+      "original_collections": [
+        "9WFV9PDM"
+      ],
+      "current_collections": [
+        "9WFV9PDM",
+        "R559LCKM"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 13,
+      "limitations": "只作位置误差传播，没有联合站点校准"
+    },
+    {
+      "id": "L045",
+      "item_key": "DPL56N6R",
+      "attachment_key": "WUKA6SH9",
+      "tier": "03 条件补充",
+      "collection_key": "R559LCKM",
+      "original_collections": [
+        "83C5X8TG",
+        "SAUVC7E6"
+      ],
+      "current_collections": [
+        "83C5X8TG",
+        "SAUVC7E6",
+        "R559LCKM"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 11,
+      "limitations": "额外速度深度及绝对频率信息；非接收机CFO模型"
+    },
+    {
+      "id": "L046",
+      "item_key": "86964M7Y",
+      "attachment_key": "377Z98S9",
+      "tier": "02 重要支撑",
+      "collection_key": "84I5XANS",
+      "original_collections": [
+        "9WFV9PDM"
+      ],
+      "current_collections": [
+        "9WFV9PDM",
+        "84I5XANS"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 42,
+      "limitations": "已知波形为额外信息；局部MSE非弱源全局恢复保证"
+    },
+    {
+      "id": "L047",
+      "item_key": "NX2P63ZR",
+      "attachment_key": "VM89PYS6",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "9WFV9PDM"
+      ],
+      "current_collections": [
+        "9WFV9PDM",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 28,
+      "limitations": "单源静止阵列；普通先验加交替迭代已充分覆盖"
+    },
+    {
+      "id": "L048",
+      "item_key": "JA8T5JP9",
+      "attachment_key": "UZXDZ7H7",
+      "tier": "01 核心文献",
+      "collection_key": "AE2533KG",
+      "original_collections": [
+        "SAUVC7E6"
+      ],
+      "current_collections": [
+        "SAUVC7E6",
+        "AE2533KG"
+      ],
+      "original_memberships_retained": true,
+      "pdf_sha256_unchanged": true,
+      "fulltext_read": true,
+      "sections_reviewed": [
+        "model",
+        "algorithm",
+        "theory",
+        "experiments",
+        "relevant appendices"
+      ],
+      "pdf_pages": 5,
+      "limitations": "校准源坐标可完全未知；六站三源测量任务不同于四站双源IQ"
+    }
+  ]
+}

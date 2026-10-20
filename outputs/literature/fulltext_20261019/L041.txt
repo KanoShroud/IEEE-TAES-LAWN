@@ -1,0 +1,735 @@
+
+===== PDF PAGE 1 =====
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 6, JUNE 2011
+2513
+Direct Geolocation of Wideband Emitters
+Based on Delay and Doppler
+Anthony J. Weiss, Fellow, IEEE
+Abstract—The localization of a stationary transmitter using
+receivers mounted on fast moving platforms is considered. It is
+assumed that the transmitted radio signal is random with known
+statistics. The conventional approach is based on two steps. In the
+ﬁrst step the time difference of arrival and the differential Doppler
+shift are measured and in the second step these measurements are
+used for geolocation. We advocate a direct position determination
+approach that proves to be more computationally efﬁcient and
+more precise for weak signals than the conventional approach. The
+direct method is a single-step method that uses the same signals
+as the two-step approach but searches directly for the emitter
+position without ﬁrst estimating intermediate parameters such as
+Doppler frequency and the time delay. A secondary but important
+result is a derivation of closed-form and compact expressions of
+the Cramér–Rao lower bound. All results are veriﬁed by Monte
+Carlo computer simulations.
+Index Terms—Differential Doppler, emitter location, maximum
+likelihood estimation.
+I. INTRODUCTION
+P
+ASSIVE geolocation of a stationary transmitter based on
+the delayed and Doppler shifted signal, observed by at
+least a single moving platform, is a well-known technique as
+can be concluded from [1]–[8]. Since the receivers location and
+velocity along their trajectory are known, the emitter location
+can be estimated.
+Common methods use two steps for localization. The system
+ﬁrst estimates the differential delay and differential Doppler fre-
+quency shift along the receivers trajectories. In the second step
+the system estimates the transmitter location based on the re-
+sults obtained in the ﬁrst step. The two step methods are not
+guaranteed to yield optimal location results since in the ﬁrst step
+the differential delay and differential Doppler estimates are ob-
+tained by ignoring the constraint that all measurements must be
+consistent with a geolocation of a single point emitter. Thus, the
+lines of position (LOP) obtained from the delay/Doppler mea-
+surements are not guaranteed to intersect in a single geograph-
+ical location. However, it can be shown that asymptotically (for
+large number of observations), the two-step methods are equiv-
+alent to the single step approach. The theory of the asymptotic
+Manuscript received June 23, 2010; revised September 10, 2010 and De-
+cember 07, 2010; accepted March 04, 2011. Date of publication March 14, 2011;
+date of current version May 18, 2011. The associate editor coordinating the re-
+view of this manuscript and approving it for publication was Prof. Soﬁene Affes.
+This research was supported by the Israel Science Foundation (Grant 218/08)
+and by the Institute for Future Technologies Research named for the Medvedi,
+Shwartzman and Gensler Families.
+The author is with the School of Electrical Engineering, Tel Aviv University,
+Tel Aviv 69978, Israel (e-mail: ajw@eng.tau.ac.il).
+Digital Object Identiﬁer 10.1109/TSP.2011.2128311
+equivalence, also known as the extended invariance principle
+(EXIP) is proved in [14] and [15]. We therefore conclude that
+the single step approach outperforms the two step methods for
+low signal-to-noise ratio (SNR) and/or short data records. This
+is demonstrated in this paper. Other advantages of the single
+step approach is the reduced computational complexity. In the
+conventional methods the Differential-Doppler and the differen-
+tial-delay are estimated along the receivers track and ﬁnally the
+location of the transmitter is deduced. In the single-step method,
+only the transmitter location is estimated, directly from the ob-
+served signals. Therefore, our algorithm is not only more precise
+it is also easier to implement.
+In a previous publication, we proposed a single-step solution
+for narrowband signals [11] based on Doppler shift only and
+assuming known or unknown nonrandom signals. Herein, we
+propose a maximum likelihood location estimation by using a
+single step approach for wideband random signals using both
+the Doppler effect and the relative delay.
+II. PROBLEM FORMULATION
+Consider a stationary source transmitting a narrow band
+signal whose carrier frequency is
+and its envelope is
+.
+The bandwidth of
+is
+and it satisﬁes
+. Then,
+an appropriate signal model is
+. When the signal
+is observed by a moving sensor the observed signal becomes
+which is an expansion or compression of the
+signal time scale, known as the Doppler effect. Let
+be the
+sensor-source relative velocity and
+the signal propagation
+velocity, then
+. Since
+is nearly one the effect
+on the slowly varying envelope will be negligible however
+the carrier frequency will be shifted considerably. Then the
+observed signal can be approximated by
+. When the
+distance between the source and the sensor is considerable the
+signal will be delayed by
+and the observed signal becomes
+up to the complex constant
+which
+has no effect on the signal amplitude, the signal delay or the
+signal frequency. This simple model will be used in the sequel.
+Consider a stationary radio emitter and
+receivers, synchro-
+nized in frequency and time, who are moving at a known speed
+that can be zero or more. The receivers intercept the transmitted
+signal at
+short intervals along their track. Let
+stand for the
+coordinates vector of the emitter and
+and
+denote the
+coordinates vector and the velocity vector of the
+receiver at
+the
+interception interval. The complex signal, after frequency
+downconversion by a known carrier frequency
+, observed by
+the
+receiver at the
+interception interval at time
+is given by
+(1)
+1053-587X/$26.00 © 2011 IEEE
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+2514
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 6, JUNE 2011
+where
+is the observation time interval of each
+interception,
+is the observed signal envelope during the
+interception interval,
+is the signal propagation time from the
+emitter to the receiver,
+is a wide-sense stationary, white,
+zero mean, complex, Gaussian noise and
+is the observed
+Doppler frequency shift given by
+(2)
+(3)
+where
+is the signal propagation speed and
+is the Euclidean
+norm. Similarly to [7] we assume that
+. Further, note
+that we assumed that
+is quasi-constant during the observa-
+tion time. That means that the observation time must be short
+enough to ensure that the platform position does not change
+more than the desired positioning error during the observation
+time.
+Assume now that the signals
+are realizations of a zero-
+mean, Gaussian process. We shall consider the waveform re-
+ceived by each sensor to be represented by its Fourier coefﬁ-
+cients deﬁned by
+(4)
+where
+is the frequency asso-
+ciated with the
+coefﬁcient. The Fourier coefﬁcients of
+and of
+are denoted by
+and by
+, respec-
+tively. In the frequency domain (1) becomes, up to a multiplica-
+tive complex constant whose magnitude is 1,
+(5)
+Deﬁne the vectors
+(6)
+We get from (5) and (6) the relation
+(7)
+where
+is a cycle shift operator (matrix) that is used for down
+shifting. The product
+shifts the vector
+by
+in-
+dices. For example, to obtain a matrix that down shifts by one
+index bring the last row of the identity matrix to be the ﬁrst row.
+The ﬁrst and second order moments of the noise vectors and the
+signal vectors are summarized by
+(8)
+where
+is a diagonal matrix whose main diagonal is the signal
+spectrum which is independent of the observations index
+. Obviously,
+is diagonal only if the observation
+time,
+, is much larger than the correlation time of the signal
+and as a result the Fourier coefﬁcients are uncorrelated. In this
+paper we assume that the signal and noise are not correlated be-
+tween interception points. Thus, (7) and (8) yield
+(9)
+Deﬁne the vectors and matrices
+(10)
+The Gaussian probability density function of the data is given
+by
+(11)
+and the negative log-likelihood is given, up to an additive con-
+stant, by
+(12)
+Using the deﬁnition
+(13)
+we get from (9) and (10) the relation
+(14)
+We use the Woodbury matrix identity [12] and the matrix deter-
+minant lemma [13] to obtain
+(15)
+(16)
+Further simpliﬁcation is obtained by noting that
+(17)
+This result indicates that
+is independent of the emitter lo-
+cation. Deﬁne
+(18)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+WEISS: DIRECT GEOLOCATION OF WIDEBAND EMITTERS BASED ON DELAY AND DOPPLER
+2515
+where
+. Thus, (15) becomes
+(19)
+The cost function in (12) can be simpliﬁed and rewritten as
+(20)
+Instead of ﬁnding the minimum of (20) we can ﬁnd the max-
+imum of
+(21)
+where the dependence of both
+and
+on
+is shown
+explicitly. The estimated emitter location is then given by
+(22)
+A possible algorithm is displayed in Algorithm 1 (A Possible
+Implementation of the DPD Algorithm).
+In order to obtain some insight, consider the case of only
+receivers and a signal with ﬂat spectrum so that
+is a scaled
+identity matrix. In this case, ignoring constant terms, the cost
+function in (21) can be replaced by,
+(23)
+where
+stands for the real part. Note that the term in curly
+brackets can be approximated by
+(24)
+where the dependence of
+and
+on
+is suppressed.
+The integral above is recognized as the well known complex
+ambiguity function. According to (22)–(24), the estimated
+position,
+, maximizes the sum, over the interception instances,
+of the received signals cross-correlations. Note in passing that
+the proposed algorithm requires a two-dimensional search for
+the emitter location if its altitude is known or three dimensional
+search in the general case. However, the two-step methods
+require ﬁrst an estimate of differential-delay and differen-
+tial-Doppler for all intercept intervals and all the receivers and
+only then a search for the emitter location. Obviously, (21) and
+in (23) can also be used for estimating the differential Doppler
+and the differential delay.
+III. CRAMÉR–RAO BOUND FOR RANDOM SIGNALS
+The Cramér–Rao Bound is a lower theoretical bound on the
+covariance of any unbiased estimator. The bound is given by
+the inverse of the Fisher information matrix (FIM). According
+to [16], for zero-mean, complex, Gaussian data vectors with co-
+variance matrix
+the elements of the FIM are given by
+(25)
+where
+is the
+element of the unknown parameter vector.
+In our case, the parameter vector is the transmitter coordinates
+vector. Thus,
+. Assume that the signal spectrum
+is ﬂat and its bandwidth is
+[rad/s]. We show in the Appendix
+that the 2 FIM is given by
+(26)
+where
+and
+represent the derivative of the delays w.r.t.
+and the derivative of the delays w.r.t.
+, respectively. Sim-
+ilarly,
+and
+represent the derivative of the Doppler
+shift w.r.t.
+and the derivative of the Doppler shifts w.r.t. , re-
+spectively. See (73) and (81) for more details. Further,
+(27)
+This result is pleasing since
+is recognized
+as the Cramér–Rao lower bound on time delay estimation [20],
+[21] in the absence of Doppler shift and
+is rec-
+ognized as the Cramér–Rao lower bound on differential Doppler
+estimation [4] in the absence of delay.
+IV. TIME AND FREQUENCY SYNCHRONIZATION ERRORS
+So far, we have assumed perfect time and frequency synchro-
+nization of all receivers. That means that the clocks at all plat-
+forms have exactly the same time and the same frequency. In
+practice this is impossible even if GPS and atomic clocks are
+used. It is therefore of interest to examine the sensitivity of the
+localization precision to time/frequency errors. Although a brute
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+2516
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 6, JUNE 2011
+force small error analysis is possible we choose here to obtain
+the result using asymptotic reasoning.
+As explained in the introduction, the two-step approach and
+the single-step approach are asymptotically equivalent. Thus,
+the error covariance is asymptotically the same. The two-step
+approach in our case consist of ﬁrst estimating the differential
+Doppler (DD) and the time difference (TD) and then using the
+results for localization. The estimation error of DD and TD is
+affected directly by the synchronization errors of the receivers.
+Therefore, the TD estimation error variance is obtained by
+adding to the error variance caused by the noise the variance of
+synchronization errors
+(28)
+and the DD estimation error is similarly given by
+(29)
+where
+and
+are the variance of the time synchronization
+error between receivers and
+is the variance of the frequency
+synchronization errors.
+Finally, the localization error covariance is given by the in-
+verse of the matrix whose elements are deﬁned by
+(30)
+This concludes this section.
+V. NUMERICAL EXAMPLES
+In this section, we provide a numerical example of the algo-
+rithm performance. We simulated two platforms whose speed is
+300 m/s and a stationary transmitter as depicted in Fig. 1. The
+distance between the platforms is 1000 m along the
+axis and
+50 m along the
+axis. The transmitter is located at coordinates
+2000, 2000 m. The ﬁrst receiver intercepts the signal when it is
+located at (0, 0),(1000, 0) and (2000, 0) m. The second receiver
+intercepts the signal when it is located at (1000, 50), (2000, 50),
+and (3000, 50) m. The transmitter carrier frequency is 1 GHz,
+and the signal bandwidth is 262.144 KHz with ﬂat spectrum.
+The signal observation time at each interception point is 3.9 ms.
+Fig. 2 shows the root-mean-square miss distance as a func-
+tion of SNR. The miss distance is the distance between the true
+location and the estimated location. The data is based on 200
+Monte Carlo trials for each data point. The performance of the
+advocated method (single-step a.k.a. DPD), the performance of
+the conventional, two-step method, and the Cramér-Rao lower
+bound are all shown in Fig. 2. Observe that for high SNR, the
+DPD root-mean-square miss distance is the same as that of the
+Fig. 1. Receivers track and emitter location.
+Fig. 2. RMSE of the DPD method (single step), the two-step method, and the
+Cramér–Rao lower bound versus SNR.
+two-step method. However, for low SNR, the DPD provides
+much better performance.
+Fig. 3 shows the root-mean-square miss distance as a function
+of the receivers’ frequency error. In order to demonstrate the
+effect of the frequency error, we had to suppress the effect of the
+additive noise and the timing error on the localization error. It
+should be realized that, at moderate SNR, the error is dominated
+by the noise, and therefore we used the relatively high SNR of
+30 dB. In order to eliminate the effect of the timing error, the
+receivers’ spacing was reduced to 1 m so the location was based
+only on the Doppler effect and not on the differential time of
+arrival. Both the DPD and the two-step conventional method had
+similar performance. The simulation agrees with the theory for
+small errors and diverges from the prediction when the errors
+are large.
+Fig. 4 shows the root-mean-square miss distance as a function
+of the receivers’ timing error. In order to demonstrate the timing
+error effect on the localization error, we suppressed the noise ef-
+fect by choosing the high SNR of 30 dB. In order to eliminate
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+WEISS: DIRECT GEOLOCATION OF WIDEBAND EMITTERS BASED ON DELAY AND DOPPLER
+2517
+Fig. 3. RMSE of the DPD method and the theoretically predicted accuracy
+versus the receivers frequency error standard deviation.
+Fig. 4. RMSE of the DPD method (single step), the two-step method and the
+theoretically predicted accuracy versus the receivers timing error standard de-
+viation.
+the frequency error effect, we reduced the speed of the receivers
+to 10 m/s so the localization was based only on the time dif-
+ference of arrival and not on the differential Doppler. Both the
+DPD and the two-step conventional method had similar perfor-
+mance. The simulation agrees with the theory for small errors
+and diverges from the prediction when the errors are large.
+VI. CONCLUSION
+In this paper, we proposed an algorithm for geolocation of an
+emitter observed by moving receivers. The transmitted signal
+is modeled as a random Gaussian signal and the localization is
+based on the delay and Doppler frequency shift that affect the
+observed signal. The proposed algorithm is the exact maximum
+likelihood. It is a single-step estimator as opposed to two-step
+methods that estimate the delay and the frequency shift in a
+ﬁrst step and estimate the location in a second step. We demon-
+strated that the proposed method is superior to two step methods
+for low signal to noise ratio. We also presented closed-form ex-
+pressions for the Cramér–Rao lower bound. The expressions are
+simple and intuitive. We also provided sensitivity analysis for
+timing and frequency errors between receivers. An extension to
+receivers location/velocity errors is straightforward.
+APPENDIX A
+DERIVATION OF THE CRAMÉR–RAO BOUND
+The derivation of the CRLB is simpler in the time domain.
+Thus, assume that we collect
+time samples of (1) and deﬁne
+(31)
+From (1), we get
+(32)
+where
+is a down shift operator. The product
+shifts
+the vector
+by
+indexes where
+is the sampling
+period. From (32) we get the cross-correlation matrix
+(33)
+where we assumed that the noise is white and
+is
+the signal covariance matrix. Deﬁne the vectors and matrices
+(34)
+From (34), we now get
+(35)
+The matrix
+is block diagonal, with
+blocks, and therefore
+(25) becomes
+(36)
+Using the chain rule, we can write
+(37)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+2518
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 6, JUNE 2011
+Note that
+(38)
+and
+(39)
+where
+and
+is a
+vector of
+zeros except for the
+entry which is one. Therefore, (38) and
+(39) yield
+(40)
+Deﬁne now the block diagonal matrix
+(41)
+and the
+block matrix,
+, whose
+block is given
+by
+(42)
+and the
+element of this block is
+(43)
+Note that
+and
+(44)
+and
+(45)
+where
+is the derivative of
+with respect to
+, and we
+used
+(46)
+Finally, (44) becomes
+(47)
+where
+is a matrix whose elements are given in (46). Deﬁne
+now the block diagonal version of
+given by
+(48)
+Note that
+(49)
+We can now replace
+with
+without changing the
+FIM. We get
+(50)
+and
+(51)
+where
+(52)
+Also from (40)
+(53)
+where
+is a diagonal matrix, and the last ap-
+proximation holds for large time-bandwidth product [4]. Fur-
+ther, from (47), we have
+(54)
+Thus, (51) and (54) yield
+(55)
+Similarly, (51) and (53) yield
+(56)
+Deﬁne
+(57)
+where
+are the derivatives of
+and
+with respect
+to
+. Combining (37), (55), (56), and (57) yields
+(58)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+WEISS: DIRECT GEOLOCATION OF WIDEBAND EMITTERS BASED ON DELAY AND DOPPLER
+2519
+Deﬁne
+(59)
+(60)
+Squaring (58) and using the deﬁnitions (59) and (60), we get
+(61)
+Note that
+(62)
+(63)
+(64)
+Thus, the trace of (61) is
+(65)
+Note that
+(66)
+Observe that
+are positive-deﬁnite Toeplitz matrices, and
+inﬁnite dimensional matrices of this type preserve their Toeplitz
+structure under matrix multiplication, addition and inversion.
+Further
+because the time interval is symmetric
+around zero. Thus,
+(67)
+The last term in (65) is
+(68)
+Now (65) becomes
+(69)
+Note that the terms in (69) satisfy the relations
+(70)
+Using (70) in (69) yields
+(71)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+2520
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 59, NO. 6, JUNE 2011
+The sums in (71) have the following compact representations:
+(72)
+where we used the deﬁnitions
+(73)
+Consider a Toeplitz Hermitian matrix
+and the
+discrete time Fourier transform (DTFT)
+(74)
+Deﬁne the unitary matrix
+(75)
+associated with DFT, the vector
+given by
+(76)
+the diagonal matrix
+and the circulant matrix
+. It can be shown that under mild regularity con-
+ditions
+converges to
+as
+increases [18], [19]. Note that,
+for large
+, we have
+and also if we
+have several matrices
+then
+. Using this result, and replacing
+with
+and
+with
+, we have
+(77)
+where
+(78)
+We get
+(79)
+where
+is the frequency in radian per second and
+is the
+signal spectrum. If the noise spectral density is
+[W/rad/s] we
+have
+. Now (71) becomes
+(80)
+where
+is assumed constant over the interval
+[rad/s] and zero outside this interval. Deﬁne now
+(81)
+To complete the analysis we provide expressions for the deriva-
+tives of the delay and the Doppler w.r.t.
+and
+. From (2) and
+(3), we get
+(82)
+and therefore
+(83)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+WEISS: DIRECT GEOLOCATION OF WIDEBAND EMITTERS BASED ON DELAY AND DOPPLER
+2521
+Similarly,
+(84)
+Here,
+is the angle between the platform velocity vector and the
+line connecting the platform and the emitter. The angle
+is the
+angle between the line connecting the platform and the emitter
+and the
+axis. We use
+to denote the distance between the
+emitter and the platform.
+Also note that
+(85)
+Finally, recalling that
+(86)
+we get from (80) the result in (30).
+This concludes the derivation.
+REFERENCES
+[1] P. M. Schultheiss and E. Weinstein, “Estimation of differential Doppler
+shifts,” J. Acoust. Soc. Amer., vol. 66, no. 5, pp. 1412–1419, Nov. 1979.
+[2] P. C. Chestnut, “Emitter location accuracy using TDOA and differen-
+tial Doppler,” IEEE Trans. Aerosp. Electron. Syst., vol. AES-18, no. 2,
+pp. 214–218, Mar. 1982.
+[3] D. J. Torrieri, “Statistical theory of passive location systems,” IEEE
+Trans. Aerosp. Electron. Syst., vol. AES-20, no. 2, pp. 183–198, Mar.
+1984.
+[4] B. Friedlander, “On the Cramér Rao bound for time delay and Doppler
+estimation,” IEEE Trans. Inf. Theory, vol. IT-30, no. 3, pp. 575–580,
+May 1984.
+[5] N. Levanon, “Interferometry against differential Doppler: Perfor-
+mance comparison of two emitter location airborne systems,” Proc.
+Inst. Electr. Eng., vol. 136, no. 2, pt. F, pp. 70–74, Apr. 1989.
+[6] K. Becker, “An efﬁcient method of passive emitter location,” IEEE
+Trans. Aerosp. Electron. Syst., vol. 28, no. 4, pp. 1091–1104, Oct. 1992.
+[7] S. Stein, “Differential delay/Doppler ML estimation with unknown sig-
+nals,” IEEE Trans. Signal Process., vol. 41, no. 8, pp. 2717–2719, Aug.
+1993.
+[8] K. C. Ho and Y. T. Chan, “Geolocation of a known altitude object
+from TDOA and FDOA measurements,” IEEE Trans. Aerosp. Electron.
+Syst., vol. 33, no. 3, pp. 770–783, Jul. 1997.
+[9] D. P. Haworth, N. G. Smith, R. Bardelli, and T. Clement, “Interference
+localization for EUTELSAT satellites; The ﬁrst European transmitter
+location system,” Int. J. Satellite Commun., vol. 15, no. 4, pp. 155–183,
+Sep. 1997.
+[10] J. Mason, “Algebraic two satellite TOA/FOA position solution on an
+ellipsoidal earth,” IEEE Trans. Aerosp. Electron. Syst., vol. 40, no. 3,
+pp. 1087–1092, Jul. 2004.
+[11] A. Amar and A. J. Weiss, “Localization of radio emitters based on
+Doppler frequency shifts,” IEEE Trans. Signal Process., vol. 56, no.
+11, pp. 5500–5508, Nov. 2008.
+[12] M. A. Woodbury, , “Inverting modiﬁed matrices,” Statistical Research
+Group, Princeton Univ., Princeton, NJ, Memo. Rep. no. 42, 1950.
+[13] D. A. Harville, Matrix Algebra From a Statistician’s Perspective.
+New York: Springer, 2008.
+[14] P. Stoica and T. Söderström, “On reparametrization of loss functions
+used in estimation and the invariance principle,” Signal Process., vol.
+17, no. 4, pp. 383–387, Aug. 1989.
+[15] A. L. Swindlehurst and P. Stoica, “Maximum likelihood methods in
+radar array signal processing,” Proc. IEEE, vol. 86, no. 2, pp. 421–441,
+Feb. 1998.
+[16] S. M. Kay, Fundamentals of Statistical Signal Processing—Estimation
+Theory.
+Englewood Cliffs, NJ: Prentice-Hall, 1993, vol. I.
+[17] C. R. Rao, Linear Statistical Inference and Its Applications, 2nd ed.
+New York: Wiley, 2002.
+[18] R. M. Gray, “Toeplitz and circulant matrices: A review,” Stanford
+Univ., Stanford, CA, Tech. Rep., 2000.
+[19] F. W. Sun et al., “On the convergence of the inverse of Toeplitz ma-
+trices and its application,” IEEE Trans. Inf. Theory, vol. 49, no. 1, pp.
+180–190, Jan. 2003.
+[20] A. J. Weiss and E. Weinstein, “Fundamental limitations in passive time
+delay estimation, Part I: Narrowband systems,” IEEE Trans. Acoust.,
+Speech, Signal Process., vol. ASSP-31, no. 2, pp. 472–485, Apr. 1983.
+[21] E. Weinstein and A. J. Weiss, “Fundamental limitations in passive time
+delay estimation, Part II: Wideband systems,” IEEE Trans. Acoust.,
+Speech, Signal Process., vol. ASSP-32, no. 5, pp. 1064–1078, Oct.
+1984.
+Anthony
+J.
+Weiss
+(S’84–M’85–SM’86–F’97)
+received the B.Sc. degree from the Technion-Israel
+Institute of Technology, Haifa, in 1973 and the
+M.Sc. and Ph.D. degrees from Tel Aviv University,
+Tel Aviv, Israel, in 1982 and 1985, all in electrical
+engineering.
+From 1973 to 1983, he was involved in research
+and development of numerous projects in the ﬁelds of
+communications, command and control, and emitter
+localization. In 1985, he joined the Department of
+Electrical Engineering-Systems, Tel Aviv University.
+From 1996 to 1999, he served as the department chairman. He is currently the
+head of the Electrical Engineering School in Tel Aviv University. His research
+interests include detection and estimation theory, signal processing, sensor array
+processing, and wireless networks. He also held leading scientiﬁc positions with
+Signal Processing Technology, Ltd., Wireless on Line, Ltd., and SigmaOne, Ltd.
+He published over 100 papers in professional magazines and conferences and
+holds nine U.S. patents.
+Prof. Weiss was a recipient of the IEEE 1983 Acoustics, Speech, and Signal
+Processing Society’s Senior Award and the IEEE third millennium medal. He
+served as the Chairman of the IEEE Israel Section.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:08:13 UTC from IEEE Xplore.  Restrictions apply. 

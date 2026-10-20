@@ -1,0 +1,1941 @@
+
+===== PDF PAGE 1 =====
+39552
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+Direct Trajectory Estimation of Moving Emitters
+With Distributed Stations and Performance
+Analysis to Station Location Errors
+Jinlong Ren , Guohua Wei , Senior Member, IEEE, Xiaojie Bao, Jiahao Bai , and Xu Wang
+Abstract—For trajectory estimation of moving emitters,
+we propose a one-step method based on widely distributed
+stations. Benefiting from the distributed multistation geom-
+etry, the proposed method makes full use of the potential
+Doppler frequency, angle and time delay information to
+determine the emitter trajectory. Compared with traditional
+methods, this approach combines measurement extraction
+and trajectory estimation in a single step, yielding a superior
+solution. To obtain a theoretical benchmark, we derive cor-
+responding Cramér–Rao bounds with compact-form for the
+interested trajectory parameters. Moreover, considering the
+effects of the station location errors, we establish the mathematical relations between the station location errors and the
+deviation of the trajectory for the moving emitter. Finally, numerical simulations are conducted to verify the superiority
+of the proposed method and the correctness of the theoretical analysis.
+Index Terms— Distributed stations, location error, perturbation analysis, trajectory estimation.
+I. INTRODUCTION
+T
+ARGET trajectory estimation plays a key role in various
+applications, including underwater navigation [1], [2],
+range measurement [3], [4], and radio emitter reconnais-
+sance [5], [6]. Passive systems for target trajectory estimation
+have significant advantages over active manners, such as the
+ability to counter stealth technology, reduced vulnerability to
+electronic counter-measures, and lower cost [7], [8]. This arti-
+cle especially focuses on the trajectory estimation of moving
+radio emitters in passive multistation systems.
+Traditionally, passive localization and tracking of emitters
+follows a two-step procedure. First, location measurements
+related to the emitters’ position and velocity are extracted from
+the received signals at each observation station independently.
+The common location measurements include angle of arrival
+(AOA), time difference of arrival (TDOA), and frequency
+difference of arrival (FDOA) [9], [10], [11]. Then, these
+location measurements are fused together in a central proces-
+Received 3 September 2024; accepted 13 October 2024. Date of
+publication 22 October 2024; date of current version 27 November 2024.
+This work was supported by the National Natural Science Foundation
+of China under Grant 61671059. The associate editor coordinating the
+review of this article and approving it for publication was Prof. You Li.
+(Corresponding author: Guohua Wei.)
+The authors are with the School of Information and Electron-
+ics, Beijing Institute of Technology, Beijing 100081, China (e-mail:
+ghwei@bit.edu.cn).
+Digital Object Identifier 10.1109/JSEN.2024.3481644
+sor by solving a set of location equations. Due to the high
+nonlinearity between the location measurements and tar-
+get parameters, there have been developed several popular
+algorithms, such as weighed least squares (WLSs) [12], pseu-
+dolinear estimation (PLE) [13], [14], Bayesian filtering [15],
+and convex optimization [16]. Although these two-step meth-
+ods could locate and track emitters, there inherently exist some
+limitations. First, the location measurements are extracted
+independently, which overlooks the essential constraint where
+these location measurements originate from the same emit-
+ter. Second, when these measurements are used together for
+localization, their precise probability distribution information
+is challenging to obtain [17]. The suboptimal weighted factors
+used will degrade the performance of target localization.
+In summary, achieving satisfactory estimation accuracy for
+emitter localization and tracking following a two-step proce-
+dure is challenging.
+Recently, a one-step method, also known as direct posi-
+tion determination (DPD) has emerged to localize and track
+emitters. In contrast to the two-step procedure, DPD directly
+searches for the optimal solution from the positioning param-
+eter space using the raw received signals [18]. Theoretically,
+DPD offers the potential for improved performance by using
+as much location information as possible and avoiding infor-
+mation loss in a step-by-step procedure efficiently.
+Among the numerous literature about DPD, the main focus
+is on stationary emitter localization. Therein, considering
+1558-1748 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+REN et al.: DIRECT TRAJECTORY ESTIMATION OF MOVING EMITTERS WITH DISTRIBUTED STATIONS
+39553
+cooperative emitters and un-cooperative emitters, [18] first
+developed corresponding algorithms based on the maximum
+likelihood principle. The other researches were devoted to
+localize multiple emitters based on spatial spectrum. To better
+distinguish closely spaced emitters, several DPD-based estima-
+tors have been developed, such as MUSIC-type, MVDR-type,
+and their variants [19], [20], [21].
+For moving emitters, they are often more threatening,
+especially in military applications. Therefore, localization and
+tracking of moving emitters are of greater significance. The
+above-mentioned DPD-based methods for stationary emitters
+cannot be applicable to moving emitters. Nevertheless, some
+literature discussed the problem of localization and tracking
+of moving emitters. Sidi and Weiss [22] deployed multiple
+separated observation stations with a single antenna to local-
+ize and track the moving emitter, where Doppler frequency
+and TOA were utilized. Afterward, Wang and Wang [23]
+focused on a moving narrowband emitter and formulated a
+DPD-based estimator where only Doppler frequency is con-
+sidered. In addition, Sun et al. [24] and Ma et al. [25] further
+applied the Bayesian-based filter to track a moving emitter
+directly. However, AOA information is not fully considered in
+these developed algorithms for moving emitters. Undoubtedly,
+adding the angle measurement ability of observation stations
+can further improve the potential localization and tracking
+accuracy of moving emitters.
+In practical application scenarios, obtaining the precise
+coordinates of observation stations is often challenging. For
+example, these observation stations may be mounted on ships
+or hovering drones, which inevitably introduces disturbances
+to the observation station location due to the influence of
+random sea swell and air currents. Ignoring these station
+location errors may degrade the performance of emitter local-
+ization and tracking. To address this problem, various studies
+have been conducted. For the traditional two-step method,
+Ho et al. [26] and Jia et al. [27] applied the pseudolinear
+operation to mitigate the effects of the station location errors.
+Besides these, Ren et al. [28] employed augmented variables
+to estimate the actual observation station locations, thereby
+compensating for the impacts of the location errors. However,
+these methods are all aimed at the extracted measurements. For
+DPD-based methods, the existing literature on station location
+errors is designed predominantly for stationary emitters [29],
+[30], [31]. In the case of the moving emitter’s localization, the
+position and velocity should be considered together. Due to the
+fact that the position and velocity are coupled in the DPD-
+based estimator, the off-the-shelf conclusion and analysis for
+stationary emitters are not applicable directly. The errors in
+station location cause both drifts in the position and moving
+direction for the moving emitters. The drift in the moving
+direction will cause great accumulated location errors. As far
+as we know, this issue has not been reported in published
+literature. As a result, it is necessary to analyze the effects of
+the station location errors on moving emitters.
+In this article, we propose a DPD-based method using
+widely distributed observation stations to determine the trajec-
+tory of a 3-D moving emitter, in which the AOA, TDOA, and
+FDOA information are jointly utilized. In addition, we analyze
+the effects of location errors in observation stations on the
+trajectory of moving emitters (i.e., the drifts in position and
+moving direction). To the best of our knowledge, this particular
+approach has not been studied in existing literature.
+The main contributions in this article are summarized as
+follows.
+1) We propose a one-step method for trajectory estimation
+of 3-D moving emitters, which uses the most com-
+plete location information including AOA, TDOA, and
+FDOA. The proposed method inherits the advantages
+of the DPD-based method and demonstrates superior
+performance in trajectory parameters estimation.
+2) We conduct theoretical performance analysis to location
+errors in observation stations for moving emitters and
+provide closed-form expressions for the drifts in the
+estimated trajectory parameters.
+The rest of the article is organized as follows. In Section II,
+we formulate the signal model for a 3-D moving emitter
+utilizing widely distributed and stationary stations. Section III
+develops a one-step method for trajectory estimation of a
+3-D moving emitter, derives a compact form of the CRB
+and discusses the computation complexity and implementation
+suggestions of the proposed method. Then, the performance
+analysis of station location errors for the proposed method is
+analyzed in Section IV. Section V provides some simulations
+to verify the superiority of the proposed method and the cor-
+rectness of the performance analysis. Finally, some concluding
+remarks are provided in Section VI.
+II. SIGNAL MODEL
+Consider the location scenario where L widely distributed
+observation stations are deployed to intercept the radiated
+signal from the moving emitter. Each station consists of
+M antenna elements. All intercepted signals at each station
+are transmitted to the central data processor to estimate the
+trajectory of the moving emitter, as depicted in Fig. 1. The
+time and frequency synchronized between observation stations
+is assumed to be achieved in advance [32], [33]. When the
+emitter moves in a stable state, the transition noise can be rea-
+sonably considered negligible. Following [17], [34], and [35],
+we assume that the emitter moves evenly in a straight line.
+The geographic coordinates of the lth observation station ql
+are assumed to be a prior, which can be measured by optical
+instruments. Along the trajectory of the moving emitter, L
+observation stations intercept the radiated signal at K short
+intervals simultaneously and the time interval for adjacent
+interceptions is set as T0 seconds.
+Following the aforementioned assumptions, the position and
+velocity vector of the moving emitter during the kth interval
+are expressed explicitly as
+pk = po + (k −1) T0vk
+vk = vo
+(1)
+where po = [xo, yo, zo]T and vo = [vx, vy, vz]T represent the
+position and velocity vector during the first interception.
+Considering a narrowband emitter [18], then the complex
+signal intercepted by the lth station during the kth interval is
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+39554
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+Fig. 1. Scenario of the trajectory estimation for a 3-D moving emitter.
+expressed as
+yl,k (t) = αl,kθl,kxk
+ t −τl,k
+
+e j2π fl,kt + nl,k (t)
+(2)
+where observation time t lasts for T seconds for each intercep-
+tion interval and αl,k represents attenuation factor. τl,k denotes
+the propagation time of the electromagnetic wave between the
+moving emitter and the lth station during the kth interval.
+In addition, θl,k is the steering vector for the lth station, and
+fl,k corresponds to the observed frequency for the lth station.
+The term xk(t −τl,k) represents a delayed version of the
+radiated signal xk(t), and nl,k(t) denotes additive measurement
+noise.
+Note that θl,k, τl,k, and fl,k are all relative to the position
+vector pk and velocity vector vk. Herein, we assume the
+observation time is sufficiently short. That is to say, the
+position and velocity of the emitter remain unchanged during
+each observation interval. Therefore, τl,k and fl,k can be
+computed as
+τl,k = 1
+c ∥pk −ql∥
+fl,k = ( fc + εk)
+ 1 + βl,k
+
+(3)
+where c is light speed and ∥·∥denotes Euclidean norm oper-
+ator. fc is nominal carrier frequency and εk is the frequency
+offset during the kth interval due to source instability. The
+Doppler factor, denoted as βl,k, is given by
+βl,k = −1
+c
+vT
+k (pk −ql)
+∥pk −ql∥.
+(4)
+The mth element of the normalized steering vector θl,k is given
+by
+θl,k,m =
+1
+√
+M
+e
+j 2π
+λ
+dT
+l,m(pk−ql)
+∥pk−ql∥
+(5)
+where λ = c/fc denotes wavelength and dl,m denotes baseline
+vector of the mth element in the lth observation station.
+Normally, βl,k ≪1 and εk ≪
+fc hold. We therefore
+approximate the observed frequency as follows:
+fl,k ≈fc + εk + fcβl,k.
+(6)
+After sampling of the down-converted signal, the discrete
+complex baseband signal yl,k[n] is given by
+yl,k [n] = αl,kθl,kxl,k [n] e j2π fcβl,knTs + nl,k [n]
+(7)
+where Ts is sampling interval and n ranges from 0 to N −1.
+Herein, we define yl,k[n] = yl,k(nTs), xl,k[n] = xk(nTs −
+τl,k)e j2πεknTs, and nl,k[n] = nl,k(nTs).
+Arranging the sampled data from all time instants into a
+column vector, we can represent it in a matrix-vector form as
+follows:
+yl,k = αl,k
+ Bl,k ⊗θl,k
+
+xl,k + nl,k
+(8)
+where ⊗denotes the Kronecker product operator, and
+yl,k =
+
+yT
+l,k [0] , yT
+l,k [1] , . . . , yT
+l,k [N −1]T
+xl,k =
+
+xl,k [0] , xl,k [1] , . . . , xl,k [N −1]T
+nl,k =
+
+nT
+l,k [0] , nT
+l,k [1] , . . . , nT
+l,k [N −1]T
+Bl,k = diag
+n
+1, e j2π fcβl,kTs, . . . , e j2π fcβl,k(N−1)Ts
+o
+(9)
+where [·]T denotes the transpose operator and diag{·} denotes a
+diagonal operator between diagonal matrix and column vector.
+To separate time delay coupled in the complex envelop
+received, we can invoke the Fourier transform to rewrite
+yl,k as
+yl,k = ¯αl,kHl,kxk + nl,k
+(10)
+where
+¯αl,k = αl,ke j2πεkτl,k
+Hl,k =
+ Bl,k ⊗θl,k
+
+FH0l,kF
+xk = [xk (0) , xk (1) , . . . , xk (N −1)]T
+0l,k = diag
+n
+1, e−j2π fsτl,k/N, . . . , e−j2π fsτl,k(N−1)/No
+(11)
+where F is a discrete-time Fourier transform matrix, and we
+combine the unknown complex coefficient αl,k and frequency
+offset εk into a new unknown complex coefficient ¯αl,k.
+Note that the angle, time delay and Doppler frequency
+are embedded in θl,k, 0l,k, and Bl,k, respectively, which
+are all relative to the trajectory parameters of the mov-
+ing emitter. The trajectory parameter vector is defined as
+ξ = [xo, yo, zo, vx, vy, vz]T.
+Our goal is to estimate the trajectory parameter vector of
+the moving emitter directly from the set of discrete sampled
+data, i.e., {yl,k}.
+III. PROPOSED ALGORITHM
+A. Direct Trajectory Estimator for Moving Emitters
+According to (10) and (11), we can observe that the trajec-
+tory parameters of the moving emitter are embedded in θl,k,
+0l,k, and Bl,k. This implies that by constructing these three
+matrices appropriately, we can obtain the optimal trajectory
+parameters, which best explain all the samples received.
+Assuming
+nl,k
+is
+complex
+Gaussian,
+circular,
+and
+time-spatial white noise with zero mean and covariance of
+σ 2IM N. Then, the log-likelihood function of all the data
+received {yl,k} can be expressed as (up to an additional
+constant)
+L1 (ξ, ¯α, x) = −1
+σ 2
+L
+X
+l=1
+K
+X
+k=1
+yl,k −¯αl,kHl,kxk
+2
+(12)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+REN et al.: DIRECT TRAJECTORY ESTIMATION OF MOVING EMITTERS WITH DISTRIBUTED STATIONS
+39555
+where
+¯α
+=
+[¯α1,1, . . . , ¯αL,1, . . . , ¯α1,K , . . . , ¯αL,K ]T
+and
+x = [xT
+1, . . . , xT
+K ]T.
+The optimal estimate of ¯αl,k with closed-form expression is
+given as follows:
+ˆ¯αl,k =
+ Hl,kxk
+HHl,kxk
+−1 Hl,kxk
+Hyl,k
+=
+ Hl,kxk
+Hyl,k.
+(13)
+Without loss of generality, we assume that ∥xk∥2 = 1 for any
+k.
+Substituting (13) into (12) further yields
+L1 (ξ, x) = −1
+σ 2
+L
+X
+l=1
+K
+X
+k=1
+yl,k −Pl,kyl,k
+2
+(14)
+where Pl,k = Hl,kxk(Hl,kxk)H. Note that Pl,k is idempotent
+and Hermitian (i.e., P2
+l,k = Pl,k, PH
+l,k = Pl,k). Hence, (14) can
+be recast as
+L1 (ξ, x) = −1
+σ 2
+L
+X
+l=1
+K
+X
+k=1
+ yH
+l,kyl,k −yH
+l,kPl,kyl,k
+
+(15)
+where yH
+l,kyl,k is the power of the received data, which is
+irrelevant to the unknown parameters ξ and x. Therefore,
+L1(ξ, x) can be reduced to L2(ξ, x), which is given by
+L2 (ξ, x) = 1
+σ 2
+L
+X
+l=1
+K
+X
+k=1
+yH
+l,kPl,kyl,k = 1
+σ 2
+K
+X
+k=1
+xH
+k Qkxk
+(16)
+where
+Qk = UkUH
+k
+Uk =
+
+HH
+1,ky1,k, HH
+2,ky2,k, . . . , HH
+L,kyL,k
+
+.
+(17)
+Note that L2(ξ, x) is a sum of K quadratic forms with
+respect to the unknown waveform xk. Therefore, the maxi-
+mum value of L2 can be obtained by summing the largest
+eigenvalues corresponding to all the matrices Qk, denoted by
+L3(ξ) = PK
+k=1 λ1(Qk) = PK
+k=1 λ1( ¯Qk), where λ1(·) denotes
+the largest eigenvalue of a matrix and ¯Qk = UH
+k Uk.
+Finally, the trajectory parameters can then be determined as
+follows:
+ˆξ = arg max
+ξ
+L3 (ξ) .
+(18)
+Note that the replacement of Qk with ¯Qk for any Uk results in
+the same cost function value and can reduce the computation
+load whenever L < N holds, which is easy to satisfy.
+From (18), we can conclude that the estimation of trajectory
+parameters needs performing eigenvalue decomposition on
+the matrix ¯Qk. There have been developed several numeri-
+cal solution methods, including the grid search method [18]
+and the iterative solution method [23], [36]. Although the
+iterative solution method has reduced computation complexity
+relatively, it tends to converge to the local optimum. To bet-
+ter demonstrate the performance of the proposed method,
+we adopt the grid search method, aiming to ensure that the
+solution converges to the global optimum [18].
+Although this article assumes that the emitter moves in a
+uniform straight line, the proposed method can be extended
+to other motion models, particularly those where the emit-
+ter motion model can be parameterized. A potential issue
+to note is that the number of unknown parameters grows
+with the increase of the complexity of the motion model,
+thereby increasing the overall complexity of the proposed
+method.
+In summary, the flowchart of the proposed method is given
+in Algorithm 1.
+Algorithm 1 Direct Trajectory Estimation Method for 3-D
+Moving Emitters
+Input: Carrier frequency fc, L widely distributed observation
+station location {ql}, sampling time interval Ts, received
+signals
+
+yl,k
+	
+.
+Output: Estimated trajectory parameter vector ˆξopt.
+1: Define the parameter search space of interest and give a
+set of starting points ξ0, ξ1, · · · , ξ NG−1.
+2: for g = 0 to NG −1 do
+3:
+Calculate the position and velocity in each interval
+according to ξ g and (1);
+4:
+Calculate the steering vector θl,k, Doppler matrix Bl,k
+and time delay matrix 0l,k according to (3)-(5), (9)
+and (11);
+5:
+Calculate the matrix Hl,k using θl,k, Bl,k, 0l,k and
+Fourier matrix F;
+6:
+Calculate the correlation matrix Uk and accumulate
+the maximum eigenvalue of the matrix ¯Qk = UkUH
+k ,
+denoted by L3
+ ξ g
+
+;
+7: end for
+8: Search the maximum of L3
+ ξ g
+
+to obtain the estimated
+trajectory parameter vectorˆξopt.
+B. Cramér–Rao Bound
+In
+this
+section,
+we
+derive
+Cramér–Rao
+bound
+with
+closed-form expressions for the interested trajectory parameter
+vector, which can be used as an optimal benchmark to assess
+the performance of the proposed method.
+From the formulated signal model, the complete unknown
+parameters include complex coefficients {¯αl,k}, complex signal
+waveform {xk}, and the interested trajectory parameter vec-
+tor ξ. For simplicity, we collect all the unknown parameters
+into a single composite vector, defined as ρ = [ξT, ˜¯α
+T, ˜xT]
+T
+,
+where ˜¯α = [Re(¯α)T, Im(¯α)T]T, and ˜x = [Re(x)T, Im(x)T]T.
+Here, Re and Im denote real and imaginary operators, respec-
+tively.
+Then, according to [37], the Fisher matrix is given by
+FIM = 2
+σ 2
+L
+X
+l=1
+K
+X
+k=1
+Re
+(
+∂
+ ¯αl,kHl,kxk
+H
+∂ρ
+∂
+ ¯αl,kHl,kxk
+
+∂ρ
+)
+.
+(19)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+39556
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+Since we are only interested in the estimated trajectory param-
+eter vector, we partition the Fisher matrix FIM as follows:
+FIM =
+
+
+FIMξξ
+FIMξ ˜¯α
+FIMξ ˜x
+FIMT
+ξ ˜¯α
+FIM˜¯α ˜¯α
+FIM˜¯α˜x
+FIMT
+ξ ˜x
+FIMT
+˜¯α˜x
+FIM˜x˜x
+
+
+=
+ FIMξξ FIM12
+FIM21 FIM22
+
+.
+(20)
+Applying Schur-complementary theorem [38], we can derive
+CRB for the trajectory parameter vector ξ with closed-form
+expressions
+CRBξ =
+
+FIMξξ −FIM12FIM−1
+22 FIM21
+−1
+.
+(21)
+The detailed calculations of the submatrices in FIM are given
+in Appendix I.
+C. Complexity Analysis and Implementation Suggestions
+Since the cost function in L3(ξ) involves six unknown
+parameters and requires Eigen-decomposition of the matrix,
+it is challenging to obtain an analytic solution for the inter-
+ested trajectory parameter vector. Here, the optimization is
+performed by a grid search, which requires a high compu-
+tation load. Specifically, the decomposition of ¯Qk involves
+L3 multiplications. Since Uk is a N × L matrix, the num-
+ber of multiplications for evaluating the Hermitian matrix
+¯Qk = UkHUk is 0.5N L2. For each column of the matrix
+Uk, FFT can be applied to calculate HH
+l,kyl,k, which involves
+2M N + 2Nlog2N + N multiplications. Since there are L
+columns in Uk, the number of multiplications should be multi-
+plied by L, i.e., L(2M N+2Nlog2N+N). Besides, considering
+there are K matrix ¯Qk, the number of multiplications for
+each grid is K(2M N L + 2N Llog2N + N L + 0.5N L2 + L3).
+Therefore, the total number of multiplications for NG grids
+is NG K(2M N L + 2N Llog2N + N L + 0.5N L2 + L3) ∼=
+NG K N L(2M + 2log2N + 1 + 0.5L).
+The grid size and grid number are essential for the grid
+search method. Here, we provide a description for construct-
+ing the parameter search space of interest. First, by using
+the localization results from the traditional two-step method,
+we can provide a rough estimate of the interested parameters.
+Subsequently, we can further assess the quality of the received
+signals, thereby determining the confidence level of the rough
+estimate. Specifically, the SNR can be estimated by spectrum
+analyzing. Utilizing the estimated SNR along with the roughly
+estimated parameters, the CRBs of the interested parameters
+can be further calculated to limit the range of the grid search
+space. Following the method used in [39], for each interested
+parameter, the grid size can be defined as a fraction of the
+root of the corresponding CRB value.
+Evidently, a smaller grid size leads to higher estimation
+accuracy, but also results in increased computational burden.
+To address this tradeoff, a combined approach using both
+coarse and fine grid search can be employed to mitigate the
+issue of the increased computational demands. Moreover, with
+the development of powerful parallel computation platforms
+such as graphics processing units (GPUs) and multicore pro-
+cessors [40], [41], these techniques can also be implemented
+in parallel efficiently to achieve superior performance.
+IV. PERFORMANCE ANALYSIS TO STATION
+LOCATION ERRORS
+When the observation stations are mounted on ships or
+hovering drones, there inevitably exist random perturbations
+in station location owing to factors such as random sea
+swell or air currents, although all the observation stations
+are considered to be stationary. The imprecise knowledge
+of station location will yield a signal model mismatch for
+the moving emitter, which results in an extra drift in the
+estimated trajectory parameter vector. The emitter position and
+moving direction are both affected. Therefore, it is necessary
+to conduct a quantitative analysis of the effects of the station
+location errors.
+Denote the perturbed location of the lth receiver at the
+kth interval by ˜ql,k = ql,k + δl,k, where δl,k is modeled as
+an additional random error. We modify the cost function as
+follows:
+L3 (ξ, δ) =
+K
+X
+k=1
+λ1
+ ¯Qk (ξ, δk)
+	
+(22)
+where δ = [δT
+1, . . . , δT
+K ]T and δk = [δT
+1,k, . . . , δT
+L,k]T.
+In the absence of station location errors, the formulated
+estimator is
+ˆξ = arg max
+ξ
+L3 (ξ, 0) .
+(23)
+Considering the imprecise station location, the cost function
+L3(ξ, 0) will be perturbed as L3(ξ, δ). To be specific, Uk will
+be changed as Uk(δk), which is given by
+Uk (δk) =
+
+HH
+1,ky1,k (δk) , . . . , HH
+L,kyL,k (δk)
+
+.
+(24)
+The trajectory parameter vector estimated will drift from ξ to
+ξ E, i.e.,
+ˆξ E = arg max
+ξ
+L3 (ξ, δ) .
+(25)
+To obtain analytical solutions for the drifts in ξ, we perform
+Taylor series expansion of ∂L3/∂ξ and neglect the second and
+higher order terms, yielding
+∂L3
+∂ξ
+ˆξ E,δ
+= ∂L3
+∂ξ
+ˆξ,0
++ ∂2L3
+∂ξ2
+ˆξ,0
+
+ˆξ E −ˆξ
+
++ ∂2L3
+∂ξ∂δ
+ˆξ,0
+δ.
+(26)
+The drifts in the estimated trajectory parameter vector 1ˆξ can
+be expressed as
+1ˆξ = ∂2L3
+∂ξ2
+
+−1
+ˆξ,0
+ 
+∂L3
+∂ξ
+ˆξ E,δ
+−∂L3
+∂ξ
+ˆξ,0
+−∂2L3
+∂ξ∂δ
+ˆξ,0
+δ
+!
+(27)
+where 1ˆξ
+=
+ˆξ E −ˆξ. Exploiting the properties of the
+stationary points of ˆξ and ˆξ E, we can further simplify 1ˆξ
+as
+1ˆξ = −∂2L3
+∂ξ2
+
+−1
+ˆξ,0
+∂2L3
+∂ξ∂δ
+ˆξ,0
+δ.
+(28)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+REN et al.: DIRECT TRAJECTORY ESTIMATION OF MOVING EMITTERS WITH DISTRIBUTED STATIONS
+39557
+Define
+Z = ∂2L3
+∂ξ2
+ˆξ,0δ
+=
+K
+X
+k=1
+Zk
+Zk = ∂2λ1
+ ¯Qk (ξ, δk)
+	
+∂ξ2
+ˆξ,0δ
+G = ∂2L3
+∂ξ∂δ
+ˆξ,0δ
+= [G1, G2, . . . , GK ]
+Gk = ∂2λ1
+ ¯Qk (ξ, δk)
+	
+∂ξ∂δk
+ˆξ,0δ
+.
+(29)
+The expectations and covariance of the extra drifts in the
+estimated trajectory parameter vector are then given as follows:
+E
+n
+1ˆξ
+o
+= −Z−1GE {δ}
+C1ˆξ = Z−1GCδGTZ−T
+(30)
+where E denotes an expectation operator and Cδ = E{δδT}
+denotes the covariance matrix of δ.
+Similarly, taking the measurement noise and station location
+errors into consideration simultaneously, the expectation and
+covariance of the drifts in the estimated trajectory parameter
+vector are given as follows:
+E
+n
+1ˆξn
+o
+= −Z−1(G + W) δ
+C1ˆξn = Z−1(G + W)Cδ(G + W)TZ−T
+= Z−1GCδGTZ−T + Z−1WCδWTZ−T
+(31)
+where
+W = ∂2L3
+∂ξ∂n
+ˆξ,0n
+= [W1, W2, . . . , WK ]
+Wk = ∂2λ1
+ ¯Qk (ξ, δk)
+	
+∂ξ∂nk
+ˆξ,0nk
+.
+(32)
+Equation (31) implies that in the presence of station location
+errors and the measurement noise, the covariance for the total
+drifts in ξ are a sum of the covariance only for location errors
+and the covariance for the measurement noise. The detailed
+calculations for Z, G, and W are summarized in Appendix II.
+As demonstrated in the following simulations, the effects
+of station location errors cannot be ignored, particularly
+in
+high-precision
+localization
+scenarios.
+Some
+heuristic
+approaches can be adopted to suppress the impacts of station
+location errors, such as the joint estimation of station location
+errors and target localization or the optimal configuration of
+observation stations to reduce sensitivity to station location
+errors. Detailed exploration of these ideas is beyond the scope
+of this study and will be our focus in future research.
+V. NUMERICAL SIMULATION AND ANALYSIS
+In this section, extensive simulations are performed to eval-
+uate the proposed method and verify the theoretical analysis.
+Four observation stations are placed separately at the corners
+of a square with each side of 1 km. Each observation station
+has a circular antenna array with five elements spaced evenly.
+Fig. 2. Simulated location scenario.
+The radius of the circle is set as half of the wavelength. The
+moving emitter transmits a communication signal modulated
+with binary phase shift keying (BPSK). The wavelength of the
+radiated signal is 0.1 m, and its baud rate is Rb = 1 MHz.
+The radiated signal is sampled at a rate of 1 MHz and
+intercepted at different numbers of intervals along the emitter’s
+trajectory. The time interval between adjacent interceptions is
+T0 = 0.3 s. Unless otherwise specified, these parameter values
+are consistent throughout all the simulations. The simulated
+location scenario is depicted in Fig. 2.
+A. Performance Evaluation Versus Different SNRs
+In this section, we investigate the robustness of the proposed
+method to different levels of measurement noise.
+For comparison, two methods are selected as baselines to
+evaluate the performance of the proposed method. Among
+the traditional two-step approaches, we employ the maxi-
+mum likelihood estimator due to its asymptotic efficiency.
+We first extract the location measurements of AOA, TDOA,
+and FDOA in each interval from the received signal via
+MUSIC algorithm [9] and complex cross function [11], and
+then use a weighted least squares to locate the emitter [17].
+Note that the optimal weighted factors, related to the covari-
+ance of the extracted measurements, are usually unavailable.
+Therefore, we resort to the extracted measurements to estimate
+the weighted factors [42]. The second baseline we choose
+is the DPD-based method in [25], owing to its comparable
+location scenario with that addressed in this study. Besides
+these competitive baselines, the theoretical CRB also serves
+as a benchmark to assess the performance of the proposed
+method.
+The tracked emitter moves in a straight line with a constant
+velocity of vo = [93.97, 162.76, −68.40]T m/s. The initial
+position po is chosen as po = [−200, −150, 300]T m. The
+number of total interception intervals is K = 10 and each
+interception consists of N = 200 samples. The SNR of yl,k
+is defined as SNRl,k = |¯αl,k|2/σ 2. Also, we assume that the
+SNR is identical for all interceptions and observation stations,
+i.e., |¯α1,1| = · · · = |¯αK,1| = · · · = |¯αK,L|. The phase of ¯αl,k
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+39558
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+Fig. 3.
+Comparison of the simulated RMSEs and theoretical CRBs with different SNR levels. (a) RMSEs and CRB of xo. (b) RMSEs and CRB
+of yo. (c) RMSEs and CRB of zo. (d) RMSEs and CRB of vx. (e) RMSEs and CRB of vy. (f) RMSEs and CRB of vz.
+is uniformly distributed in the range [−π, π). The simulated
+SNR ranges from −10 to 20 dB with a step of 5 dB.
+To obtain statistically meaningful results, we conduct 200
+Monte Carlo trials for these three methods at each SNR
+level. The root mean square errors (RMSEs) of the estimated
+trajectory parameters are calculated as follows:
+RMSEx =
+v
+u
+u
+t
+1
+Ntrial
+Ntrial
+X
+i=1
+ ˆxi −x
+2
+(33)
+where x is the theoretical value, ˆxi is the estimated value of
+x in the ith trial, and Ntrial is the number of total trials.
+Fig. 3(a)–(h) illustrates the RMSEs of these three methods
+and CRBs versus different SNR levels. Evidently, the esti-
+mation performance of all the methods improves with the
+increase in the SNR levels, approaching to the theoretical
+CRBs. Among these three methods, the proposed method is
+closest to the optimal lower bound, followed by the two-
+step method, and the current DPD-based method in [25] is
+farthest from the optimal lower bound. These performance
+gaps are more obvious in lower SNR levels, revealing the
+robustness of the proposed method to the measurement noise.
+Table I provides the detailed values of the differences between
+the RMSEs and CRBs for the considered three methods
+when SNR is chosen as −5 dB. Specifically, the gaps of
+the current DPD-based method in [25] are 58.3 m, 49.1 m,
+78.8 m, 30.0 m/s, 24.6 m/s, and 57.3 m/s, respectively.
+The gaps of the proposed method are 7.0 m, 5.0 m, 12.6 m,
+3.9 m/s, 3.5 m/s, and 7.8 m/s, respectively. This result
+comprehensively demonstrates the necessity of incorporating
+angle information in the proposed method, which can yield
+significant performance gain. For the two-step method, its gaps
+are 33.0 m, 23.0 m, 55.1 m, 15.9 m/s, 17.3 m/s, and 25.6 m/s,
+TABLE I
+PERFORMANCE GAPS OF THE THREE METHODS AND
+THEORETICAL CRBS WHEN SNR IS −5 dB
+respectively. Although the two-step method utilizes the angle
+measurement, its localization accuracy remains suboptimal due
+to certain information loss. Also, note that the two-step method
+cannot reach corresponding CRBs even at higher SNR levels
+because of the use of the estimated weighted matrix. Overall,
+the simulation results show that the proposed method is more
+robust and can achieve superior performance in estimation
+accuracy for trajectory parameters.
+B. Performance Evaluation Versus Sample Length N in
+Each Interception
+In this section, we investigate the impact of the sample
+length N on the performance of the proposed method.
+In the simulation, we set SNR as 5 dB and changed the
+sample length N from 100 to 300 with a step of 50. The other
+parameters are the same as the aforementioned. For each N,
+we conduct 200 Monte Carlo trials to calculate the RMSEs
+of the initial position and velocity of the tracked emitter. The
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+REN et al.: DIRECT TRAJECTORY ESTIMATION OF MOVING EMITTERS WITH DISTRIBUTED STATIONS
+39559
+Fig. 4.
+Comparison of the simulated RMSEs and theoretical CRBs of
+initial position po with different sample length N.
+RMSEs of the initial position and velocity are given by
+RMSEpo =
+v
+u
+u
+t
+1
+Ntrial
+Ntrial
+X
+i=1
+ˆpo −po
+2
+(34a)
+RMSEvo =
+v
+u
+u
+t
+1
+Ntrial
+Ntrial
+X
+i=1
+ˆvo −vo
+2.
+(34b)
+Figs. 4 and 5 show the simulated RMSEs of the considered
+three methods with different sample length in each interval.
+As shown in Figs. 4 and 5, the RMSEs of the initial position
+and velocity of the tracked emitter both decrease as the sample
+length N increases. This indicates that longer observation time
+can yield a more accurate estimate of trajectory parameters,
+as it can provide more motion information. Similarly, the
+proposed method has the best performance in terms of initial
+position and velocity, compared with the other two baselines.
+To be specific, when N is chosen as 300, the proposed method
+achieves excellent estimation accuracy for the initial position,
+which surpasses the DPD-based method in [25] by 16.9 m
+and exceeds the two-step method by 1.8 m. In addition, the
+improvements in velocity estimation accuracy are 8.5 and
+1.2 m/s, respectively, for the DPD-based method in [25] and
+the two-step method.
+C. Performance Evaluation Versus Length of Interception
+Intervals K
+In this section, we consider the scenario where different
+interception intervals are used to estimate the target trajectory.
+The sample length in each interception interval is set as
+N = 200 and SNR is set as 5 dB. We vary the number of
+simulated interception intervals K from 8 to 18 with a step of
+2. The other parameters are the same as the aforementioned.
+Similarly, we perform 200 Monte Carlo trails to calculate
+the RMSEs of the initial position and velocity of the tracked
+emitter.
+The comparison results of the RMSEs for the three methods
+and CRBs of the initial position and velocity are illustrated
+Fig. 5.
+Comparison of the simulated RMSEs and theoretical CRBs of
+initial velocity vo with different sample length N.
+Fig. 6.
+Comparison of the simulated RMSEs and theoretical CRBs of
+initial position po with different lengths of interception intervals K.
+in Figs. 6 and 7, respectively. As can be seen, the simu-
+lated RMSEs of these three methods all decrease with an
+increase in the length of interception intervals K because more
+interception intervals mean more useful location information.
+Similar to the last simulation, the proposed method still has the
+best performance among these three methods. To be specific,
+when K is chosen as 16, the proposed method has superior
+position estimation accuracy, which surpasses the DPD-based
+method in [25] by 18.6 m and exceeds the two-step method
+by 2.8 m. Correspondingly, the improvements in velocity
+estimation accuracy are 11.9 and 1.3 m/s, respectively.
+D. Performance Analysis to Station Location Errors
+In Section IV, we derive the relationships between the
+location errors and the drifts in the trajectory parameters.
+In this section, we perform Monte Carlo simulations to confirm
+our theoretical analysis.
+To separate the effects of the measurement noise, we first
+consider a scenario where the SNR tends to +∞, which
+means that the signals received are not corrupted by any
+measurement noise. The sample length N and length of
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+39560
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+Fig. 7.
+Comparison of the simulated RMSEs and theoretical CRBs of
+initial position vo with different lengths of interception intervals K.
+Fig. 8.
+Comparison of the simulated RMSEs and theoretical analysis
+of xo, yo, and zo with different levels of station location errors.
+interception intervals K are set as 100 and 10, respec-
+tively. The standard derivation of the location errors with
+Gaussian distribution σδ varies from 0.5 m to 3 m with a
+step of 0.5 m. The other parameters are the same as the
+aforementioned.
+The comparison of the simulated and theoretical results for
+the trajectory parameters are depicted in Figs. 8 and 9. As can
+be seen, the simulated results are almost completely consistent
+with our theoretical deviation, which confirms the correctness
+of our theoretical analysis. In addition, the observation location
+errors simultaneously affect the trajectory parameters consider-
+ably. Specially, when σδ is 3 m, the drifts in xo, yo, and zo are
+approximately 2.1, 1.8, and 3.2 m, respectively. Similarly, the
+drifts in vx, vy, and vz are approximately 1, 0.9, and 1.7 m/s,
+respectively.
+E. Composite Effects of Measurement Noise and
+Location Errors
+Finally, we investigate the composite effects of the mea-
+surement noise and errors in station location.
+Fig. 9.
+Comparison of the simulated RMSEs and theoretical analysis
+of vx, vy, and vz with different levels of station location errors.
+Fig. 10.
+Comparison of the simulated RMSEs and theoretical analysis
+of xo component with different SNR levels.
+The standard deviation of the errors in station location is
+set to σδ = 0.5 m and the simulated SNRs range from
+0 to 35 dB with a step of 5 dB. The other parameters are
+the same as the aforementioned. For clarity, we only present
+the simulation results for xo and vx in Figs. 10 and 11,
+respectively. The results for other parameters follow similar
+trends.
+As can be seen, there are four lines in Figs. 10 and 11.
+The black line with marker “x” and the red line with marker
+“▽” denote the simulated RMSE and theoretical analysis,
+respectively, where the effects of the measurement noise and
+station location errors are considered simultaneously. The
+black dashed line denotes the CRB where there are no location
+errors, and the last one denotes the theoretical analysis where
+the station location errors are only considered.
+As shown in Figs. 10 and 11, the simulated RMSEs for
+xo and vx coincide with the theoretical values perfectly.
+As the SNR decreases, the simulated values for xo and vx
+both deviate slightly from the theoretical values, which is
+attributed to the omission of higher order components of the
+measurement noise. In addition, as the SNR increases, the
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 10 =====
+REN et al.: DIRECT TRAJECTORY ESTIMATION OF MOVING EMITTERS WITH DISTRIBUTED STATIONS
+39561
+Fig. 11.
+Comparison of the simulated RMSEs and theoretical analysis
+of vx component in different SNR levels.
+simulated RMSEs for xo and vx both gradually deviate from
+the CRBs, and converge toward the theoretical values for
+which only the station location errors are considered. Based
+on these results, we can conclude that the measurement noise
+and the station location errors both account for the drifts of the
+target trajectory parameters. Moreover, the results also reveal
+that the effects of the measurement noise dominate at lower
+SNR levels, whereas the effects of the station location errors
+become prominent in higher SNR levels, which is consistent
+with the theoretical analysis.
+VI. CONCLUSION
+In this study, we addressed the problem of trajectory esti-
+mation for a 3-D moving emitter in a single step, in which
+multiple widely distributed passive observation stations are
+deployed to intercept the radiated signals. The proposed
+method jointly employs the potential information of AOA,
+TDOA, and FDOA embedded in the received signals based
+on the maximum likelihood criterion. The optimal trajectory
+parameters are selected as the candidates which can best
+explain all the received signals in probabilistic senses. In addi-
+tion, the performance analysis of station location errors is
+achieved for moving emitters based on first-order Taylor series
+approximation, and analytic relationships between location
+errors and drifts in the trajectory parameters are provided with
+closed-form expressions. Numerical simulations showed that
+the proposed method could achieve superior performance in
+trajectory parameters estimation and was statistically efficient.
+The performance analysis for location errors was confirmed
+with the simulated results, which enabled us to quantify the
+effects of station location errors not only on the emitter
+position but also on the moving direction. In our future
+work, we will pay more attention to multiple-target loca-
+tion scenarios and develop a more computationally efficient
+localization algorithm. In addition, investigating an adaptive
+framework that enables dynamic adjustment of algorithm
+parameters based on real-time data to accommodate vari-
+ous motion models is a challenging yet practical research
+direction.
+APPENDIX I
+DERIVATION OF MATRIX FIM
+Define
+¯αk =
+
+¯α1,k, ¯α2,k, . . . , ¯αL,k
+T
+A = blkdiag (¯α1, ¯α2, . . . , ¯αK )
+H = blkdiag
+ H1,1, . . . , HL,1, . . . , HL,K
+
+X = blkdiag (IL ⊗x1, IL ⊗x2, . . . , IL ⊗xK )
+(I.1)
+where blkdiag(·) denotes a block-diagonal operator. Then, the
+detailed expression of the submatrices in (I.1) are expressed
+as follows:
+FIMξξ = 2
+σ 2 Re
+n  ˙H (I6 ⊗X¯α)
+H ˙H (I6 ⊗X¯α)
+o
+FIMξ ˜¯α = 2
+σ 2
+h
+Re
+n  ˙H (I6 ⊗X¯α)
+HHX
+o
+,
+−Im
+n  ˙H (I6 ⊗X¯α)
+HHX
+oi
+FIMξ ˜x = 2
+σ 2
+h
+Re
+n  ˙H (I6 ⊗X¯α)
+HH (A ⊗IN)
+o
+,
+−Im
+n  ˙H (I6 ⊗X¯α)
+HH (A ⊗IN)
+oi
+FIM˜¯α ˜¯α = 2
+σ 2 I2K L
+FIM˜¯α˜x = 2
+σ 2
+ Re
+
+XH (A ⊗IN)
+	
+−Im
+
+XH (A ⊗IN)
+	
+Im
+
+XH (A ⊗IN)
+	
+Re
+
+XH (A ⊗IN)
+	
+
+FIM˜x˜x = 2
+σ 2
+ AHA
+0
+0
+AHA
+
+⊗IN
+(I.2)
+where
+˙H =
+ ∂H
+∂xo
+, ∂H
+∂yo
+, ∂H
+∂zo
+, ∂H
+∂vx
+, ∂H
+∂vy
+, ∂H
+∂vz
+
+.
+Using some mathematical manipulations, we obtain
+∂Hl,k
+∂xo
+= ∂βl,k
+∂xo
+ Bl,k ⊗θl,k
+ ⌢0l,k +
+
+Bl,k ⊗∂θl,k
+∂xo
+
+˜0l,k
++ ∂τl,k
+∂xo
+ Bl,k ⊗θl,k
+ ⌣0l,k
+∂Hl,k
+∂vx
+= ∂βl,k
+∂vx
+ Bl,k ⊗θl,k
+ ⌢0l,k +
+
+Bl,k ⊗∂θl,k
+∂vx
+
+˜0l,k
++ ∂τl,k
+∂vx
+ Bl,k ⊗θl,k
+ ⌣0l,k
+(I.3)
+where ˜0l,k = FH0l,kF,
+⌢0l,k = 3BFH0l,kF, and
+⌣0l,k =
+FH300l,kF. The 3B and 30 are expressed as follows:
+3B = diag (0, j2π fcTs, . . . , j2π fc (N −1) Ts)
+30 = diag (0, −j2π fs/N, . . . , −j2π fs (N −1) /N) . (I.4)
+The derivatives of Hl,k with respect to other parameters in ξ
+are similar to (I.3).
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 11 =====
+39562
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+Finally, the derivatives of βl,k, τl,k, and θl,k with respect to
+ξ are calculated as
+∂τl,k
+∂ξ
+=
+1
+cρl,k
+
+eT
+l,k, tkeT
+l,k
+T
+∂βl,k
+∂ξ
+=
+1
+cρl,k
+
+vT
+k El,k, tkvT
+k El,k −eT
+l,k
+T
+∂θl,k
+∂ξ
+= −j2π fc
+cρl,k
+h
+diag
+ θl,k
+
+DS
+l El,k, tkdiag
+ θl,k
+
+DS
+l El,k
+i
+(I.5)
+where
+el,k = pk −ql
+ρl,k = ∥pk −ql∥
+DS
+l =
+
+dl,1, . . . , dl,M
+T
+El,k = el,keT
+l,k/ρ2
+l,k −I.
+(I.6)
+This concludes the derivation of matrix FIM.
+APPENDIX II
+CALCULATIONS OF Z, G, AND W
+Lemma 1: Given an I × I Hermitian matrix R, the first
+derivative of λ1{R} with respect to parameter γ1 and the
+second derivative of λ1{R} with respect to parameters γ1 and
+γ2 are given by
+∂λ1 {R}
+∂γ1
+= rH
+1
+∂R
+∂γ1
+r1
+∂2λ1 {R}
+∂γ1∂γ2
+= rH
+1
+∂2R
+∂γ1∂γ2
+r1 + 2Re
+
+rH
+1
+∂R
+∂γ1
+˜R1
+∂R
+∂γ2
+r1
+
+(II.1)
+where ri is the eigenvector of R corresponding to the eigen-
+value λi and ˜R1 = PI
+i=2 rirH
+i /(λ1 −λi). The detailed proof
+can be found in [43]. The calculations of Z, G, and W
+are composed of the first and second derivatives of
+¯Qk.
+Here, we just present the derivatives of ¯Qk(ξ, δ) with respect
+to ξ and δ for clarify. The deductions of derivatives of
+¯Qk(ξ, δ, n) with respect to ξ and n follow similar ways,
+where n = [nT
+1,1, . . . , nT
+1,K , . . . , nT
+L,K ]T is a collection of the
+measurement noise.
+To obtain Zk and Gk, we should deduce the first and second
+derivatives of ¯Qk(ξ, δ), which are given by
+∂¯Qk (ξ, δk)
+∂ξi
+= ∂UH
+k
+∂ξi
+Uk + UH
+k
+∂Uk
+∂ξi
+∂2 ¯Qk (ξ, δk)
+∂ξi∂ξ j
+= ∂2UH
+k
+∂ξi∂ξ j
+Uk + ∂UH
+k
+∂ξi
+∂Uk
+∂ξ j
++ ∂UH
+k
+∂ξ j
+∂Uk
+∂ξi
++ UH
+k
+∂2Uk
+∂ξi∂ξ j
+(II.2)
+where ξi denotes the ith element of vector ξ. The expressions
+of ((∂¯Qk(ξ, δk))/∂δl,k, j) and (∂2 ¯Qk(ξ, δk))/(∂ξi∂δl,k, j) are
+similar to (II.2), where δl,k, j is the jth element of δl,k ∈R3×1.
+After that, the first and second derivatives of Uk can be
+expressed as
+∂Uk
+∂ξi
+=
+"
+∂HH
+1,k
+∂ξi
+y1,k, . . . ,
+∂HH
+L,k
+∂ξi
+yL,k
+#
+∂Uk
+∂δl,k, j
+=
+
+0, . . . , HH
+l,k
+∂yl,k
+∂δl,k, j
+, . . . , 0
+
+∂2Uk
+∂ξi∂ξ j
+=
+"
+∂2HH
+1,k
+∂ξi∂ξ j
+y1,k, . . . ,
+∂2HH
+L,k
+∂ξi∂ξ j
+yL,k
+#
+∂2Uk
+∂ξi∂δl,k, j
+=
+"
+0, . . . ,
+∂HH
+l,k
+∂ξi
+∂yl,k
+∂δl,k, j
+, . . . , 0
+#
+.
+(II.3)
+It can be observed that the derivatives of Uk can be obtained
+by evaluating the following derivatives of Hl,k and yl,k, which
+are given by
+∂Hl,k
+∂ξi
+= ¯Bl,k
+∂¯0l,k
+∂ξi
++ ∂¯Bl,k
+∂ξi
+¯0l,k
+∂2Hl,k
+∂ξi∂ξ j
+= ∂¯Bl,k
+∂ξ j
+∂¯0l,k
+∂ξi
++ ¯Bl,k
+∂2 ¯0l,k
+∂ξi∂ξ j
++ ∂¯Bl,k
+∂ξi
+∂¯0l,k
+∂ξ j
++ ∂2 ¯Bl,k
+∂ξi∂ξ j
+¯0l,k
+∂yl,k
+∂δl,k, j
+= bl,k
+∂¯Bl,k
+∂δl,k, j
+¯0l,kxk + bl,k ¯Bl,k
+∂¯0l,k
+∂δl,k, j
+xk
+(II.4)
+where ¯Bl,k = Bl,k ⊗θl,k and ¯0l,k = FH0l,kF. Obviously, (II.4)
+further need the evaluations of derivatives in 0l,k, Bl,k, and
+θl,k,m.
+Define
+˙θl,k,m = ∂θl,k,m
+∂p0
+= −j 2π
+λ
+θl,k,m
+ρl,k
+El,kdl,m
+¨θl,k,m = ∂2θl,k,m
+∂p2
+0
+= j 2π
+λ
+θl,k,m
+ρ2
+l,k
+(
+j 2π
+λ El,kdl,mdT
+l,mEl,k
+
++
+eT
+l,kdl,m
+ρl,k
+ 3El,k + 2I
+
+−
+el,kdT
+l,m + dl,meT
+l,k
+ρl,k
+)
+(II.5)
+then, we can obtain
+∂0l,k
+∂δl,k, j
+= 300l,k
+∂τl,k
+∂δl,k, j
+∂Bl,k
+∂δl,k, j
+= 3BBl,k
+∂βl,k
+∂δl,k, j
+∂θl,k,m
+∂ξ
+=
+h
+˙θl,k,m, tk ˙θl,k,m
+i
+∂θ2
+l,k,m
+∂ξ2
+=
+ 1
+tk
+tk
+t2
+k
+
+⊗¨θl,k,m
+∂20l,k
+∂ξi∂ξ j
+= ∂2τl,k
+∂ξi∂ξ j
+300l,k + ∂τl,k
+∂ξi
+∂τl,k
+∂ξ j
+32
+00l,k
+∂2Bl,k
+∂ξi∂ξ j
+= ∂2βl,k
+∂ξi∂ξ j
+3BBl,k + ∂βl,k
+∂ξi
+∂βl,k
+∂ξ j
+32
+BBl,k.
+(II.6)
+Finally,
+the
+detailed
+expressions
+for
+(∂τl,k/∂δl,k),
+(∂βl,k/∂δl,k), and (∂θl,k,m/∂δl,k) evaluated at ξ = ˆξ, δ = 0
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 12 =====
+REN et al.: DIRECT TRAJECTORY ESTIMATION OF MOVING EMITTERS WITH DISTRIBUTED STATIONS
+39563
+are given by
+∂τl,k
+∂δl,k
+= −el,k
+cρl,k
+∂βl,k
+∂δl,k
+= −
+1
+cρl,k
+El,kvk
+∂θl,k,m
+∂δl,k
+= j 2π
+λ
+1
+ρl,k
+El,kdl,mθl,k,m.
+(II.7)
+This concludes the derivatives of ¯Qk(ξ, δ).
+Uk evaluated at ξ = ˆξ and δ = 0 can be recast as
+Uk
+
+ˆξ, 0
+
+=
+
+HH
+1,ky1,k, . . . , HH
+L,kyL,k
+
+=
+
+¯α1,kxk, . . . , ¯αL,kxk
+
+.
+(II.8)
+¯Qk(ˆξ, 0) can then be expressed as follows:
+¯Qk
+
+ˆξ, 0
+
+= ∥xk∥2∥¯αk∥2
+ ¯α∗
+k
+∥¯αk∥
+  ¯α∗
+k
+∥¯αk∥
+H
+(II.9)
+where ∗denotes the conjugate operator. Obviously, the largest
+eigenvalue and corresponding eigenvector of
+¯Qk(ˆξ, 0) are
+given by
+λk1 = ∥xk∥2∥¯αk∥2,
+rk1 =
+¯α∗
+k
+∥¯αk∥.
+(II.10)
+Since the only nonzero eigenvalue of ¯Qk(ˆξ, 0) is λk1, then
+˜Rk1 can be expressed as
+˜Rk1 =
+ I −rk1rH
+k1
+ 
+λk1.
+(II.11)
+This concludes the calculations of rk1 and ˜Rk1.
+In the end, inserting (II.2), rk1 and ˜Rk1 into (II.1) and (29),
+we can obtain the detailed expressions of Z and G. W is
+obtained in a similar way.
+REFERENCES
+[1] R. Moose and M. Caputi, “A convergence analysis of a passive
+underwater tracking system with nonlinear feedback,” IEEE Trans.
+Acoust., Speech, Signal Process., vol. ASSP-34, no. 6, pp. 1401–1409,
+Dec. 1986.
+[2] T. Alexandri, M. Walter, and R. Diamant, “A time difference of arrival
+based target motion analysis for localization of underwater vehicles,”
+IEEE Trans. Veh. Technol., vol. 71, no. 1, pp. 326–338, Jan. 2022.
+[3] J. Ren, G. Wei, and X. Wang, “Vector miss distance parameter estimation
+based on direct position determination,” IEEE Sensors J., vol. 22, no. 12,
+pp. 12107–12116, Jun. 2022.
+[4] T. Yuan, Y. Bar-Shalom, P. Willett, R. Ben-Dov, and S. Pollak, “Estima-
+tion of thrusting trajectories in 3D from a single fixed passive sensor,”
+IEEE Trans. Aerosp. Electron. Syst., vol. 50, no. 3, pp. 2096–2108,
+Jul. 2014.
+[5] T. Sathyan, A. Sinha, and T. Kirubarajan, “Passive geolocation and track-
+ing of an unknown number of emitters,” IEEE Trans. Aerosp. Electron.
+Syst., vol. 42, no. 2, pp. 740–750, Apr. 2006.
+[6] D. Musicki, R. Kaune, and W. Koch, “Mobile emitter geolocation and
+tracking using TDOA and FDOA measurements,” IEEE Trans. Signal
+Process., vol. 58, no. 3, pp. 1863–1874, Mar. 2010.
+[7] B. Dawidowicz, P. Samczynski, M. Malanowski, J. Misiurewicz, and
+K. S. Kulpa, “Detection of moving targets with multichannel airborne
+passive radar,” IEEE Aerosp. Electron. Syst. Mag., vol. 27, no. 11,
+pp. 42–49, Nov. 2012.
+[8] H. D. Griffiths and C. J. Baker, “Passive coherent location radar systems.
+Part 1: Performance prediction,” IEE-Proc. Radar, Sonar Navigat.,
+vol. 152, no. 3, pp. 153–159, Jun. 2005.
+[9] R. Schmidt, “Multiple emitter location and signal parameter estima-
+tion,” IEEE Trans. Antennas Propag., vol. AP-34, no. 3, pp. 276–280,
+Mar. 1986.
+[10] A. N. Lemma, A. van der Veen, and E. F. Deprettere, “Analysis of joint
+angle-frequency estimation using ESPRIT,” IEEE Trans. Signal Process.,
+vol. 51, no. 5, pp. 1264–1283, May 2003.
+[11] Z. Liu, R. Wang, and Y. Zhao, “Computationally efficient TDOA and
+FDOA estimation algorithm in passive emitter localisation,” IET Radar,
+Sonar Navigat., vol. 13, no. 10, pp. 1731–1740, Oct. 2019.
+[12] G. Wang, S. Cai, Y. Li, and N. Ansari, “A bias-reduced nonlinear WLS
+method for TDOA/FDOA-based source localization,” IEEE Trans. Veh.
+Technol., vol. 65, no. 10, pp. 8603–8615, Oct. 2016.
+[13] K. C. Ho and W. Xu, “An accurate algebraic solution for moving source
+location using TDOA and FDOA measurements,” IEEE Trans. Signal
+Process., vol. 52, no. 9, pp. 2453–2463, Sep. 2004.
+[14] N. H. Nguyen and K. Do˘gançay, “Multistatic pseudolinear target
+motion analysis using hybrid measurements,” Signal Process., vol. 130,
+pp. 22–36, Jan. 2017.
+[15] M.
+M.
+Olama,
+S.
+M.
+Djouadi,
+I.
+G.
+Papageorgiou,
+and
+C. D. Charalambous,
+“Position
+and
+velocity
+tracking
+in
+mobile
+networks using particle and Kalman filtering with comparison,” IEEE
+Trans. Veh. Technol., vol. 57, no. 2, pp. 1001–1010, Mar. 2008.
+[16] X. Wu and H. Qi, “Motion parameter estimation for mobile sources
+using semidefinite programming,” IEEE Trans. Mobile Comput., vol. 22,
+no. 2, pp. 1066–1080, Feb. 2023.
+[17] J. Bosse, O. Krasnov, and A. Yarovoy, “Direct target localization with an
+active radar network,” Signal Process., vol. 125, pp. 21–35, Aug. 2016.
+[18] A. J. Weiss, “Direct position determination of narrowband radio fre-
+quency transmitters,” IEEE Signal Process. Lett., vol. 11, no. 5,
+pp. 513–516, May 2004.
+[19] A. J. Weiss and A. Amar, “Direct position determination of multiple
+radio signals,” EURASIP J. Adv. Signal Process., vol. 2005, pp. 1–13,
+Dec. 2005.
+[20] L. Tzafri and A. J. Weiss, “High-resolution direct position determina-
+tion using MVDR,” IEEE Trans. Wireless Commun., vol. 15, no. 9,
+pp. 6449–6461, Sep. 2016.
+[21] J. Bai, G. Wei, S. Wang, X. Wang, and Z. Fei, “Efficient direct
+localization of OFDM emitters in multipath environment with mobile
+receivers,” IEEE Trans. Veh. Technol., vol. 71, no. 1, pp. 545–556,
+Jan. 2022.
+[22] A. Y. Sidi and A. J. Weiss, “Delay and Doppler induced direct tracking
+by particle filter,” IEEE Trans. Aerosp. Electron. Syst., vol. 50, no. 1,
+pp. 559–572, Jan. 2014.
+[23] D. Wang and G. Wang, “A direct localization method for moving
+narrowband source based on Doppler frequency shifts,” Acta Electronica
+Sinica, vol. 45, no. 3, pp. 591–598, Jul. 2017.
+[24] M. Sun, W. Xia, and Y. Wang, “Direct target tracking by distributed
+Gaussian particle filtering based on delay and Doppler,” in Proc. 14th
+IEEE Int. Conf. Signal Process. (ICSP), Beijing, China, Aug. 2018,
+pp. 58–63.
+[25] F. Ma, F. Guo, and L. Yang, “Direct position determination of moving
+sources based on delay and Doppler,” IEEE Sensors J., vol. 20, no. 14,
+pp. 7859–7869, Jul. 2020.
+[26] K. C. Ho, X. Lu, and L. Kovavisaruch, “Source localization using TDOA
+and FDOA measurements in the presence of receiver location errors:
+Analysis and solution,” IEEE Trans. Signal Process., vol. 55, no. 2,
+pp. 684–696, Feb. 2007.
+[27] T. Jia, K. C. Ho, H. Wang, and X. Shen, “Accurate localization of
+AUV in motion by explicit solution using time delays,” in Proc. IEEE
+Int. Conf. Acoust., Speech Signal Process. (ICASSP), Barcelona, Spain,
+May 2020, pp. 4871–4875.
+[28] B. Ren, T. Jia, H. Liu, Y. Wang, and J. Yan, “Efficient estimation for
+sensor biases and target states in the presence of sensor position errors,”
+IEEE Sensors J., vol. 24, no. 10, pp. 16551–16562, May 2024.
+[29] D. Wang and Y. Wu, “Statistical performance analysis of direct posi-
+tion determination method based on Doppler shifts in presence of
+model errors,” Multidimensional Syst. Signal Process., vol. 28, no. 1,
+pp. 149–182, Jan. 2017.
+[30] J. Yin, D. Wang, Y. Wu, and T. Tang, “Single-step localization using
+multiple moving arrays in the presence of observer location errors,”
+Signal Process., vol. 152, pp. 392–410, Nov. 2018.
+[31] T. Qin, B. Ba, and D. Wang, “Performance analysis of single-
+step localization method based on matrix eigen-perturbation the-
+ory
+with
+system
+errors,”
+Electronics,
+vol.
+8,
+no.
+2,
+p. 235,
+Feb. 2019.
+[32] T. Johnsen, “Time and frequency synchronization in multistatic radar.
+Consequences to usage of GPS disciplined references with and without
+GPS signals,” in Proc. IEEE Radar Conf., Apr. 2002, pp. 141–147.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 13 =====
+39564
+IEEE SENSORS JOURNAL, VOL. 24, NO. 23, 1 DECEMBER 2024
+[33] M.
+A.
+Alvarez
+and
+U.
+Spagnolini,
+“Distributed
+time
+and
+car-
+rier frequency synchronization for dense wireless networks,” IEEE
+Trans.
+Signal
+Inf.
+Process.
+Netw.,
+vol.
+4,
+no.
+4,
+pp. 683–696,
+Dec. 2018.
+[34] P. Lv, G. Wei, and W. Cui, “Vector motion parameter estimation
+for an approaching missile based on an extended-target model,”
+IEEE Trans. Antennas Propag., vol. 66, no. 10, pp. 5464–5474,
+Oct. 2018.
+[35] F. Zhang, Y. Sun, J. Zou, D. Zhang, and Q. Wan, “Closed-
+form localization method for moving target in passive multistatic
+radar network,” IEEE Sensors J., vol. 20, no. 2, pp. 980–990,
+Jan. 2020.
+[36] I. Ziskind and M. Wax, “Maximum likelihood localization of multiple
+sources by alternating projection,” IEEE Trans. Acoust., Speech, Signal
+Process., vol. ASSP-36, no. 10, pp. 1553–1560, Oct. 1988.
+[37] H. Van Trees, Detection, Estimation and Modulation Theory, Part I:
+Detection, Estimation, and Linear Modulation Theory. New York, NY,
+USA: Wiley, 2001.
+[38] R. A. Horn and C. R. Johnson, Matrix Analysis. Cambridge, U.K.:
+Cambridge Univ. Press, 1986.
+[39] F. Ma, Z.-M. Liu, and F. Guo, “Direct position determination in
+asynchronous sensor networks,” IEEE Trans. Veh. Technol., vol. 68,
+no. 9, pp. 8790–8803, Sep. 2019.
+[40] T. V. Luong, N. Melab, and E.-G. Talbi, “GPU computing for parallel
+local search metaheuristic algorithms,” IEEE Trans. Comput., vol. 62,
+no. 1, pp. 173–185, Jan. 2013.
+[41] G. Kan et al., “A multi-core CPU and many-core GPU based fast parallel
+shuffled complex evolution global optimization approach,” IEEE Trans.
+Parallel Distrib. Syst., vol. 28, no. 2, pp. 332–344, Feb. 2017.
+[42] W. Ding, S. Chang, and J. Li, “A novel weighted localization method
+in wireless sensor networks based on hybrid RSS/AoA measurements,”
+IEEE Access, vol. 9, pp. 150677–150685, 2021.
+[43] J. S. Picard and A. J. Weiss, “Direct position determination sensitivity
+to NLOS propagation effects on Doppler-shift,” IEEE Trans. Signal
+Process., vol. 67, no. 14, pp. 3870–3881, Jul. 2019.
+Jinlong Ren was born in Xinxiang, Henan,
+China, in 1996. He received the B.S. degree in
+communication engineering from Nanjing Uni-
+versity of Science and Technology, Nanjing,
+China, in 2018, and the M.S. degree in infor-
+mation and communication engineering from
+Beijing Institute of Technology, Beijing, China,
+in 2021, where he is currently pursuing the
+Ph.D. degree in information and communication
+engineering.
+His research interests include radar signal pro-
+cessing and statistical signal processing.
+Guohua
+Wei
+(Senior
+Member,
+IEEE)
+was
+born in Xiangyang, Hubei, China, in 1977.
+He received the B.E. degree in optoelectron-
+ics from Harbin Engineering University, Harbin,
+China, in 1999, and the Ph.D. degree in signal
+and information processing from Beijing Institute
+of Technology, Beijing, China, in 2004.
+He is currently a Professor with Beijing Institute
+of Technology. His current research interests
+include signal processing and their various appli-
+cations in electronic systems.
+Xiaojie Bao was born in Yantai, Shandong,
+China, in 1996. He received the B.S. degree
+in
+communication
+engineering
+from
+Dalian
+Maritime University, Dalian, China, in 2019. He is
+currently pursuing the Ph.D. degree in informa-
+tion and communication engineering with Beijing
+Institute of Technology, Beijing, China.
+His research interests include radar signal pro-
+cessing and statistical signal processing.
+Jiahao Bai was born in Luoyang, Henan, China,
+in 1994. He received the B.E. degree in commu-
+nication engineering from Zhengzhou University,
+Zhengzhou, China, in 2016, and the Ph.D.
+degree in information and communication engi-
+neering from Beijing Institute of Technology
+(BIT), Beijing, China, in 2023.
+He is currently a Post-Doctoral Fellow with the
+School of Information and Electronics, BIT. His
+research interests include MIMO radar systems,
+array signal processing, and statistical signal
+processing.
+Xu Wang was born in 1974. He received the
+M.E. degree from the Department of Electronic
+Engineering, Beijing Institute of Technology
+(BIT), Beijing, China, in 1998, and the Ph.D.
+degree from BIT, in 2011.
+He is currently an Associate Professor with
+BIT. His research interests include signal pro-
+cessing and radar systems.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:21:35 UTC from IEEE Xplore.  Restrictions apply. 

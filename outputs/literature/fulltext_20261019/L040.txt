@@ -1,0 +1,2591 @@
+
+===== PDF PAGE 1 =====
+17946
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+Fundamentals of Wobbling and Hardware
+Impairments-Aware Air-to-Ground Channel Model
+Morteza Banagar
+, Member, IEEE, and Harpreet S. Dhillon
+, Fellow, IEEE
+Abstract—In this paper, we develop an impairments-aware air-
+to-ground uniﬁed channel model that incorporates the effect of
+both wobbling and hardware impairments, where the former is
+caused by random physical ﬂuctuations of unmanned aerial vehi-
+cles (UAVs), and the latter by intrinsic radio frequency (RF) non-
+idealities. The impact of UAV wobbling is modeled by two stochastic
+processes, i.e., the canonical Wiener process and the more realistic
+sinusoidalprocess.Incontrast,theaggregateimpactofallhardware
+impairments is modeled as two multiplicative and additive distor-
+tion noise processes. We then rigorously characterize the autocor-
+relation function (ACF) of the wireless channel, using which we
+provide a comprehensive analysis of four key channel-related met-
+rics: i) power delay proﬁle (PDP), ii) coherence time, iii) coherence
+bandwidth, and iv) power spectral density (PSD) of the distortion-
+plus-noise process. Furthermore, we evaluate these metrics with
+reasonable UAV wobbling and hardware impairment models to
+obtain useful insights. Notably, we demonstrate that even for small
+UAV wobbling, the coherence time severely degrades at high fre-
+quencies, which renders air-to-ground channel estimation very
+difﬁcult at these frequencies. To the best of our understanding, this
+is the ﬁrst work that characterizes the joint impact of UAV wobbling
+and hardware impairments on the air-to-ground wireless channel.
+Index Terms—Coherence bandwidth, coherence time, hardware
+impairments, power delay proﬁle, power spectral density, random
+UAV wobbling, wireless channel.
+I. INTRODUCTION
+O
+WING to their agility, cost-effectiveness, ease of de-
+ployment, and higher probability of line-of-sight (LoS),
+UAVs have become an integral part of the current wireless
+ecosystem [2], [3], [4], [5], [6]. Given their proposed use in
+a variety of applications in different frequency bands, it is
+important to understand the fundamental characteristics of the
+air-to-ground wireless channels, which is a topic of signiﬁcant
+current interest. To that end, our speciﬁc focus in this paper
+is on studying the joint impact of a unique UAV impairment
+(wobbling) and a fundamental characteristic of all transceivers
+(hardware impairments) on the properties of the air-to-ground
+wireless channels.
+Manuscript received 28 August 2023; revised 5 February 2024 and 15 May
+2024; accepted 25 June 2024. Date of publication 31 July 2024; date of current
+version 19 December 2024. This work was supported by the US National
+Science Foundation under Grant CNS-1923807. An earlier version of this paper
+was presented at the 2022 IEEE Globecom in Rio de Janeiro, Brazil [doi:
+10.1109/GLOBECOM48099.2022.10000688]. The review of this article was
+coordinated by Prof. Mugen Peng. (Corresponding author: Harpreet S.Dhillon.)
+The authors are with Wireless@VT, Department of Electrical and Computer
+Engineering, Virginia Polytechnic Institute and State University, Blacksburg,
+VA 24061 USA (e-mail: mbanagar@vt.edu; hdhillon@vt.edu).
+Digital Object Identiﬁer 10.1109/TVT.2024.3436046
+Because of the lack of ﬁxed infrastructures, UAVs suffer
+from some amount of physical vibrations, especially under
+inclement weather conditions or high vibration frequency of
+their propellers [7], [8]. These physical vibrations (also known
+as wobbling [8], jittering [9], [10], and ﬂuctuations [11]) could
+adversely affect the wireless channel especially at high fre-
+quencies. Further, all digital transceivers suffer from RF non-
+idealities (also known as hardware impairments) that degrade
+or even severely limit their performance [12], [13]. While the
+hardware impairments are well-understood in the literature, their
+interplay with the unique UAV impairments, such as wobbling,
+has not been studied yet. Motivated by this observation and
+viewing the UAV wobbling as an “impairment”, we consider an
+aerial-terrestrial setup in this paper, where the terrestrial node
+suffers from hardware impairments, while the aerial node suffers
+from both hardware impairments and wobbling. In other words,
+we leverage the well-established models from the literature for
+physical and hardware impairments, and develop a novel and
+more realistic air-to-ground channel model that is cognizant of
+these impairments. For this setup, we provide a comprehensive
+analysis of key channel-related metrics and discuss the impli-
+cations of our analysis on operating UAVs especially at high
+carrier frequencies.
+A. Related Works
+This paper builds on the following general lines of research:
+i) air-to-ground channel model, ii) UAV wobbling, and iii)
+hardware impairments. We explain each research direction next.
+Air-to-Ground Channel Model: There have been numerous
+works that focus on modeling and/or measurement of air-to-
+ground wireless channels [14], [15], [16], [17], [18], [19], [20],
+[21], [22], [23]. Air-to-air and air-to-ground channels are inher-
+ently different from ground-to-ground channels due to many
+reasons, such as the higher probability of LoS in the aerial
+channels and the mobility of UAVs [2], [3], [14]. Following the
+mathematical model suggested by the international telecommu-
+nication union (ITU) [24], perhaps the ﬁrst work that established
+a meaningful yet simple relation between the LoS probability
+and the elevation angle in an aerial-terrestrial setup for low
+altitude platforms (LAPs) was [15], where the authors ﬁtted a
+modiﬁed Sigmoid function to the LoS probability. Extensive
+measurement campaigns were conducted in [16], [17], [18]
+to obtain speciﬁc air-to-ground channel models for different
+environments (over-water [16], hilly and mountainous [17], and
+suburban and near-urban [18]). In these papers, the authors
+0018-9545 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17947
+characterized different metrics related to the air-to-ground chan-
+nels, such as path loss, Ricean K factor of the small-scale fading,
+and delay spread of the channel. Another relatively recent mea-
+surement campaign was conducted in [20], where the authors
+extracted channel impulse responses from the received data, us-
+ing which they obtained key characteristics of the channel, such
+as path loss and shadow fading. In [21], the authors proposed
+an air-to-ground channel model for UAV base stations ﬂying
+at high altitudes and moving periodically in circular curves.
+Considering ultrawideband signals, the authors in [22] con-
+ducted measurements for air-to-ground wireless channels and
+developed stochastic path-loss and multi-path channel models
+for ultrawideband propagation channels. Last but not least, the
+third generation partnership project (3GPP) has also provided
+a detailed channel model, including the LoS probability and
+path-loss and fading models, in different environments in its
+technical report on cellular support for UAVs [23].
+UAV Wobbling: One unique feature of aerial wireless com-
+munications, which can be viewed as an impairment, is the
+fact that UAVs may experience wobbling, i.e., typically small
+and random ﬂuctuations of the UAV platform due to various
+reasons, such as wind gusts and lack of ﬁxed infrastructure [25].
+Since this area of research is still at its nascent stage, there are
+only a handful of works that incorporate UAV wobbling [8], [9],
+[10], [11], [26], [27], [28], [29]. For instance, the authors in [9]
+provided a stochastic model for UAV wobbling and then studied
+a resource allocation problem in UAV-assisted cellular networks.
+Considering directional antennas, the antenna gain mismatch
+problem due to random UAV wobbling for an air-to-air network
+was studied in [11], where the authors also provided closed-
+form statistical channel models for the air-to-air links. In [8],
+the authors studied the impact of random UAV wobbling on
+the air-to-ground wireless channel and obtained the coherence
+time of the channel under different stochastic wobbling models.
+Following [8], the authors in [27] studied the Doppler effect
+at millimeter-wave (mmWave) frequencies for an air-to-ground
+channel under random UAV wobbling. The authors in [28],
+[29] extended the UAV wobbling model in [8] to a 3D setup
+and obtained the channel coherence time. Apart from analytical
+results, measurement campaigns have also reported the impact
+of wobbling as an important source of error in establishing a
+strong connection in aerial wireless networks [30], [31]. In par-
+ticular, in [30], the authors used a channel sounder to investigate
+an air-to-ground wireless link, from which they observed that
+the variations of the received power from a completely static
+UAV are much less than that of a hovering UAV. These studies
+highlight the importance of considering UAV wobbling in aerial
+wireless communications.
+Hardware Impairments: The unfavorable impact of RF imper-
+fections on various aspects of communication systems has been
+studied extensively during the past decades. Perhaps one of the
+most comprehensive books on this subject is [12], where the
+authors describe in detail three fundamental hardware impair-
+ments, i.e., phase noise, in-phase/quadrature (I/Q) imbalance,
+and power ampliﬁer (PA) nonlinearity, along with a general
+error model that characterizes the effect of all three impairments
+on the received signal in a wireless channel. This general error
+model [12, Ch. 7] motivated many researchers to redeﬁne and
+solve fundamental communication-theoretic problems under a
+more realistic impairments-aware channel model [13], [32],
+[33], [34], [35], [36], [37], [38], [39]. For instance, the authors
+in [32] quantiﬁed the aggregate effect of hardware impairments
+on two-hop relaying systems [40], [41], [42] and obtained
+closed-form expressions for the outage probability in these net-
+works. In [33], the authors analytically proved that the capacity
+of amultiple-input multiple-output (MIMO) channel will belim-
+ited when hardware impairments are assumed, which signiﬁes
+the fundamental impact of these impairments on the wireless
+channel. The problem of MIMO transmission with residual RF
+impairments on the transmitter side was studied in [34], where
+the authors showed that such hardware impairments substan-
+tially degrade the performance of MIMO detection algorithms.
+In [13], the authors incorporated hardware impairments in the
+analysis of massive MIMO systems, and demonstrated the exis-
+tence of a bound on the capacity of each user equipment (UE).
+Another interesting work that studied the impact of hardware
+impairments on massive MIMO systems is [35], where the
+authors perform two types of simulations considering additive
+and multiplicative stochastic impairment models, as well as
+more accurate deterministic behavioral models.
+Although sparse, there are a few works that study the impact
+of hardware impairments in UAV communications [43], [44].
+For example, the authors in [43] studied a UAV-aided non-
+orthogonal multiple access (NOMA) relaying network, where
+both the UAV-relay and terrestrial UEs suffer from residual
+hardware impairments. Quite surprisingly, none of the recent
+works consider the impact of UAV wobbling along with other
+impairments. In this paper, we analyze the joint impact of hard-
+ware impairments and UAV wobbling on the wireless channel
+and provide a uniﬁed impairments-aware air-to-ground channel
+model. We summarize our contributions next.
+B. Contributions
+This paper provides a uniﬁed model for the air-to-ground
+wireless channel that suffers from both UAV wobbling and
+hardware impairments. In particular, we assume that a hovering
+UAV (transmitter) communicates with a UE on the ground
+(receiver) in a multi-path environment with Rician fading. Both
+the UAV and the UE suffer from various hardware impairments,
+such as phase noise, I/Q imbalance, and PA nonlinearity. Apart
+from these hardware impairments, we assume that the UAV
+also suffers from random wobbling, i.e., unpredictable physical
+ﬂuctuations due to not having a ﬁxed aerial infrastructure. Note
+that the presented air-to-ground channel model is applicable
+whenever there is an LoS link between a UAV and a ground
+UE, and the consideration of nonidealities make it a highly real-
+istic model. This canonical setting appears in many real-world
+applications. For example, consider a UAV that is dispatched
+for a search and rescue mission in inclement weather, where
+establishing a reliable communication between the UAV and
+the UEs is critical. Having an improper model by ignoring
+environmental factors and hardware shortcomings, the UAV
+may not be able to establish reliable communication links to
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+17948
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+the UEs. We model UAV wobbling using two different random
+processes, i.e., the Wiener process and the sinusoidal process
+(backed by analytical and experimental studies [8], [27], [30]),
+and characterize the properties of each process separately. As
+for the hardware impairments, we model the aggregate effect
+of all of them as two multiplicative and additive distortion
+processes (backed by analytical and experimental studies [12]),
+and study them in both nonstationary and stationary scenarios.
+Although modeling these hardware impairments is known and
+well-accepted in the literature, the interplay between hardware
+impairments and UAV wobbling has not been studied yet. For
+this setup, our contributions are highlighted next.
+1) Uniﬁed Impairments-Aware Wireless Channel Model: We
+present a uniﬁed channel model in a multi-path Rician fading
+environment that accounts for both UAV wobbling and hardware
+impairments. Our proposed model consists of a modiﬁed time-
+varying channel impulse response and a distortion-plus-noise
+process, where the former is affected by UAV wobbling and
+only the multiplicative distortion part of the hardware impair-
+ments, while the latter is affected by UAV wobbling and both
+the multiplicative and additive distortion parts of the hardware
+impairments.
+2) Derivation and Evaluation of Key Channel Metrics: We
+rigorously derive channel ACFs for both nonstationary and sta-
+tionary impairments. Using these results, we extensively study
+four key metrics that are used to characterize a wireless channel,
+i.e., i) PDP, ii) coherence time, iii) coherence bandwidth, and iv)
+PSD of the distortion-plus-noise process.
+3) Design Insights and Implications on Higher Frequencies:
+We demonstrate that even with stationary hardware impair-
+ments, the received signal could be nonstationary due to the
+oscillatory nature of UAV wobbling, a phenomenon that could
+only be observed in air-to-ground wireless communications.
+The analysis presented in this paper suggests a high sensitivity
+of key channel metrics to both UAV wobbling and hardware
+impairments, especially at higher carrier frequencies. A partic-
+ularly noteworthy implication of our results is the degradation
+of channel coherence time at higher carrier frequencies because
+of these effects. To the best of our knowledge, this is the ﬁrst
+work that proposes an impairments-aware uniﬁed channel model
+for UAV communications and characterizes the key metrics
+associated with the channel.
+For the reader’s reference, list of the acronyms used in this
+paper is provided in Table I.
+II. SYSTEM MODEL
+A. Spatial Setup
+We consider a rotary-winged UAV that hovers in the air
+and communicates with a ground UE. We assume that there
+are N multi-path components (MPCs) from scatterers which
+contribute to the total received signal at the ground UE. To
+representoursystemmodel,weuseCartesiancoordinatesystem,
+where the ground is aligned with the xy-plane, and the UAV
+platform centroid, ground UE, and the i-th scatterer (i.e., the
+i-th MPC) are located at PD = (0, yD, zD), PU = (xU, yU, 0),
+and PSi = (xSi, ySi, zSi), respectively. As seen from Fig. 1, we
+TABLE I
+ACRONYMS USED IN THIS PAPER
+Fig. 1.
+Spatial setup: The UAV platform wobbles and the UAV transceiver
+suffers from various hardware impairments.
+assume that the UAV is equipped with an antenna that is located
+at a distance of yD from the centroid of the UAV platform, so
+that the initial location of the antenna is (0, 0, zD). Furthermore,
+for the ease of notation, we use the convention that the UE is the
+zeroth MPC. The UAV-UE, UAV-MPC, and MPC-UE distances
+are represented by d0(t), di(t), and dSi,U for the i-th MPC at
+time t, respectively. Also, the angle-of-departure (AoD) from
+the UAV to the i-th MPC (measured with respect to the z-axis)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17949
+is denoted by ωi. Based on the deﬁned convention, the AoD
+from the UAV to the UE is denoted by ω0.
+B. Impairments
+We categorize the nonidealities that degrade reliable aerial-
+terrestrial communications as UAV wobbling and hardware im-
+pairments, which are introduced next.
+UAV Wobbling: The agility of UAVs comes at the price of
+not having a ﬁxed infrastructure, which could even lead to
+instability because of wind gusts or bad weather conditions [11].
+Considering these natural phenomena and the high vibration
+frequency of UAVs’ propellers, UAVs may experience small
+random physical vibrations, which are referred to as wobbling
+in this paper. Although this wobbling is typically small [25],
+its impact on the received signals could be non-negligible, espe-
+cially at high carrier frequencies. Furthermore, this impact could
+be even more severe if the UAV is equipped with a directional
+antenna instead of an omnidirectional antenna. As shown in
+Fig. 1, we represent the wobbling pitch angle at time t by θ(t),
+which shows the deviation of the UAV platform from its initial
+state. In this paper, we model θ(t) using stochastic processes [8]
+and study the impact of UAV wobbling on different aspects of
+the wireless channel. More technical discussions are presented
+in Section III-C.
+Hardware Impairments: Because of their inherent physical
+characteristics, RF transceivers are known to suffer from hard-
+ware impairments, such as PA nonlinearity, I/Q imbalance, and
+phase noise [12], [34]. Although various models for each hard-
+ware impairment can be found in the literature [45], [46], [47],
+we intend to consider the aggregate effect of all such impair-
+ments in this work for the sake of generality. The fundamental
+impact of each of these impairments on the transmitted and re-
+ceived signals usually includes an attenuation and phase rotation
+of the original signal (i.e., multiplicative effect) along with a
+leakage of different carriers or symbols into each other (i.e.,
+additive effect). Due to these factors, the inﬂuence of each hard-
+ware impairment can be modeled as an afﬁne linear function.
+Therefore, the combined effect of these hardware impairments
+can be modeled as two multiplicative and additive distortion
+noise processes at both the transmitter and receiver [12, Sec.
+7.2.2]. Mathematically speaking, the impaired transmitted and
+received signals in complex baseband can be written as
+s(t) = χT(t)˜s(t) + ηT(t),
+r(t) = χR(t)˜r(t) + ηR(t),
+(1)
+where ˜s(t) and ˜r(t) are the unimpaired transmitted and re-
+ceived signals, s(t) and r(t) are their impaired counterparts,
+and χT(t) and ηT(t) (resp. χR(t) and ηR(t)) are the multi-
+plicative and additive distortion noise processes at the trans-
+mitter (resp. receiver), respectively. Note that these RF impair-
+ments are nonstationary in nature, and thus, these distortion
+noises are assumed to be time-dependent in general [12, Sec.
+7.2.3]. These four noise processes are characterized by their
+ACFs,
+i.e.,
+AχT(t1, t2) = E[χ∗
+T(t1)χT(t2)],
+AχR(t1, t2) =
+E[χ∗
+R(t1)χR(t2)], AηT(t1, t2) = E[η∗
+T(t1)ηT(t2)], and AηR(t1,
+t2) = E[η∗
+R(t1)ηR(t2)]. Furthermore, we assume that these four
+processes are independent from each other and the additive dis-
+tortions have zero means [12], [32], i.e., E[ηT(t)] = E[ηR(t)] =
+0. Since wide-sense stationary (WSS) processes are an important
+class of random processes, we will also study our channel met-
+rics (described next) when hardware impairments are assumed
+to be WSS. In that case, the above-mentioned ACFs will only
+be functions of t2 −t1.
+C. Preliminaries and Assumptions
+Before presenting our channel model, we provide some pre-
+liminary results and review the well-established assumptions
+and properties of the unimpaired channel model [48, Ch. 3]. We
+start by establishing a connection between UAV-MPC distances
+at different times and the wobbling pitch angle, presented next
+(see [8, Lemma 1] for the proof).
+Lemma 1: Assuming that yD ≪di(t) and θ(t) ≪1 rad for
+a wobbling UAV, we have
+di(t + Δt) −di(t) ≈yD cos(ωi)[θ(t + Δt) −θ(t)].
+(2)
+Corollary 1: If θ(t) is a random process with stationary
+increments, i.e., θ(t + Δt) −θ(t) and θ(Δt) have the same
+distribution, we have di(t + Δt) −di(t) ≈yD cos(ωi)θ(Δt).
+Since the distance between the transmitter and receiver
+changes with time due to UAV wobbling, we observe a Doppler
+shift in the channel. Speciﬁcally, the Doppler phase shift for the
+i-th MPC can be written using (2) as
+ϕDi(t, Δt) = 2π
+λ yD cos(ωi)[θ(t + Δt) −θ(t)],
+(3)
+where λ =
+c
+fc is the signal wavelength, c is the speed of light,
+and fc is the carrier frequency.
+We consider a multi-path channel with one LoS and N non-
+line-of-sight (NLoS) links. In Fig. 1, the LoS path from the
+UAV to the ground UE is represented by a green dashed line
+and the NLoS path from the UAV to the i-th MPC and then to
+the ground UE is represented by red dotted lines. Without hard-
+ware impairments, the received signal in the complex baseband
+and the time-varying channel impulse response can be written,
+respectively, as [48], [49]
+˜r(t) =
+N
+
+i=0
+αi(t)e−jϕi(t)˜s(t −τi(t)) + ˜n(t),
+˜c(τ; t) =
+N
+
+i=0
+αi(t)e−jϕi(t)δ(τ −τi(t)),
+(4)
+where αi(t), ϕi(t), and τi(t) are the amplitude, phase, and delay
+of the i-th MPC, respectively, ˜n(t) is the AWGN, ˜c(τ; t) is the
+unimpaired time-varying channel impulse response, and δ(.)
+is the Dirac delta function. From (4), one can easily verify
+the following convolution integral for the channel, which is
+considered as a linear time-variant (LTV) system:
+˜r(t) =
+ ∞
+−∞
+˜c(τ; t)˜s(t −τ) dτ + ˜n(t).
+(5)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+17950
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+We assume that each of the resolvable MPCs is associated
+with a single reﬂector. Therefore, αi(t) would not change con-
+siderably over the time period of interest, and thus, we drop its
+t argument henceforth [48]. We also consider the well-accepted
+Laplacian model for |αi|2 as
+|αi|2 = 1
+2β e−|ωi−ω0|
+β
+,
+1 ≤i ≤N,
+(6)
+where β > 0 is a scaling parameter [50], [51] and for the AoD we
+assume that ωi ∼U[0, π
+2 ). Therefore, the power of the i-th MPC
+is derived as Pαi := E[|αi|2] =
+1
+2π(2 −e−ω0
+β −e−π/2−ω0
+β
+). Fur-
+thermore, assuming Rician fading model with factor K, we
+can write |α0|2 = K N
+i=1 |αi|2 = K N
+i=1
+1
+2β e−|ωi−ω0|
+β
+, which
+gives the power of the LoS component as Pα0 := E[|α0|2] =
+NKPαi.
+Remark 1: Instead of using the Laplacian model, we could
+have used more elaborate 3GPP-based path loss models [23,
+Table B-2]. However, since our fundamental results (provided
+next) are agnostic to the choice of the channel model, we favored
+the current channel model assumptions that are equally well
+accepted in the literature [48], [50], [51] and also mathematically
+more tractable than the 3GPP-based models.
+The delay of the i-th MPC can be written as τi(t) ≈τi(0) =
+di(0)+dSi,U
+c
+, where we assumed that the delay also does not
+change signiﬁcantly over time. In fact, since the UAV-UE dis-
+tance is in the order of hundreds of meters or even kilometers, the
+delay will be in the order of microseconds. However, using (2),
+it is clear that the added distance due to UAV wobbling is in the
+order of centimeters, which makes the corresponding residual
+delay to be in the order of nanoseconds. Hence, our approxima-
+tion is valid, and we also deﬁne τi := τi(0) for simplicity. As-
+suming that the location of the UE (PU) is known and the MPCs
+are distributed randomly on the ground, the propagation delay of
+the i-th MPC can be written as τi = τ0 + τΔi, where τ0 = d0
+c is
+the UAV-UE delay and τΔi is the excess delay of the i-th MPC.
+We assume that τΔi is distributed exponentially with parameter
+ρi, which depends on the propagation environment [51], [52].
+Therefore, the probability density functions (pdfs) of τ0 and τi
+can be written as
+fτ0(τ) = δ(τ −τ0),
+fτi(τ) = ρie−ρi(τ−τ0)1(τ −τ0),
+(7)
+where 1(.) is the indicator function.
+As for the phase of the i-th MPC, on the other hand, the small
+distance variations described earlier become more important
+since they will be multiplied by the carrier frequency, causing
+Doppler phase shift. We write the phase of the i-th MPC as
+ϕi(t) = 2π
+λ (di(0) + dSi,U) + 2π
+λ yD cos(ωi)[θ(t) −θ(0)]
+= 2πfcτi + ϕDi(t),
+(8)
+where ϕDi(t) := ϕDi(0, t) is the Doppler phase shift at time t
+given in (3).
+D. Metrics
+We consider multiple key channel-related metrics in this
+paper, which are described next. We represent the time-varying
+channel impulse response by c(τ; t), where τ is the delay
+variable and t is the observation time, and deﬁne its ACF
+as Ac(τ; t, Δt) = E[c∗(τ; t)c(τ; t + Δt)]. Note that since the
+channel is assumed to be nonstationary, we present our deﬁ-
+nitions/results in their general form. Throughout the paper, we
+assume that the channel undergoes uncorrelated scattering.
+1) PDP: We deﬁne PDP in a nonstationary multi-path chan-
+nel as the average received power at a given multi-path delay τ
+and a speciﬁc observation time t [48], [51]. One way to obtain
+the PDP is to evaluate the ACF of the time-varying channel
+impulseresponseatΔt = 0,i.e.,Pc(τ; t) = Ac(τ; t, Δt = 0) =
+E[|c(τ; t)|2]. However, as we will see in the next section, the
+time-varying channel impulse response entails a sum of Dirac
+delta functions (see (4) and (13)), which introduces a singularity
+problem (delta squared) into this deﬁnition. One way to avoid
+this issue is to isolate one of the delta functions by writing the
+channel ACF as Ac(τ; t, Δt) = Pc(τ; t)δ(Δt), and redeﬁning
+the PDP with only one delta function as Pc(τ; t) [53].
+2) Coherence Time: Coherence time is deﬁned as the period
+of time over which the channel remains almost constant, calcu-
+lated as follows: First, we evaluate the ACF of the time-varying
+channel impulse response, i.e., Ac(τ; t, Δt). Note that for a
+nonstationary channel, this ACF is a function of τ, t, and Δt.
+Then, we take the Fourier transform of this ACF with respect to
+the delay variable τ and represent the new frequency variable
+by Δf, i.e., AC(Δf; t, Δt) = Fτ{Ac(τ; t, Δt)}. Now, setting
+Δf = 0 and normalizing this ACF, we deﬁne coherence time as
+TCoh(t) := min
+
+Δt :
+|AC(t, Δt)|
+max |AC(t, Δt)| ≤γT
+
+,
+(9)
+where AC(t, Δt) = AC(Δf = 0; t, Δt) and γT is a predeﬁned
+threshold [8], [54].
+3) Coherence Bandwidth: Coherence bandwidth is deﬁned
+as the range of frequencies over which the channel remains
+almostconstant,calculatedasfollows:WeﬁrstobtaintheFourier
+transform of the channel ACF as we did in the deﬁnition of
+coherence time, i.e., AC(Δf; t, Δt). Then, setting Δt = 0 and
+normalizing this ACF, we deﬁne coherence bandwidth as
+BCoh(t) := min
+
+Δf :
+|AC(Δf; t)|
+max |AC(Δf; t)| ≤γB
+
+,
+(10)
+where AC(Δf; t) = AC(Δf; t, Δt = 0) and γB is a predeﬁned
+threshold.
+4) PSD of Distortion-Plus-Noise: As seen already, UAV
+wobbling and hardware impairments will cause both multi-
+plicative and additive distortions to the received signal. In
+this paper, we treat the additive distortion as noise, and to-
+gether with additive white Gaussian noise (AWGN), study
+their PSDs as our last metric of interest. The PSD of nonsta-
+tionary signal x(t) is deﬁned as the Fourier transform of its
+time-averaged ACF, i.e., Sx(f) = FΔt{⟨E[x∗(t)x(t + Δt)]⟩t},
+where ⟨y(t)⟩t = limT →∞
+1
+2T
+ T
+−T y(t) dt represents averaging
+y(t) over time [55, Sec. 7.2].
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17951
+III. IMPAIRMENTS-AWARE UNIFIED CHANNEL MODEL
+A. Uniﬁed Channel Model
+Now, let us revisit (4) when there exist hardware impairments.
+Using (1), we can write the received signal in complex baseband
+as
+r(t) = χR(t)
+ N
+
+i=0
+αi(t)e−jϕi(t)s(t −τi(t))
+	
++ ηR(t) + ˜n(t)
+= χR(t)
+ N
+
+i=0
+αi(t)e−jϕi(t)
+χT(t −τi(t))˜s(t −τi(t))
++ ηT(t −τi(t))
+	
++ ηR(t) + ˜n(t)
+=
+N
+
+i=0
+αi(t)e−jϕi(t)χR(t)χT(t −τi(t))˜s(t −τi(t))+n(t),
+(11)
+where n(t) is the combined effect of AWGN, wobbling, and
+hardware impairments, given as
+n(t) =
+N
+
+i=0
+αi(t)e−jϕi(t)χR(t)ηT(t −τi(t)) + ηR(t) + ˜n(t).
+(12)
+From (11), we obtain the time-varying channel impulse response
+as
+c(τ; t) =
+N
+
+i=0
+αi(t)e−jϕi(t)χR(t)χT(t −τi(t))δ(τ −τi(t)),
+(13)
+where the impact of UAV wobbling is hidden in the phase
+term, i.e., ϕi(t) (see (8)), while hardware impairments mani-
+fest their effect as multiplicative distortion noises, i.e., χR(t)
+and χT(t −τi(t)). This modiﬁed time-varying channel impulse
+response together with the new noise term in (12), also referred
+to as the distortion-plus-noise process in this paper, construct
+our impairments-aware uniﬁed channel model for air-to-ground
+wireless communications. Completely analogous to the convo-
+lution integral for the without-impairment scenario in (5), we
+can write the input-output relation of the new channel (which is
+also an LTV system) as
+r(t) =
+ ∞
+−∞
+c(τ; t)˜s(t −τ) dτ + n(t).
+(14)
+Note that the input to the channel will still be the unimpaired
+signal ˜s(t).
+B. Metrics: General Results
+In order to further characterize this uniﬁed channel model, we
+obtain the metrics deﬁned in Section II-D next. The following
+lemma provides the channel ACF in the time-delay domain.
+Lemma 2: For a nonstationary air-to-ground wireless channel
+withphysicalnonidealities(duetoUAVwobbling)andhardware
+impairments (due to intrinsic RF components), where the time-
+varying channel impulse response is given by (13), the channel
+ACF can be written as
+ANonSt
+c
+(τ; t, Δt)=
+N
+
+i=0
+AχR(t, t + Δt)AχT(t −τ, t −τ + Δt)
+× E
+
+|αi|2 exp
+
+−j2π
+λ yD cos(ωi) [θ(t+Δt) −θ(t)]
+
+fτi(τ),
+(15)
+where the superscript NonSt stands for “Non-Stationary” and
+fτi(τ) represents the pdf of τi.
+Proof: We write the channel ACF as
+ANonSt
+c
+(τ; t, Δt) = E [c∗(τ; t)c(τ; t + Δt)]
+= E
+ N
+
+i=0
+N
+
+k=0
+α∗
+iαke−j(ϕk(t+Δt)−ϕi(t))χ∗
+R(t)χR(t + Δt)
+× χ∗
+T(t −τi)χT(t −τk + Δt)δ(τ −τi)δ(τ −τk)
+	
+=
+N
+
+i=0
+N
+
+k=0
+k̸=i
+E
+
+α∗
+iαke−j 2π
+λ (dk(0)+dSk,U−di(0)−dSi,U)
+× e−j(ϕDk (t+Δt)−ϕDi(t))χ∗
+R(t)χR(t + Δt)
+× χ∗
+T(t −τi)χT(t −τk + Δt)δ(τ −τi)δ(τ −τk)
+
++
+N
+
+i=0
+E
+
+|αi|2e−j(ϕDi(t+Δt)−ϕDi(t))χ∗
+R(t)χR(t + Δt)
+× χ∗
+T(t −τi)χT(t −τi + Δt)δ(τ −τi)δ(τ −τi)
+
+.
+Since dSk,U −dSi,U ≫λ, we observe that Zk,i = [ 2π
+λ (dSk,U −
+dSi,U) mod 2π] is a uniformly distributed random variable from
+0 to 2π [56, Lemma 4]. Therefore, E[e−jZk,i] = 0 because of
+which the double-summation in the last equality is zero. As for
+the single summation term, we encounter the singularity issue
+(delta squared) discussed earlier in Section II-D1. To avoid this
+singularity problem, we isolate one of the delta functions [53]
+and rewrite the channel ACF with only one delta function as
+ANonSt
+c
+(τ; t, Δt)
+=
+N
+
+i=0
+E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+×χ∗
+R(t)χR(t + Δt)χ∗
+T(t −τi)χT(t −τi + Δt)δ(τ −τi)]
+=
+N
+
+i=0
+ ∞
+−∞
+E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+× AχR(t, t+Δt)AχT(t −τi, t −τi+Δt)δ(τ −τi)fτi(τi)dτi,
+which gives the result in (15) by applying the sifting property of
+the delta function.
+■
+The following corollary simpliﬁes (15) further by considering
+WSS hardware impairments.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+17952
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+Corollary 2: Assuming WSS hardware impairments, the
+channel ACF can be simpliﬁed as
+AWSS
+c
+(τ; t, Δt) =
+N
+
+i=0
+AχR(Δt)AχT(Δt)
+× E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+fτi(τ).
+(16)
+Note that the superscript WSS only pertains to “hardware”
+impairments, not UAV wobbling. In addition, assuming that θ(t)
+is a random process with stationary increments, we have
+AWSS−SI
+c
+(τ; Δt) =
+N
+
+i=0
+AχR(Δt)AχT(Δt)
+× E
+
+|αi|2e−j 2π
+λ yD cos(ωi)θ(Δt)
+fτi(τ),
+(17)
+which will not be a function of t anymore. Thus, the channel in
+this special case becomes stationary. The abbreviation SI in the
+superscript stands for “Stationary-Increments”.
+The following theorem gives the channel PDP for both non-
+stationary and WSS impairments.
+Theorem 1: The PDP of the air-to-ground wireless channel
+for the nonstationary and WSS hardware impairments can be
+formulated, respectively, as
+P NonSt
+c
+(τ; t) =
+N
+
+i=0
+PαiPχR(t)PχT(t−τ)fτi(τ),
+P WSS
+c
+(τ) =
+N
+
+i=0
+PαiPχRPχTfτi(τ),
+(21)
+where PχR(t) := AχR(t, t) = E[|χR(t)|2] and PχT(t−τ) :=
+AχT(t −τ, t −τ) = E[|χT(t −τ)|2] are the powers of the mul-
+tiplicative distortion noises at the receiver and transmitter at
+times t and t −τ, respectively. The deﬁnitions of their WSS
+counterparts are similar, i.e., PχR := E[|χR|2] and PχT :=
+E[|χT|2]. Clearly, we also have P WSS−SI
+c
+(τ) = P WSS
+c
+(τ).
+Proof: Setting Δt = 0 in (15) and (16), we get (21).
+■
+Note that UAV wobbling does not play any role in determining
+the PDP. Further, from (21), we observe that the PDP will be
+proportional to the pdfs of the propagation delays of different
+MPCs [57, p. 348]. Using Theorem 1, we can also determine the
+average and root-mean-square (rms) delay spreads for nonsta-
+tionary and WSS hardware impairments, respectively, as
+μNonSt(t) =
+ ∞
+0 τPc(τ; t) dτ
+ ∞
+0 Pc(τ; t) dτ
+=
+N
+i=0 Pαi
+ ∞
+0 τPχT(t−τ)fτi(τ) dτ
+N
+i=0 Pαi
+ ∞
+0 PχT(t−τ)fτi(τ) dτ
+,
+(22)
+σNonSt(t) =
+ ∞
+0 (τ −μ(t))2Pc(τ; t) dτ
+ ∞
+0 Pc(τ; t) dτ
+=
+
+
+
+
+N
+i=0 Pαi
+ ∞
+0 (τ −μ(t))2PχT(t−τ)fτi(τ) dτ
+N
+i=0 Pαi
+ ∞
+0 PχT(t−τ)fτi(τ)dτ
+,
+(23)
+μWSS =
+ ∞
+0 τP WSS
+c
+(τ) dτ
+ ∞
+0 P WSS
+c
+(τ) dτ
+=
+N
+i=0 Pαi
+ ∞
+0 τfτi(τ) dτ
+N
+i=0 Pαi
+,
+(24)
+σWSS =
+ ∞
+0 (τ −μWSS)2P WSS
+c
+(τ) dτ
+ ∞
+0 P WSS
+c
+(τ) dτ
+=
+
+
+
+
+N
+i=0 Pαi
+ ∞
+0 (τ −μWSS)2fτi(τ) dτ
+N
+i=0 Pαi
+.
+(25)
+As for the coherence time/bandwidth, we need to ﬁrst derive
+the Fourier transform of the channel ACF with respect to the
+delay variable τ. Following Lemma 2, this can be written for
+nonstationary impairments as (18), while for WSS hardware
+impairments, it can be simpliﬁed as (19), both shown at the
+bottom of this page. Note that when θ(t) has the stationary-
+increments property, (19) is further simpliﬁed as (20), shown at
+the bottom of this page, which is not a function of t anymore. The
+following two theorems give the coherence time and coherence
+bandwidth of the channel, respectively.
+Theorem 2: The coherence time of the air-to-ground channel
+can be formulated as in (9), where the ACFs for nonstationary
+ANonSt
+C
+(Δf; t, Δt) = Fτ{ANonSt
+c
+(τ; t, Δt)}
+(18)
+=
+N
+
+i=0
+AχR(t, t + Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]  ∞
+0
+AχT(t −τ, t −τ + Δt)fτi(τ)e−j2πΔfτ dτ,
+AWSS
+C
+(Δf; t, Δt) =
+N
+
+i=0
+AχR(Δt)AχT(Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]  ∞
+0
+fτi(τ)e−j2πΔfτdτ,
+(19)
+AWSS−SI
+C
+(Δf; Δt) =
+N
+
+i=0
+AχR(Δt)AχT(Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)θ(Δt)  ∞
+0
+fτi(τ)e−j2πΔfτdτ,
+(20)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17953
+and WSS hardware impairments are given, respectively, as
+ANonSt
+C
+(t, Δt) =
+N
+
+i=0
+AχR(t, t + Δt)
+× E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+×
+ ∞
+0
+AχT(t −τ, t −τ + Δt)fτi(τ) dτ,
+(26)
+AWSS
+C
+(t, Δt) =
+N
+
+i=0
+AχR(Δt)AχT(Δt)
+× E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+.
+(27)
+Furthermore, when θ(t) is a random process with stationary
+increments, we have
+AWSS−SI
+C
+(Δt) =
+N
+
+i=0
+AχR(Δt)AχT(Δt)
+× E
+
+|αi|2e−j 2π
+λ yD cos(ωi)θ(Δt)
+.
+(28)
+Proof: Setting Δf = 0 in (18), (19), and (20), we end up with
+the ﬁnal results.
+■
+Remark 2: In an ideal scenario where there is no hardware
+impairments and the UAV platform is “completely” stable,
+we have θ(t) ≡0, ∀t, which results in a constant value for the
+channel ACF for all t and Δt. Therefore, the coherence time
+will be inﬁnity in this scenario.
+Theorem 3: The coherence bandwidth of the air-to-ground
+channel can be formulated as in (10), where the ACFs for
+nonstationary and WSS hardware impairments are given as
+ANonSt
+C
+(Δf; t) =
+N
+
+i=0
+PαiPχR(t)
+ ∞
+0
+PχT(t−τ)fτi(τ)e−j2πΔfτdτ,
+(29)
+AWSS
+C
+(Δf) =
+N
+
+i=0
+PαiPχRPχT
+ ∞
+0
+fτi(τ)e−j2πΔfτdτ,
+(30)
+respectively. Clearly, we also have AWSS−SI
+C
+(Δf)=AWSS
+C
+(Δf).
+Proof: Setting Δt = 0 in (18) and (19), we end up with the
+ﬁnal results.
+■
+Remark 3: Since only the normalized values of the ACFs
+matter for the sake of evaluating the coherence bandwidth, we
+can ignore PχR(t) and PχRPχT in (29) and (30), respectively,
+as they are not functions of Δf or the summation dummy
+variable i.
+Remark 4: It is interesting to note that hardware impairments,
+when assumed to be WSS, as well as UAV wobbling do not
+have any impact on the coherence bandwidth of the channel.
+Furthermore, coherence bandwidth in the ideal no-impairment
+scenario will be the same as that of the WSS hardware
+impairments.
+Up until now, our focus was mainly on the characteristics
+of the channel, where using the time-varying channel impulse
+response c(τ; t), we studied the PDP, coherence time, and coher-
+ence bandwidth. Note that one can easily obtain other channel-
+related metrics, such as delay spread and Doppler spread by
+using the metrics derived in this section. Let us now study the
+behavior of the effective received noise at the ground UE by
+analyzing the PSD of the aggregate distortion caused by UAV
+wobbling and hardware impairments at both the transmitter and
+receiver plus the AWGN at the receiver, i.e., n(t) deﬁned in (12).
+The following theorem establishes this result.
+Theorem 4: The PSD of the distortion-plus-noise process
+n(t) can be written as (31), shown at the bottom of the page,
+where N0
+2 is the AWGN power and ⟨.⟩t denotes averaging over
+time.
+Proof: We start by writing the ACF of n(t) as
+ANonSt
+n
+(t, t + Δt) = E [n∗(t)n(t+Δt)]
+(a)
+= E [˜n∗(t)˜n(t + Δt)]
++ E [η∗
+R(t)ηR(t+Δt)]+E
+ N
+
+i=0
+α∗
+iejϕi(t)χ∗
+R(t)η∗
+T(t −τi(t))
+
+×
+ N
+
+i=0
+αie−jϕi(t+Δt)χR(t + Δt)ηT(t + Δt −τi(t + Δt))
+	
+(b)
+= A˜n(Δt)+AηR(t, t + Δt) + E
+ N
+
+i=0
+|αi|2e−j(ϕi(t+Δt)−ϕi(t))
+× χ∗
+R(t)χR(t + Δt)η∗
+T(t −τi)ηT(t −τi + Δt)
+
+= A˜n(Δt) + AηR(t, t + Δt) +
+N
+
+i=0
+AχR(t, t + Δt)
+× E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+×
+ ∞
+0
+AηT(t −τi, t −τi + Δt)fτi(τi) dτi,
+wherein(a)weusedtheindependencebetweendistortionnoises
+and AWGN and the assumption that ηR(t) and ˜n(t) have zero
+SNonSt
+n
+(f) = N0
+2 + FΔt{⟨AηR(t, t + Δt)⟩t}
++
+N
+
+i=0
+FΔt
+
+AχR(t, t+Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)] ∞
+0
+AηT(t −τi, t −τi + Δt)fτi(τi) dτi
+
+t
+
+,
+(31)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+17954
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+means, and in (b) we used the same reasoning as in the proof
+of Lemma 2 to demonstrate that the cross terms in the double-
+summation are zero, and we also used the approximation τi(t) ≈
+τi(0) = τi. Note that ˜n(t) is a white process, and thus, we have
+A˜n(Δt) = N0
+2 δ(Δt), where N0
+2 is the noise power. To obtain
+the PSD of any nonstationary random process, we need to ﬁrst
+average its ACF over time t, and then take its Fourier transform
+with respect to Δt [55, Sec. 7.2]. Therefore, the PSD of n(t) is
+written as in (31).
+■
+Corollary 3: The PSD of the distortion-plus-noise process
+n(t) when hardware impairments are WSS can be written as
+(32), shown at the bottom of the page. Furthermore, assuming
+that θ(t) is a random process with stationary increments, this
+result is further simpliﬁed as (33), also shown at the bottom of
+the page.
+Proof: Following the proof of Theorem 4 and assuming WSS
+hardware impairments, the ACF of n(t) is simpliﬁed as
+AWSS
+n
+(t, t + Δt) = A˜n(Δt) + AηR(Δt)
++
+N
+
+i=0
+AχR(Δt)AηT(Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+,
+which results in (32) after averaging over t and taking the Fourier
+transform with respect to Δt. Moreover, if we assume that θ(t)
+is a random process with stationary increments, the process n(t)
+becomes stationary and we have
+AWSS−SI
+n
+(Δt) = A˜n(Δt) + AηR(Δt)
++
+N
+
+i=0
+AχR(Δt)AηT(Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)θ(Δt)
+,
+which gives (33) after taking its Fourier transform.
+■
+Remark 5: In the ideal no-impairment scenario (also see
+Remark 2) the PSD of n(t) can be simpliﬁed as follows:
+SNoImp
+n
+(f) = N0
+2 + (PηR + NPχRPηTPαi) δ(f),
+where the superscript NoImp stands for “No-Impairment”,
+PηR := AηR(0), and PηT := AηT(0).
+C. Metrics: Evaluations for Some Case Studies
+The results we have derived so far are general and hold for
+any UAV wobbling model and any distribution of delay and
+distortion noise processes. However, to gain useful insights, it is
+instructive to simplify these results for speciﬁc case studies. We
+consider some reasonable models in this section and evaluate
+the metrics derived in the previous section accordingly.
+1) UAV Wobbling: We consider two different random pro-
+cesses for modeling the UAV pitch angle θ(t): i) Wiener process,
+and ii) sinusoidal process. Let us review the properties of each
+process ﬁrst.
+r Stationary-Increments – Wiener Process: This canonical
+model is deﬁned as a process with independent, stationary,
+and Gaussian increments that is continuous in time t. Fur-
+thermore, its value at t = 0 is assumed to be zero. There-
+fore, we have θ(t + Δt) −θ(t)
+dist.
+== θ(Δt) ∼N(0, Δt),
+where
+dist.
+== stands for equality in distribution. Since Wiener
+processes are scale-invariant, we can make the variance of
+θ(Δt) dimensionless by multiplying it with the propor-
+tionality constant b = 1s−1. Following the characteristic
+function (cf) of Gaussian random variables, we have
+E
+
+ejω(θ(t+Δt)−θ(t))
+= E
+
+ejωθ(Δt)
+= e−ω2
+2 Δt.
+(36)
+r Non-Stationary-Increments – Sinusoidal Process: This
+model is motivated by the random oscillatory behavior
+of wobbling. We assume that θ(t) = L sin(2πQt), where
+L ∼U[−θm, θm) and Q ∼fQ(q) are the amplitude and
+frequency of the variations of the UAV pitch angle,
+respectively, with θm and fQ(.) being the maximum
+UAV pitch angle and some given pdf, respectively. We
+also assume that L and Q are independent. Clearly, the
+independent and stationary-increments property does not
+hold for this process. Following the cf of uniform random
+variables, we have
+E[ejω(θ(t+Δt)−θ(t))] =
+ ∞
+−∞
+sinc
+
+ω
+π θm (sin(2πq(t + Δt))
+−sin(2πqt))) fQ(q)dq,
+(37)
+where sinc(x) = sin(πx)
+πx
+.
+SWSS
+n
+(f) = N0
+2 + FΔt{AηR(Δt)} +
+N
+
+i=0
+FΔt
+
+AχR(Δt)AηT(Δt)
+
+E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)] 
+t
+
+,
+(32)
+SWSS−SI
+n
+(f) = N0
+2 + FΔt{AηR(Δt)} +
+N
+
+i=0
+FΔt
+
+AχR(Δt)AηT(Δt)E
+
+|αi|2e−j 2π
+λ yD cos(ωi)θ(Δt) 
+,
+(33)
+GSI
+i (Δt) = E
+
+|αi|2e−j 2π
+λ yD cos(ωi)θ(Δt)
+=
+⎧
+⎨
+⎩
+ π/2
+0
+1
+πβ e−|ωi−ω0|
+β
+e−2π2
+λ2 y2
+D cos2(ωi)Δt dωi,
+i̸ = 0
+2NKPα1e−2π2
+λ2 y2
+D cos2(ω0)Δt,
+i = 0,
+(34)
+GNonSI
+i
+(t, Δt) = E
+
+|αi|2e−j 2π
+λ yD cos(ωi)[θ(t+Δt)−θ(t)]
+=
+⎧
+⎨
+⎩
+ π/2
+0
+ ∞
+−∞
+1
+πβ e−|ωi−ω0|
+β
+fQ(q)sinc
+ 2
+λθmyD cos(ωi) (sin(2πq(t + Δt)) −sin(2πqt))
+
+dq dωi,
+i̸ = 0
+2NKPα1
+ ∞
+−∞fQ(q)sinc
+ 2
+λθmyD cos(ω0) (sin(2πq(t + Δt)) −sin(2πqt))
+
+dq,
+i = 0,
+(35)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 10 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17955
+Using (6), (36), and (37), we introduce and evaluate (34) and
+(35), shown at the bottom of the previous page, which will be
+used extensively in our derivations. Note that the superscript
+NonSI stands for “Non-Stationary-Increments”, and the func-
+tions GNonSI
+i
+(t, Δt), 1 ≤i ≤N are all equal to each other. The
+same is also true for the functions GSI
+i (Δt), 1 ≤i ≤N.
+Remark 6: The Wiener process is proposed as a purely
+theoretical model that provides a reasonable baseline for the
+more practical sinusoidal process, where the latter is a realistic
+model that captures both oscillatory behavior and randomness of
+UAV wobbling. Note that the sinusoidal process does not have
+stationary increments because of which the received signal is
+nonstationary (the channel ACF will be a function of both t and
+Δt).
+2) Distortion Noises: As for the additive distortion noise,
+we assume WSS Gaussian processes both at the transmitter
+and receiver, which is backed by measurements and theoretical
+studies [12], [32]. Although various models are available for the
+covariance function of Gaussian processes [58], we consider the
+squared exponential model in this paper. Hence, the ACFs for
+the additive distortion noises can be written as
+AηT(Δt) = κ2
+ηTe
+−(Δt)2
+2l2ηT ,
+AηR(Δt) = κ2
+ηRe
+−(Δt)2
+2l2ηR ,
+(38)
+where κ2
+ηT (κ2
+ηR) and lηT (lηR) are design parameters, which rep-
+resent the maximum power and the characteristic length-scale of
+the additive distortion noise process at the transmitter (receiver),
+respectively. On the other hand, the research on representative
+models for the multiplicative distortion noise processes is scarce.
+As also pointed out in [12, p. 261], researchers usually ignore the
+time-dependence and randomness of these distortion processes
+and assume deterministic multiplicative errors. In this paper,
+we study two representative models based on random processes
+(WSS and nonstationary) for these multiplicative errors listed
+below:
+r WSS – Gaussian Process: Similar to the additive distortion
+noise, we assume the canonical Gaussian process for the
+WSSmultiplicativedistortionnoises.TheACFsinthiscase
+can be written as
+AχT(Δt) = κ2
+χTe
+−(Δt)2
+2l2χT ,
+AχR(Δt) = κ2
+χRe
+−(Δt)2
+2l2χR ,
+(39)
+where κ2
+χT, κ2
+χR, lχT, and lχR are deﬁned similar as before.
+r Nonstationary – Sinusoidal Process: As a canonical non-
+stationary model, we again use the sinusoidal process in
+this case that was also used to model UAV wobbling
+above. In particular, we deﬁne χT(t) = LT sin(2πQTt)
+and χR(t) = LR sin(2πQRt), where LT (LR) and QT
+(QR) are the amplitude and frequency of variations of
+χT(t) (χR(t)), respectively. Therefore, we can write their
+ACFs as
+AχT(t, t + Δt) =
+PLT
+ ∞
+−∞
+sin(2πqt) sin(2πq(t + Δt))fQT(q) dq,
+(40)
+AχR(t, t + Δt) =
+PLR
+ ∞
+−∞
+sin(2πqt) sin(2πq(t + Δt))fQR(q) dq,
+(41)
+where PLT = E[|LT|2], PLR = E[|LR|2], and fQT(.) and
+fQR(.) are the pdfs of QT and QR, respectively. Further
+discussion about the choice of different parameters for this
+model will be provided in Section IV.
+Remark 7: In the nonstationary setup, one could also as-
+sume a Wiener process for the multiplicative distortion noise
+processes. However, since the ACF of the Wiener process
+W(t) is simply the minimum value of its observation times,
+i.e., AW (t, t + Δt) = t for non-negative Δt, all of our met-
+rics will quickly diverge using this model. Hence, the Wiener
+process is not a suitable model for the multiplicative distortion
+noise.
+Remark 8: As mentioned earlier, RF impairments are non-
+stationary in nature and represent time-dependent behaviors.
+We extend the generalized error model proposed in [12, Ch.
+7] by statistical characterization of the additive and multi-
+plicative terms (as opposed to deterministic terms), which
+are more suitable for wireless systems with RF imperfec-
+tions, such as the aerial-terrestrial setup considered in this
+paper.
+Using these models for UAV wobbling and distortion
+noise processes, we will now evaluate the metrics derived in
+Section III-B.
+PDP: Using Theorem 1, we obtain the PDP for nonstationary
+and WSS hardware impairments, respectively, as
+P NonSt
+c
+(τ; t) = Pα1PLRPLT
+ ∞
+−∞
+sin2(2πqt)fQR(q) dq
+×
+ ∞
+−∞
+sin2(2πq(t −τ))fQT(q) dq
+×
+
+NKδ(τ −τ0)+
+N
+
+i=1
+ρie−ρi(τ−τ0)1(τ −τ0)
+
+,
+(42)
+P WSS
+c
+(τ) = Pα1κ2
+χRκ2
+χT
+×
+
+NKδ(τ −τ0)+
+N
+
+i=1
+ρie−ρi(τ−τ0)1(τ −τ0)
+
+,
+(43)
+where we used the relations Pαi = Pα1 =
+1
+2π(2 −e−ω0
+β −
+e−π/2−ω0
+β
+), 1 ≤i ≤N,andPα0 = NKPα1.From(24)and(25),
+we obtain the average and rms delay spreads for WSS hardware
+impairments, respectively, as
+μWSS = τ0 +
+1
+N(K + 1)
+N
+
+i=1
+1
+ρi
+,
+(44)
+σWSS =
+
+2
+N(K+1)
+N
+i=1
+1
+ρ2
+i
+−
+1
+N 2(K+1)2
+N
+i=1
+1
+ρi
+ 2
+.
+(45)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 11 =====
+17956
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+Coherence Time: From Theorem 2, (34), and (35), one can
+obtainthecoherencetimeofthechannelfordifferentimpairment
+scenarios. Since the equations become quite intricate in all
+cases, we need to perform numerical integration to calculate
+the coherence time. However, when hardware impairments are
+WSS, the ﬁnal equations could be simpliﬁed further. Using
+the predeﬁned functions GNonSI
+i
+(t, Δt) and GSI
+i (Δt), we can
+simplify the ACFs as
+AWSS
+C
+(t, Δt) = κ2
+χRκ2
+χTe
+−
+
+1
+2l2χR
++
+1
+2l2χT
+
+(Δt)2
+×
+
+GNonSI
+0
+(t, Δt) + NGNonSI
+1
+(t, Δt)
+
+,
+AWSS−SI
+C
+(Δt) = κ2
+χRκ2
+χTe
+−
+
+1
+2l2χR
++
+1
+2l2χT
+
+(Δt)2
+×
+
+GSI
+0 (Δt) + NGSI
+1 (Δt)
+
+,
+where we used the fact that GNonSI
+i
+(t, Δt) = GNonSI
+1
+(t, Δt),
+1 ≤i ≤N, and GSI
+i (Δt) = GSI
+1 (Δt), 1 ≤i ≤N. Note that
+the maximum value for both ACFs is 2κ2
+χRκ2
+χTN(K + 1)Pα1,
+which occurs at Δt = 0. Therefore, the coherence time for WSS
+hardware impairments when θ(t) does not and does have the
+stationary-increments property can be written, respectively, as
+T WSS
+Coh (t) = min
+⎧
+⎪
+⎨
+⎪
+⎩
+Δt : e
+−
+
+1
+2l2χR
++
+1
+2l2χT
+
+(Δt)2
+2N(K + 1)Pα1
+×
+""GNonSI
+0
+(t, Δt) + NGNonSI
+1
+(t, Δt)
+"" ≤γT
+⎫
+⎪
+⎬
+⎪
+⎭
+,
+(46)
+T WSS−SI
+Coh
+= min
+⎧
+⎪
+⎨
+⎪
+⎩
+Δt : e
+−
+
+1
+2l2χR
++
+1
+2l2χT
+
+(Δt)2
+2N(K + 1)Pα1
+×
+""GSI
+0 (Δt) + NGSI
+1 (Δt)
+"" ≤γT
+⎫
+⎪
+⎬
+⎪
+⎭
+,
+(47)
+which needs to be solved numerically for Δt. These equations
+can be further simpliﬁed for the limiting case of K →∞, i.e.,
+a purely LoS channel with no multipath, as follows:
+T WSS, LoS
+Coh
+(t)= lim
+K→∞T WSS
+Coh (t)=min
+&
+Δt : e
+−
+
+1
+2l2χR
++
+1
+2l2χT
+
+(Δt)2
+×
+ ∞
+−∞
+fQ(q)sinc
+2
+λθmyD cos(ω0)
+× (sin(2πq(t + Δt)) −sin(2πqt))
+ 
+dq ≤γT
+'
+,
+T WSS−SI, LoS
+Coh
+= lim
+K→∞T WSS−SI
+Coh
+= min
+&
+Δt : e
+−
+
+1
+2l2χR
++
+1
+2l2χT
+
+(Δt)2
+e−2π2
+λ2 y2
+D cos2(ω0)Δt ≤γT
+'
+=
+(
+4π4
+λ4 y4
+D cos4(ω0)−2 log(γT)
+
+1
+l2χR +
+1
+l2χT
+
+−2π2
+λ2 y2
+D cos2(ω0)
+1
+l2χR +
+1
+l2χT
+.
+Coherence Bandwidth: We use Theorem 3 along with (39),
+(40), and (41) to derive the coherence bandwidth of the channel.
+Following Remark 3, we do not need to evaluate PχR(t) and
+PχRPχT in (29) and (30), respectively, as they will be canceled
+out when normalizing the ACF. Let us start with simplifying
+the channel ACF when hardware impairments are nonstation-
+ary. Setting Δt = 0 and t →t −τ in (40), and swapping the
+integrals in (29), we can write
+ANonSt
+C
+(Δf; t) = Pα1PχR(t)PLT
+
+NK
+ ∞
+−∞
+fQT(q)
+×
+ ∞
+0
+sin2(2πq(t −τ))δ(τ −τ0)e−j2πΔfτdτdq
++
+N
+
+i=1
+ ∞
+−∞
+fQT(q)
+×
+ ∞
+τ0
+sin2(2πq(t −τ))ρie−ρi(τ−τ0)e−j2πΔfτ dτ dq
+
+= Pα1PχR(t)PLTe−j2πΔfτ0
+
+H0(t) +
+N
+
+i=1
+Hi(Δf; t)
+	
+,
+where
+H0(t) = NK
+ ∞
+−∞
+fQT(q) sin2(2πq(t −τ0)) dq,
+Hi(Δf; t) =
+ρi
+2(ρi + j2πΔf) −
+ ∞
+−∞
+fQT(q)
+×
+
+ρiej4πq(t−τ0)
+4(ρi + j2πΔf + j4πq) +
+ρie−j4πq(t−τ0)
+4(ρi + j2πΔf −j4πq)
+ 
+dq.
+Taking the absolute value of ANonSt
+C
+(Δf; t), we can write the
+coherence bandwidth as
+BNonSt
+Coh
+(t)
+= min
+⎧
+⎨
+⎩Δf :
+"""H0(t) + N
+i=1 Hi(Δf; t)
+"""
+max
+"""H0(t) + N
+i=1 Hi(Δf; t)
+"""
+≤γB
+⎫
+⎬
+⎭,
+(48)
+which needs to be solved numerically for Δf. On the other hand,
+for WSS hardware impairments, the channel ACF can be further
+simpliﬁed as
+AWSS
+C
+(Δf) = Pα1PχRPχT
+
+NK
+ ∞
+0
+δ(τ −τ0)e−j2πΔfτ dτ
++
+N
+
+i=1
+ ∞
+τ0
+ρie−ρi(τ−τ0)e−j2πΔfτ dτ
+	
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 12 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17957
+=Pα1PχRPχTe−j2πΔfτ0
+
+NK+
+N
+
+i=1
+ρi
+ρi+j2πΔf
+	
+,
+which gives the coherence bandwidth as
+BWSS
+Coh = min
+⎧
+⎨
+⎩Δf :
+"""K + 1
+N
+N
+i=1
+ρi
+ρi+j2πΔf
+"""
+K + 1
+≤γB
+⎫
+⎬
+⎭.
+(49)
+Observe that the coherence bandwidth is not a function of UAV
+wobbling or hardware impairments in this case (see Remark 4).
+Similartothecaseofcoherencetime,forK →∞,onecaneasily
+see that the terms containing Hi(Δf; t) can be ignored with re-
+spect to H0(t), which makes the solutions of (48) and (49) trivial.
+In fact, for any γB < 1 in this case, we have BNonSt, LoS
+Coh
+(t) =
+BWSS, LoS
+Coh
+= ∞. This observation can be seen in Fig. 8, as well.
+PSD of Distortion-Plus-Noise: Theorem 4 gives the PSD of
+the distortion-plus-noise process n(t) for the general case where
+hardware impairments are nonstationary and UAV wobbling
+does not necessarily have the stationary-increments property.
+One could use (37), (38), and (41) to obtain an equation for the
+PSD of n(t), but as is clear from the form of these equations,
+this derivation quickly becomes intractable. Therefore, for the
+sake of simplicity, we only analytically evaluate the PSD of
+the distortion-plus-noise process when hardware impairments
+are WSS. Let us ﬁrst analyze the PSD of n(t) when UAV
+wobblinghas thestationary-increments property. Following(33)
+in Corollary 3, we have
+SWSS−SI
+n
+(f)
+= N0
+2 + FΔt
+&
+κ2
+ηRe
+−(Δt)2
+2l2ηR
+'
++
+N
+
+i=0
+FΔt
+&
+κ2
+χRe
+−(Δt)2
+2l2χR κ2
+ηTe
+−(Δt)2
+2l2ηT GSI
+i (Δt)
+'
+= N0
+2 + FΔt
+&
+κ2
+ηRe
+−(Δt)2
+2l2ηR
+'
++ FΔt
+
+κ2e−(Δt)2
+2l2 2NKPα1e−u2 cos2(ω0)Δt
+
++ NFΔt
+&
+κ2e−(Δt)2
+2l2
+ π/2
+0
+1
+πβ e−|ωi−ω0|
+β
+e−u2 cos2(ωi)Δtdωi
+'
+= N0
+2 + κ2
+ηR
+)
+2πl2ηRe−2π2l2
+ηRf 2
++ κ2√
+2πl2e−2π2l2f 2
+2Pα0e
+1
+2 l2u4 cos4(ω0)ej2πl2u2 cos2(ω0)f
++ N
+ π/2
+0
+1
+πβ e−|ωi−ω0|
+β
+e
+1
+2 l2u4 cos4(ωi)ej2πl2u2 cos2(ωi)fdωi
+ 
+,
+(50)
+where we deﬁned the parameters κ2 = κ2
+χRκ2
+ηT, l−2 = l−2
+χR +
+l−2
+ηT, and u2 = 2π2
+λ2 y2
+D to simplify the equations, and in the last
+equality we used the Fourier transform of a Gaussian function,
+i.e., Fx{e−ax2} = * π
+ae−π2
+a f 2. As for the case where UAV wob-
+bling does not have the stationary-increments property (see (32)
+in Corollary 3), we need to ﬁrst average GNonSI
+i
+(t, Δt) over time
+t. Following the same procedure as above, we can write the PSD
+of n(t) as
+SWSS
+n
+(f)
+= N0
+2 + FΔt
+&
+κ2
+ηRe
+−(Δt)2
+2l2ηR
+'
++
+N
+
+i=0
+FΔt
+&
+κ2
+χRe
+−(Δt)2
+2l2χR κ2
+ηTe
+−(Δt)2
+2l2ηT +
+GNonSI
+i
+(t, Δt)
+,
+t
+'
+= N0
+2 + κ2
+ηR
+)
+2πl2ηRe−2π2l2
+ηRf 2
++ 2Pα0 lim
+T →∞
+1
+T
+ T
+0
+ ∞
+−∞
+ ∞
+−∞
+κ2e−(Δt)2
+2l2
+× sinc
+2
+λθmyD cos(ω0) (sin(2πq(t + Δt)) −sin(2πqt))
+ 
+× fQ(q)e−j2πfΔt dq dΔt dt
++ N lim
+T →∞
+1
+T
+ T
+0
+ ∞
+−∞
+
+π
+2
+0
+ ∞
+−∞
+κ2e−(Δt)2
+2l2
+1
+πβ e−|ωi−ω0|
+β
+× sinc
+2
+λθmyD cos(ωi) (sin(2πq(t + Δt)) −sin(2πqt))
+ 
+× fQ(q)e−j2πfΔt dq dωi dΔt dt,
+(51)
+where in the last equality we used the deﬁnition of Fourier
+transform and swapped the order of limit and integral.
+IV. SIMULATION RESULTS
+In this section, we provide numerical results to obtain further
+insights on the impact of UAV wobbling and hardware impair-
+ments on the key performance metrics of wireless channels.
+We assume that a rotary-winged UAV hovers in the air and
+communicates with a UE on the ground in a multi-path channel.
+The parameters of the channel used in this paper are as follows:
+Number of MPCs N ∈{20, 10} for sub-6 GHz and mmWave
+frequencies, respectively, carrier frequency fc ∈{2.4, 6, 30}
+GHz (thus, signal wavelength λ ∈{12.5, 5, 1} cm), UAV-UE
+distance d0 = 300 m (thus, UAV-UE delay τ0 = 1 μs), UAV-UE
+AoD ω0 = 20◦, reciprocal of the mean excess delay of the i-th
+MPCρi ∼U[107, 108) s−1,RicianK factorK ∈{0, 1, 5, 11.5}
+[59, Table I] (note that K = 0 represents the Rayleigh channel),
+scaling parameter of the Laplacian angular power spectrum
+β = 1, and noise power N0
+2 = 5 × 10−9 W. The UAV antenna
+is placed at a distance of yD = 40 cm from the UAV platform
+centroid. Note that these are just nominal values and our results
+are not impacted by their choice. Due to many reasons discussed
+earlier, the UAV may wobble, which is modeled using two
+random processes, i.e., the Wiener and sinusoidal processes.
+The UAV pitch angle in the latter case is bounded to θm ∈
+{5, 7, 10}◦[25] with a frequency of variations that is uniformly
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 13 =====
+17958
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+TABLE II
+SIMULATION PARAMETERS USED IN THIS PAPER
+distributed between 5 and 25 Hz. Both the UAV and the UE
+suffer from hardware impairments as well, and the parameters
+deﬁned in this paper for modeling the hardware impairments
+are as follows: Maximum power and the characteristic length-
+scale of the WSS additive/multiplicative distortion noise pro-
+cesses at the transmitter/receiver are {κ2
+ηT, κ2
+ηR, κ2
+χT, κ2
+χR} ∈
+{0.1, 0.5, 1} W and {lηT, lηR, lχT, lχR} ∈{0.01, 0.05, 0.1} s,
+respectively, and power of amplitude and frequency of variations
+of nonstationary multiplicative distortion noise process at the
+transmitter/receiver are PLT = PLR = 0.5 W and {QT, QR} ∼
+U[5, 15) Hz, respectively. A summary of the parameters used in
+this paper is provided in Table II.
+A. PDP
+In Fig. 2, we plot the PDP for different scenarios. In particular,
+we highlight the impact of hardware impairments on the PDP by
+comparing the ideal case (no hardware impairment) with those
+of impaired scenarios. The gap in the power of the received
+signal between the ideal and impaired cases is clear in this
+ﬁgure, which is around 6 dB for WSS hardware impairments
+with κ2
+χT = κ2
+χR = 0.5 W. As shown before, note that UAV
+wobbling has no impact on the PDP. It can also be observed that
+the difference between the WSS and nonstationary hardware
+impairments in terms of their respective PDPs is not very high.
+This observation further motivates the use of WSS processes for
+modeling hardware impairments as they are more tractable than
+Fig.2.
+PDPforidealandimpairedhardwarescenarios.Assumptions:N = 20,
+K = 11.5, and κ2
+χT = κ2
+χR = 0.5 W. HI stands for hardware impairment.
+Fig. 3.
+Coherence time: Normalized channel ACF for different random pro-
+cesses. Assumptions: N = 20, K = 11.5, fc = 6 GHz, θm = 5◦, and lχT =
+lχR = 0.05 s.
+nonstationary models, which are otherwise more realistic [12,
+Sec. 7.2.3].
+B. Coherence Time
+We show the impact of UAV wobbling and hardware im-
+pairments
+on the channel coherence time in Figs. 3–6. The
+general trends of the normalized channel ACF for the Wiener
+and sinusoidal processes are depicted in Fig. 3. Note that we
+used the WSS hardware impairment model to obtain these
+ﬁgures. Since the channel ACF becomes nonstationary for the
+sinusoidal process, we plotted it at different time instants to show
+its progression over time. Also, from this ﬁgure, we observe
+that channel coherence time is minimized at t = 0 s, and thus,
+we use this time instant as a representative one to determine
+the channel coherence time. Assuming that γT = 0.5, we ﬁnd
+that T WSS
+Coh (0) = 5.13 ms and T WSS−SI
+Coh
+= 643 μs, which makes
+sense intuitively, as the variations in θ(t) for the Wiener process
+can grow without bounds. In Fig. 4, we compare the normalized
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 14 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17959
+Fig. 4.
+Coherence time: Normalized channel ACF for different random pro-
+cesses and impairment levels. Assumptions: N = 20, K = 11.5, fc = 6 GHz,
+θm = 5◦.
+Fig. 5.
+Coherence time: Normalized channel ACF for different fc. Assump-
+tions: K = 11.5, θm = 5◦, and lχT = lχR = 0.05 s.
+Fig. 6.
+Coherence time: Normalized channel ACF for different θm. Assump-
+tions: K = 11.5, fc = 2.4 GHz, and lχT = lχR = 0.05 s.
+Fig. 7.
+Coherence bandwidth: Normalized channel ACF for different impair-
+ment models and times t. Assumptions: N = 20 and K = 11.5.
+channel ACF for different random processes and impairment
+levels. As seen in this ﬁgure, hardware impairments do not
+have any noticeable effect on the channel ACF when θ(t)
+follows the Wiener process. Although this was expected, we
+observe that hardware impairments do not severely degrade
+coherence time for the sinusoidal process either. In particular, we
+have T WSS−SI
+Coh
+= {639, 643} μs and T WSS
+Coh (0) = {4.36, 5.16}
+ms for lχT = lχR = {0.01, 0.1} s. The impact of carrier fre-
+quency and maximum UAV pitch angle on the coherence time
+for the sinusoidal process is depicted in Figs. 5 and 6. From a
+physical standpoint, we observe that the channel phase directly
+depends on the UAV-UE distance and the carrier frequency (see
+(8)). Therefore, increasing θm (thus, the UAV-UE distance) or
+fc results in higher channel variations, which, in turn, decreases
+the channel coherence time. Numerically speaking, we have
+T WSS
+Coh (0) = {32.52, 5.13, 0.98} ms for fc = {2.4, 6, 30} GHz
+and θm = 5◦and T WSS
+Coh (0) = {32.52, 11.13, 6.63} ms for θm =
+{5, 7, 10}◦and fc = 2.4 GHz. As is clear from these numbers,
+channel coherence time is heavily degraded at high frequencies
+due to UAV wobbling and hardware impairments (less than 1 ms
+at fc = 30 GHz), which renders channel estimation and tracking
+very challenging.
+C. Coherence Bandwidth
+In Figs. 7 and 8, we plot the normalized channel ACF as a
+function of Δf to investigate the impact of different impair-
+ments on the channel coherence bandwidth. From (49), we
+observe for WSS hardware impairments that the normalized
+ACF monotonically goes from 1 to
+K
+K+1 as Δf goes from 0 to
+∞. Interestingly, Fig. 7 shows that this is also the case for non-
+stationary hardware impairments as long as t > τ0. Assuming
+that γB = 0.95, we have BWSS
+Coh = 10.75 MHz and BNonSt
+Coh
+(t) =
+{0.51, 12.21, 11.21} MHz at t = {τ0, 2τ0, 4τ0}. Note that the
+behavior of the nonstationary hardware impairments quickly
+converges to that of the WSS one. In Fig. 8, we show the channel
+ACF at time instant t = 0 s for different Rician K factors. As
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 15 =====
+17960
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+Fig. 8.
+Coherence bandwidth: Normalized channel ACF for different Rician
+K factors. Assumptions: WSS hardware impairments and N = 20.
+Fig. 9.
+PSD of n(t) for different impairment levels. Assumptions: Wiener
+wobbling, WSS hardware impairments, N = 20, K = 11.5, fc = 2.4 GHz,
+and θm = 5◦.
+the power of the LoS link increases with respect to the powers
+of other MPCs, we expect to have lower delay spreads, and thus,
+higher coherence bandwidths.
+D. PSD of Distortion-Plus-Noise
+We provide numerical results for the PSD of n(t) in Figs.
+9–11. Assuming both Wiener and sinusoidal models for UAV
+wobbling, we plot the PSD of n(t) for different hardware
+impairment levels in Figs. 9 and 10, respectively. We observe
+that increasing the maximum power of the WSS hardware im-
+pairment model (κ2 parameters, e.g., κ2
+ηT) while keeping the
+characteristic length-scale of this model (l parameters, e.g., lηT)
+constant simply shifts the PSD upward (in dB), which means
+that the total power of n(t) (integral of its PSD) increases.
+On the other hand, increasing the l parameters while keeping
+the κ2 parameters constant squeezes the PSD curve toward the
+0 Hz frequency, which could either increase or decrease the total
+distortion-plus-noise power depending on the speciﬁc values of
+the l and κ2 parameters and the wobbling model. In Fig. 11,
+Fig. 10.
+PSD of n(t) for different impairment levels. Assumptions: Sinusoidal
+wobbling, WSS hardware impairments, N = 20, K = 11.5, fc = 2.4 GHz,
+θm = 5◦.
+Fig. 11.
+PSD of n(t) for different θm. Assumptions: WSS hardware im-
+pairments, N = 20, K = 11.5, fc = 2.4 GHz, κ2
+ηT = κ2
+ηR = κ2
+χR = 1 W,
+lηT = lηR = lχR = 0.01 s.
+we assume that UAV wobbling follows a sinusoidal model and
+compare the PSD of n(t) for different values of the maximum
+UAV pitch angle. As is clear in this ﬁgure and assuming realistic
+values for θm, the PSD of n(t) is resilient to this impairment and
+does not degrade noticeably with increasing the maximum UAV
+pitch angle.
+Remark 9: Hardware impairments are the primary factors
+in determining the PDP, coherence bandwidth of the channel,
+and PSD of distortion-plus-noise process, while UAV wobbling
+dominates the coherence time of the channel.
+V. CONCLUSION
+In this paper, we developed a uniﬁed air-to-ground channel
+model that accounts for multiple impairment types. Speciﬁcally,
+we considered a multi-path Rician channel, where a ground
+UE receives data from a hovering UAV via one LoS and
+multiple NLoS paths. Two fundamentally different impairment
+types have been considered in this paper, i.e., UAV wobbling
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 16 =====
+BANAGAR AND DHILLON: FUNDAMENTALS OF WOBBLING AND HARDWARE IMPAIRMENTS-AWARE AIR-TO-GROUND CHANNEL MODEL
+17961
+and hardware impairments (RF nonidealities at both the UAV
+and the UE). We modeled the UAV pitch angle wobbling by
+two different stochastic processes, one with independent and
+stationary increments (the Wiener process) and another with
+bounded ﬂuctuations to represent the oscillatory nature of wob-
+bling (the sinusoidal process). As for the RF nonidealities, we
+modeled the combined effect of all hardware impairments as
+two multiplicative and additive distortion noise processes. Using
+these models, we concretely analyzed the channel ACF and pro-
+videdeasy-to-useequationsforfourkeychannel-relatedmetrics,
+i.e., PDP, coherence time, coherence bandwidth, and PSD of
+the distortion-plus-noise process. Our results demonstrated a
+heavy degradation of the channel coherence time at high carrier
+frequencies due to UAV wobbling and hardware impairments,
+which effectively makes channel estimation more challenging at
+mmWave and higher frequencies. To the best of our knowledge,
+this is the ﬁrst work that provides a comprehensive analysis of
+the joint effect of UAV wobbling and hardware impairments
+on the air-to-ground wireless channel. One meaningful exten-
+sion of this work is to provide the same analysis when the
+UAV is mobile, which makes the effective Doppler phase shift
+even more complicated. The impairments associated with the
+air-ground wireless channel could potentially be compensated
+using UAVs equipped with reconﬁgurable intelligent surfaces
+(RIS). However, as with any new technology, this addition will
+bring its own challenges [60] that need to be properly addressed
+and is left as a promising future work. Another extension of
+this work is to consider a more elaborate model for the MPCs
+by parameterizing the clusters and the rays within clusters to
+obtain an even more precise air-to-ground channel model. Also,
+analyzing the air-to-ground impairments-aware wireless chan-
+nel when centralized or distributed MIMO setups are considered
+(instead of single-antenna transceivers) is another future line of
+research.
+REFERENCES
+[1] M. Banagar and H. S. Dhillon, “Wobbling and impairments-aware channel
+model and its implications on high-frequency UAV links,” in Proc. IEEE
+Glob. Commun. Conf., 2022, pp. 5983–5988.
+[2] M. Mozaffari, W. Saad, M. Bennis, Y.-H. Nam, and M. Debbah, “A
+tutorial on UAVs for wireless networks: Applications, challenges, and
+open problems,” IEEE Commun. Surv. Tut., vol. 21, no. 3, pp. 2334–2360,
+thirdquarter 2019.
+[3] Y. Zeng, Q. Wu, and R. Zhang, “Accessing from the sky: A tutorial on
+UAV communications for 5G and beyond,” Proc. IEEE, vol. 107, no. 12,
+pp. 2327–2375, Dec. 2019.
+[4] M. Banagar, “Drone cellular networks: Fundamentals, modeling, and anal-
+ysis,” Ph.D. dissertation, Virginia Tech, Blacksburg, VA, USA, May 2022.
+[5] M. Banagar and H. S. Dhillon, “Performance characterization of canon-
+ical mobility models in drone cellular networks,” IEEE Trans. Wireless
+Commun., vol. 19, no. 7, pp. 4994–5009, Jul. 2020.
+[6] M. Banagar, V. V. Chetlur, and H. S. Dhillon, “Stochastic geometry-based
+performanceanalysisofdronecellularnetworks,”inUAVCommunications
+for 5G and Beyond. Hoboken, NJ, USA: Wiley, 2020, ch. 9, pp. 231–254.
+[7] Z. Li et al., “Development and design methodology of an anti-vibration
+system on micro-UAVs,” in Proc. Int. Micro Air Veh. Conf. Flight Com-
+petition, 2017, pp. 223–228.
+[8] M. Banagar, H. S. Dhillon, and A. F. Molisch, “Impact of UAV wobbling
+on the air-to-ground wireless channel,” IEEE Trans. Veh. Technol., vol. 69,
+no. 11, pp. 14025–14030, Nov. 2020.
+[9] D. Xu, Y. Sun, D. W. K. Ng, and R. Schober, “Multiuser MISO UAV
+communications in uncertain environments with no-ﬂy zones: Robust
+trajectory and resource allocation design,” IEEE Trans. Commun., vol. 68,
+no. 5, pp. 3153–3172, May 2020.
+[10] H. Wu, Y. Wen, J. Zhang, Z. Wei, N. Zhang, and X. Tao, “Energy-efﬁcient
+and secure air-to-ground communication with jittering UAV,” IEEE Trans.
+Veh. Technol., vol. 69, no. 4, pp. 3954–3967, Apr. 2020.
+[11] M. T. Dabiri, H. Saﬁ, S. Parsaeefard, and W. Saad, “Analytical channel
+models for millimeter wave UAV networks under hovering ﬂuctuations,”
+IEEE Trans. Wireless Commun., vol. 19, no. 4, pp. 2868–2883, Apr. 2020.
+[12] T. Schenk, RF Imperfections in High-Rate Wireless Systems: Impact and
+Digital Compensation. Berlin, Germany: Springer, 2008.
+[13] E. Björnson, J. Hoydis, M. Kountouris, and M. Debbah, “Massive MIMO
+systems with non-ideal hardware: Energy efﬁciency, estimation, and ca-
+pacity limits,” IEEE Trans. Inf. Theory, vol. 60, no. 11, pp. 7112–7139,
+Nov. 2014.
+[14] W. Khawaja, I. Guvenc, D. W. Matolak, U.-C. Fiebig, and N. Schneck-
+enburger, “A survey of air-to-ground propagation channel modeling for
+unmanned aerial vehicles,” IEEE Commun. Surv. Tut., vol. 21, no. 3,
+pp. 2361–2391, thirdquarter 2019.
+[15] A. Al-Hourani, S. Kandeepan, and S. Lardner, “Optimal LAP altitude
+for maximum coverage,” IEEE Wireless Commun. Lett., vol. 3, no. 6,
+pp. 569–572, Dec. 2014.
+[16] D. W. Matolak and R. Sun, “Air-ground channel characterization for un-
+manned aircraft systems–Part I: Methods, measurements, and models for
+over-water settings,” IEEE Trans. Veh. Technol., vol. 66, no. 1, pp. 26–44,
+Jan. 2017.
+[17] R. Sun and D. W. Matolak, “Air-ground channel characterization for
+unmanned aircraft systems–Part II: Hilly and mountainous settings,” IEEE
+Trans. Veh. Technol., vol. 66, no. 3, pp. 1913–1925, Mar. 2017.
+[18] D. W. Matolak and R. Sun, “Air-ground channel characterization for
+unmanned aircraft systems–Part III: The suburban and near-urban en-
+vironments,” IEEE Trans. Veh. Technol., vol. 66, no. 8, pp. 6607–6618,
+Aug. 2017.
+[19] J. Sabzehali, V. K. Shah, H. S. Dhillon, and J. H. Reed, “3D placement
+and orientation of mmWave-based UAVs for guaranteed LoS coverage,”
+IEEE Wireless Commun. Lett., vol. 10, no. 8, pp. 1662–1666, Aug. 2021.
+[20] X. Cai et al., “An empirical air-to-ground channel model based on pas-
+sive measurements in LTE,” IEEE Trans. Veh. Technol., vol. 68, no. 2,
+pp. 1140–1154, Feb. 2019.
+[21] J. Liu, H. Zhang, M. Sheng, Y. Su, S. Chen, and J. Li, “High altitude
+air-to-ground channel modeling for ﬁxed-wing UAV mounted aerial base
+stations,” IEEE Wireless Commun. Lett., vol. 10, no. 2, pp. 330–334,
+Feb. 2021.
+[22] W. Khawaja, I. Guvenc, and D. Matolak, “UWB channel sounding and
+modeling for UAV air-to-ground propagation channels,” in Proc. IEEE
+Glob. Commun. Conf., Dec. 2016, pp. 1–7.
+[23] 3GPP, “Study on enhanced LTE support for aerial vehicles,” 3rd Gener-
+ation Partnership Project, Sophia Antipolis, France, Tech. Rep. 36.777,
+Jan. 2018.
+[24] “Propagation data and prediction methods required for the design of
+terrestrial broadband radio access systems operating in a frequency range
+from 3 to 60 GHz,” International Telecommunication Union (ITU), P. Ser.,
+Radiowave Propagation P.1410-5, Feb. 2012.
+[25] B. Ahmed, H. R. Pota, and M. Garratt, “Flight control of a rotary wing UAV
+using adaptive backstepping,” Int. J. Robust Nonlinear Control, vol. 20,
+no. 6, pp. 639–658, Apr. 2010.
+[26] A. Pourranjbar, M. Baniasadi, A. Abbasfar, and G. Kaddoum, “A novel
+distributed algorithm for phase synchronization in unmanned aerial vehi-
+cles,” IEEE Commun. Lett., vol. 24, no. 10, pp. 2260–2264, Oct. 2020.
+[27] S. Yang, Z. Zhang, J. Zhang, and J. Zhang, “Impact of rotary-wing
+UAV wobbling on millimeter-wave air-to-ground wireless channel,” IEEE
+Trans. Veh. Technol., vol. 71, no. 9, pp. 9174–9185, Sep. 2022.
+[28] X. Yang, D. Zhai, R. Zhang, H. Cao, S. Garg, and G. Kaddoum, “Impact
+of UAV 3D wobbles on the non-stationary air-to-ground channels at sub-6
+GHz bands,” in Proc. IEEE Glob. Commun. Conf., Dec. 2022, pp. 4473–
+4478.
+[29] X. Yang, D. Zhai, R. Zhang, L. Liu, F. R. Yu, and V. C. M. Leung,
+“Temporal correlation characteristics of air-to-ground wireless channel
+with UAV wobble,” IEEE Trans. Intell. Transp. Syst., vol. 24, no. 10,
+pp. 10702–10715, Oct. 2023.
+[30] J. Gomez-Ponce et al., “Air-to-ground directional channel sounder with
+drone and 64-antenna dual-polarized cylindrical array,” in Proc. IEEE Int.
+Conf. Commun. Workshops, Jun. 2021, pp. 1–6.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 17 =====
+17962
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 73, NO. 12, DECEMBER 2024
+[31] V. Semkin et al., “Lightweight UAV-based measurement system for air-to-
+ground channels at 28 GHz,” in Proc. IEEE 32nd Annu. Int. Symp. Pers.,
+Indoor, Mobile Radio Commun., Sep. 2021, pp. 848–853.
+[32] E. Bjornson, M. Matthaiou, and M. Debbah, “A new look at dual-hop
+relaying: Performance limits with hardware impairments,” IEEE Trans.
+Commun., vol. 61, no. 11, pp. 4512–4525, Nov. 2013.
+[33] E. Bjornson, P. Zetterberg, M. Bengtsson, and B. Ottersten, “Capacity
+limits and multiplexing gains of MIMO channels with transceiver impair-
+ments,” IEEE Commun. Lett., vol. 17, no. 1, pp. 91–94, Jan. 2013.
+[34] C. Studer, M. Wenk, and A. Burg, “MIMO transmission with residual
+transmit-RF impairments,” in Proc. Int. ITG Workshop Smart Antennas,
+Feb. 2010, pp. 189–196.
+[35] U. Gustavsson et al., “On the impact of hardware impairments on massive
+MIMO,” in Proc. IEEE Glob. Commun. Conf. Workshops, Dec. 2014,
+pp. 294–300.
+[36] O. Taghizadeh, A. C. Cirik, and R. Mathar, “Hardware impairments aware
+transceiver design for full-duplex amplify-and-forward MIMO relaying,”
+IEEE Trans. Wireless Commun., vol. 17, no. 3, pp. 1644–1659, Mar. 2018.
+[37] O. Taghizadeh, V. Radhakrishnan, A. C. Cirik, R. Mathar, and L. Lampe,
+“Hardware impairments aware transceiver design for bidirectional full-
+duplex MIMO OFDM systems,” IEEE Trans. Veh. Technol., vol. 67, no. 8,
+pp. 7450–7464, Aug. 2018.
+[38] V.
+Radhakrishnan,
+O.
+Taghizadeh,
+and
+R.
+Mathar,
+“Hardware
+impairments-aware transceiver design for multi-carrier full-duplex MIMO
+relaying,” IEEE Trans. Veh. Technol., vol. 70, no. 2, pp. 1109–1121,
+Feb. 2021.
+[39] X. Li, J. Li, Y. Liu, Z. Ding, and A. Nallanathan, “Residual transceiver
+hardware impairments on cooperative NOMA networks,” IEEE Trans.
+Wireless Commun., vol. 19, no. 1, pp. 680–695, Jan. 2020.
+[40] M. Banagar and H. S. Dhillon, “3D two-hop cellular networks with
+wireless backhauled UAVs: Modeling and fundamentals,” IEEE Trans.
+Wireless Commun., vol. 21, no. 8, pp. 6417–6433, Aug. 2022.
+[41] M. Banagar and H. S. Dhillon, “Fundamentals of 3D two-hop cellular
+networks analysis with wireless backhauled UAVs,” in Proc. IEEE Glob.
+Commun. Conf., 2021, pp. 1–6.
+[42] J. Sabzehali, V. K. Shah, Q. Fan, B. Choudhury, L. Liu, and J. H. Reed,
+“Optimizing number, placement, and backhaul connectivity of multi-UAV
+networks,” IEEE Internet Things J., vol. 9, no. 21, pp. 21548–21560,
+Nov. 2022.
+[43] X. Li, Q. Wang, Y. Liu, T. A. Tsiftsis, Z. Ding, and A. Nallanathan, “UAV-
+aided multi-way NOMA networks with residual hardware impairments,”
+IEEE Wireless Commun. Lett., vol. 9, no. 9, pp. 1538–1542, Sep. 2020.
+[44] J. Hou, Z. Yang, and M. Shikh-Bahaei, “Hardware impairment-aware data
+collection and wireless power transfer using a MIMO full-duplex UAV,”
+in Proc. IEEE Int. Conf. Commun. Workshops, 2020, pp. 1–6.
+[45] T. C. W. Schenk, P. F. M. Smulders, and E. R. Fledderus, “Impact of
+nonlinearities in multiple-antenna OFDM transceivers,” in Proc. Symp.
+Commun. Veh. Technol., 2006, pp. 53–56.
+[46] T. C. W. Schenk, E. R. Fledderus, and P. F. M. Smulders, “Performance
+analysis of zero-IF MIMO OFDM transceivers with IQ imbalance,” J.
+Commun., vol. 2, no. 7, pp. 9–19, Dec. 2007.
+[47] L. Piazzo and P. Mandarini, “Analysis of phase noise effects in OFDM
+modems,” IEEE Trans. Commun., vol. 50, no. 10, pp. 1696–1705,
+Oct. 2002.
+[48] A. Goldsmith, Wireless Communications. Cambridge, U.K.: Cambridge
+Univ. Press, 2005.
+[49] G. Matz and F. Hlawatsch, “Fundamentals of time-varying communica-
+tion channels,” in Wireless Communications Over Rapidly Time-Varying
+Channels. San Francisco, CA, USA: Academic, May 2011, ch. 1, pp. 1–63.
+[50] K.I.Pedersen,P.E.Mogensen,andB.H.Fleury,“Powerazimuthspectrum
+in outdoor environments,” Electron. Lett., vol. 33, no. 18, pp. 1583–1584,
+Aug. 1997.
+[51] A. F. Molisch, Wireless Communications. Hoboken, NJ, USA: Wiley,
+2011.
+[52] C. E. O’Lone, H. S. Dhillon, and R. M. Buehrer, “Characterizing the
+ﬁrst-arriving multipath component in 5G millimeter wave networks: TOA,
+AOA, and non-line-of-sight bias,” IEEE Trans. Wireless Commun., vol. 21,
+no. 3, pp. 1602–1620, Mar. 2022.
+[53] A. Meijerink and A. F. Molisch, “On the physical interpretation of the
+Saleh-Valenzuela model and the deﬁnition of its power delay proﬁles,”
+IEEE Trans. Antennas Propag., vol. 62, no. 9, pp. 4780–4793, Sep. 2014.
+[54] V.VaandR.W.Heath,“Basicrelationshipbetweenchannelcoherencetime
+and beamwidth in vehicular channels,” in Proc. IEEE 82nd Veh. Technol.
+Conf., 2015, pp. 1–5.
+[55] J. P. Z. Peebles, Probability, Random Variables, and Random Signal
+Principles, 4th ed. New York, NY, USA: McGraw-Hill, 2001.
+[56] H. S. Dhillon and G. Caire, “Wireless backhaul networks: Capacity bound,
+scalability analysis and design guidelines,” IEEE Trans. Wireless Com-
+mun., vol. 14, no. 11, pp. 6043–6056, Nov. 2015.
+[57] M. Patzold, Mobile Radio Channels, 2nd ed. Hoboken, NJ, USA: Wiley,
+2012.
+[58] C. E. Rasmussen and C. K. I. Williams, Gaussian Processes for Machine
+Learning. Cambridge, MA, USA: MIT Press, 2006.
+[59] N. Goddemeier and C. Wietfeld, “Investigation of air-to-air channel char-
+acteristics and a UAV speciﬁc extension to the rice model,” in Proc. IEEE
+Glob. Commun. Conf. Workshops, 2015, pp. 1–5.
+[60] Z. Huang, B. Zheng, and R. Zhang, “Transforming fading channel from
+fast to slow: Intelligent refracting surface aided high-mobility communi-
+cation,” IEEE Trans. Wireless Commun., vol. 21, no. 7, pp. 4989–5003,
+Jul. 2022.
+Morteza Banagar (Member, IEEE) received the
+B.Sc. and M.Sc. degrees in electrical engineering
+from the University of Tehran, Tehran, Iran, in 2012
+and2014,respectively,andthePh.D.degreeinelectri-
+cal engineering from Virginia Tech, Blacksburg, VA,
+USA, in 2022. He is currently a Senior Engineer with
+Qualcomm Incorporated, working on the design and
+implementation of 5G cellular modems. His current
+research interests include system-level design and
+analysis of UAV networks, channel modeling, and
+design and enhancement of 5G cellular modems.
+Harpreet S. Dhillon (Fellow, IEEE) received the
+B.Tech. degree in electronics and communication en-
+gineering from Indian Institute of Technology Guwa-
+hati, Guwahati, India, in 2008, the M.S. degree in
+electrical engineering from Virginia Tech, Blacks-
+burg, VA, USA, in 2010, and the Ph.D. degree in
+electrical engineering from the University of Texas
+at Austin, Austin, TX, USA, in 2013. After serving
+as a Viterbi Postdoctoral Fellow with the University
+of Southern California, Los Angeles, CA, USA, for
+a year. In 2014, he joined Virginia Tech, where he
+is currently the W. Martin Johnson Professor of Engineering and the interim
+Department Head of the Bradley Department of Electrical and Computer En-
+gineering. His research interests include communication theory, wireless net-
+works, geolocation, and stochastic geometry. He is a Fellow of AAIA, a Fellow
+of AIIA, and a Clarivate Analytics (Web of Science) Highly Cited Researcher.
+He was the recipient of six best paper awards including the 2014 IEEE Leonard
+G. Abraham Prize, the 2015 IEEE ComSoc Young Author Best Paper Award,
+and the 2016 IEEE Heinrich Hertz Award. He was also the recipient of Early
+Achievement Awards from three IEEE ComSoc Technical Committees, namely,
+the Communication Theory Technical Committee (CTTC) in 2020, the Radio
+Communications Committee (RCC) in 2020, and the Wireless Communications
+Technical Committee (WTC) in 2021. He was named the 2017 Outstanding
+New Assistant Professor, the 2018 Steven O. Lane Junior Faculty Fellow, the
+2018 College of Engineering Faculty Fellow, the 2019 Elizabeth and James E.
+Turner Jr. ’56 Faculty Fellow, and the recipient of the 2020 Dean’s Award for
+Excellence in Research by Virginia Tech. His other academic Honors include
+the 2008 Agilent Engineering and Technology Award, the UT Austin MCD
+Fellowship, the 2013 UT Austin WNCG leadership award, and the inaugural IIT
+Guwahati Young Alumni Achiever Award 2020. He was the TPC Co-chair for
+IEEE WCNC 2022 and IEEE PIMRC 2024, and as a symposium TPC Co-chair
+for many IEEE conferences. He has also served on the Editorial boards of several
+IEEE journals with his current appointments being on the Executive Editorial
+Committee for IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS and as
+Senior Editor for IEEE WIRELESS COMMUNICATIONS LETTERS.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:11:33 UTC from IEEE Xplore.  Restrictions apply. 

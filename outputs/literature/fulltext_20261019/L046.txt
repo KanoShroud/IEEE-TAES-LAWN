@@ -1,0 +1,2778 @@
+
+===== PDF PAGE 1 =====
+Multidim Syst Sign Process (2019) 30:749–790
+https://doi.org/10.1007/s11045-018-0579-z
+Performance analysis and improvement of direct position
+determination based on Doppler frequency shifts in
+presence of model errors: case of known waveforms
+Ding Wang1,2 · Jiexin Yin1,2 · Ruirui Liu1,2 ·
+Hongyi Yu1,2 · Yunlong Wang1,2
+Received: 2 December 2016 / Revised: 15 March 2018 / Accepted: 12 April 2018 /
+Published online: 26 April 2018
+© Springer Science+Business Media, LLC, part of Springer Nature 2018
+Abstract The direct position determination (DPD) method based on Doppler frequency
+shifts for signals with known waveforms is ﬁrst proposed by Amar and Weiss. Although this
+method exhibits excellent asymptotic performance, but does not account for the effects of
+uncertainties in the receiver positions and velocities. These uncertainties may result in a con-
+siderable reduction of localization accuracy. In this paper, the statistical performance of the
+DPD estimator is investigated under receiver position and velocity errors (also called model
+errors). We derive an analytical expression for the mean square error in the estimated source
+location in the case where the estimator assumes that the receiver positions and velocities are
+accurate, but they in fact contain errors. The main difﬁculty in the mathematical analysis is
+that the DPD cost function is not explicit with respect to the emitter position. Consequently,
+some algebraic manipulation is required to derive closed-form expressions for the ﬁrst- and
+second-order partial derivatives of the cost function. The Cramér–Rao bounds (CRBs) for
+the target position estimation are also deduced in the presence and absence of model errors.
+These CRBs provide insights into the effects of model errors on the localization accuracy.
+Two improved DPD methods are developed based on our analysis results. The ﬁrst has lower
+complexity than the common grid search, and the second exhibits increased robustness to
+model errors. Simulation results support and corroborate the theoretical developments in this
+paper.
+Keywords Direct position determination (DPD) · Performance analysis · Model errors ·
+Doppler frequency shifts · Known waveforms · Mean square error (MSE) · Cramér–Rao
+bound (CRB)
+B Jiexin Yin
+Cindyin0807@163.com
+1
+National Digital Switching System Engineering and Technology Research Center, Zhengzhou
+450002, People’s Republic of China
+2
+Zhengzhou Information Science and Technology Institute, Zhengzhou 450002, Henan, People’s
+Republic of China
+123
+
+
+===== PDF PAGE 2 =====
+750
+Multidim Syst Sign Process (2019) 30:749–790
+1 Introduction
+Emitter localization has received signiﬁcant attention in the ﬁeld of signal processing because
+of its importance in radar, sonar, navigation, sensor networks, and wireless communications
+(Pulford 2010; Gogineni and Nehorai 2011; Shen and Win 2010; Zhang et al. 2016). Gen-
+erally, the traditional source localization technique is based on a two-step procedure. In the
+ﬁrst step, the intermediate parameters of the transmitted signals (e.g., angle of arrival (AOA)
+(Schmidt 1986; Kutluyil 2005), time of arrival (TOA) (Cheung et al. 2004; Beck et al. 2008),
+time difference of arrival (TDOA) (Yang and Ho 2009; Ho and Yang 2008), frequency of
+arrival (FOA) (Mason 2004), frequency difference of arrival (FDOA) (Ho et al. 2007; Sun and
+Ho 2011), received signal strength (RSS) (Rahman and Kleeman 2009), gain ratio of arrival
+(GROA) (Ho and Sun 2008)) are measured at each station independently. In the second step,
+the estimated parameters are used to determine the location of the emitter. This two-step
+procedure is also known as the decentralized approach (Wax and Kailath 1985).
+Although two-step localization is extensively used in modern localization systems, it
+cannot achieve the minimum estimation variance. Indeed, this localization method is sub-
+optimal, as the parameter estimation in the ﬁrst phase is performed independently by each
+sensor, without using the constraint that all the observations relate to the same emitter loca-
+tion. Recently, direct position determination (DPD) has emerged as a promising technique for
+the localization of radio frequency sources (Amar and Weiss 2008; Weiss 2011; Li et al. 2016;
+Pourhomayoun and Fowler 2014; Weiss 2004; Weiss and Amar 2005; Amar and Weiss 2007;
+Oispuu and Nickel 2010; Bar-Shalom and Weiss 2009; Reuven and Weiss 2009). Although
+this kind of localization method may require more computations and communication band-
+width, novel information technology (Shen et al. 2017; Fu et al. 2016; Sun and Gu 2017)
+can be used to overcome these difﬁculties. For example, the cloud computing and cloud
+storage technology (Shen et al. 2017; Fu et al. 2016) can be used to reduce the computation
+loads, and the compressive sensing technology (Sun and Gu 2017) is helpful for reducing
+the communication bandwidth.
+Indeed, DPD is a centralized and single-step estimation technique in which the estimator
+uses exactly the same data as the classical two-step methods but determines the source
+location directly. In general, the DPD method outperforms conventional two-step methods in
+low signal-to-noise (SNR) conditions and when there are relatively few sample; moreover,
+it does not encounter the association problem. More importantly, the DPD technique can be
+applied to many wireless positioning systems. DPD methods have been proposed for locating
+a narrowband radio emitter based on Doppler frequency shifts (Amar and Weiss 2008) and
+for wideband signals using both the Doppler effects and relative delays (Weiss 2011; Li et al.
+2016; Pourhomayoun and Fowler 2014). In addition, DPD methods for radio signals with
+antenna arrays have been developed (Weiss 2004; Weiss and Amar 2005; Amar and Weiss
+2007; Oispuu and Nickel 2010). As the temporal characteristics of signals can be exploited
+in a more convenient way in DPD, methods for orthogonal frequency division multiplexing
+signals (Bar-Shalom and Weiss 2009) and cyclostationary signals (Reuven and Weiss 2009)
+have been proposed. Additionally, several DPD methods for locating transmitted signals with
+known waveforms have been reported (Amar and Weiss 2008; Li et al. 2016; Weiss 2004;
+Weiss and Amar 2005), and these achieve higher localization accuracy than methods that do
+not exploit the signal waveform information. Applications of such studies can be found in,
+for example, cooperative communication systems where some known preamble sequences
+are transmitted for training purposes (Li et al. 1995; Gu et al. 2008).
+Similar to traditional two-step localization, the localization accuracy of the DPD methods
+may be degraded by model uncertainties. The model mismatches come from various sources.
+123
+
+
+===== PDF PAGE 3 =====
+Multidim Syst Sign Process (2019) 30:749–790
+751
+For example, there may be uncertainties in the receiver locations and velocities, array cali-
+bration errors, as well as scattering and multipath errors. The statistical performance of the
+DPD approach in the presence of array model errors has been examined for the case of known
+waveforms (Amar and Weiss 2006). The estimation accuracy of the DPD method presented in
+Amar and Weiss (2008), which uses Doppler frequency shifts, has been rigorously analyzed
+in the case of receiver position and velocity errors (Ding and Ying 2017). In this paper, our
+theoretical derivation focuses on an alternative DPD method in Amar and Weiss (2008) that
+assumes the signal waveforms are known. An analytical expression for the mean square error
+of the source position estimate is derived when the estimator assumes the model errors do
+not exist, but are in fact present. Note that the model errors herein refer to the random pertur-
+bations in receiver positions and velocities. The theoretical formula for the increase in mean
+square error (MSE) of the source location estimates resulting from random receiver loca-
+tion and velocity perturbations is derived. The main difﬁculty in the mathematical analysis
+stems from the fact that the DPD cost function in the estimator is not expressed analytically
+with respect to the emitter position parameters. As a consequence, some algebraic manipu-
+lations must be used to derive closed-form expressions for the ﬁrst- and second-order partial
+derivatives of the cost function. Furthermore, the Cramér–Rao bounds (CRBs) for the source
+position estimation are deduced for two cases: (a) the model errors are not present, and (b)
+the model errors exist. Finally, we present two novel DPD methods on the basis of the perfor-
+mance analysis results in this paper. Their excellent performances are veriﬁed by a number
+of simulations.
+The remainder of this paper is organized as follows. In Sect. 2, the signal model for DPD
+is formulated. Section 3 brieﬂy describes the DPD estimator proposed in Amar and Weiss
+(2008), which is suitable for the case of known waveforms. The statistical assumption and
+effects of the model errors are discussed in Sect. 4. In Sect. 5, the analytical formula for
+the MSE of the DPD method is derived in the presence of model errors. Section 6 derives
+the CRB of the source location estimate for two cases: when model errors are absent and
+when they are present. In Sect. 7, two improved DPD methods are developed. Section 8
+presents numerical results that conﬁrm our theoretical developments. Conclusions are drawn
+in Sect. 9. The proofs of the main results are shown in the appendixes.
+2 Signal model for direct position determination
+Consider a stationary radio emitter and L mobile receivers, synchronized in frequency and
+time. The receivers intercept the radiating signal at K short intervals along their trajectory.
+The emitter position is denoted by the D × 1 vector of coordinates q. Moreover, let pl,k
+and ˙pl,k denote the coordinate and velocity vector of the lth receiver at the kth interception
+interval, respectively, both of which are D × 1 vectors. Note that D denotes the coordinate
+dimension, namely, D  2 for planar localization, and D  3 for three-dimensional (3D)
+localization. For simplicity, only two-dimensional (2D) localization scenario, which is the
+case studied in Amar and Weiss (2008), Weiss (2011), Li et al. (2016), Pourhomayoun and
+Fowler (2014), Weiss (2004), Weiss and Amar (2005), Amar and Weiss (2007), is considered
+here. The reason is that the extension of the theoretical developments in this paper to 3D space
+is very straightforward. Additionally, when we consider 2D localization, the source position
+vector q is given by q  [x y]T, where x and y denote x- and y-coordinates, respectively.
+For the sake of clarity, Fig. 1 depicts two different geometrical conﬁgurations of the
+problem in 2D, where both the receivers and the source are located in the x–y plane. The solid
+lines show the receivers’ trajectories where the triangles indicate the interception intervals.
+123
+
+
+===== PDF PAGE 4 =====
+752
+Multidim Syst Sign Process (2019) 30:749–790
+Fig. 1 Two localization geometries for 2D localization. a Three mobile receivers used for localization. b Four
+mobile receivers used for localization
+The emitter position is indicated by a star. Note that these two localization geometries are
+used to examine the performance of the DPD methods in Sect. 8.
+To introduce the signal model for direct localization, the following two assumptions are
+made.
+Assumption 1 At each interception point, the observation time is sufﬁciently short that the
+locations and velocities of the receivers remain unchanged during the data collection period.
+Assumption 2 The signal bandwidth B is small compared to the inverse of the propagation
+time between the receivers, i.e., B < 1/τmax, where τmax is the maximal propagation time
+between the receivers. As a result, the signal complex envelope is the same at all spatially
+separated receivers.
+Under these two assumptions, the complex signal observed by the lth receiver at the kth
+interception interval at time t is modeled as
+ˆzl,k(t)  αl,ksk(t) · exp{j2π fl,kt} + εl,k(t) (1 ≤l ≤L ; 1 ≤k ≤K)
+(1)
+where sk(t) is the signal complex envelope during the kth interception interval, which is
+assumed to be known, εl,k(t) is a complex circular Gaussian noise with zero mean and
+variance σ 2, αl,k is an unknown complex path attenuation, and fl,k is the frequency observed
+by the lth receiver during the kth interception interval.
+The expression for fl,k can be written as
+fl,k  ( fc + Δfk)(1 + γ (q, ¯pl,k))
+(2)
+where fc is the nominal frequency of the emitter signal, Δfk is the unknown frequency shift
+due to the source instability during the kth interception interval, and γ (q, ¯pl,k) is caused by
+doppler effects. The expression for γ (q, ¯pl,k) can be obtained based on the radial velocity
+of each receiver towards (or away from) the emitter, which is equal to the derivative of the
+Euclidean distance between the emitter and the receiver with respect to time. According to
+Amar and Weiss (2008), Weiss (2011), Li et al. (2016), Pourhomayoun and Fowler (2014),
+γ (q, ¯pl,k) is given by
+γ (q, ¯pl,k)  −1
+v · ∂||q −pl,k||2
+∂t
+ 1
+v ·
+˙pT
+l,k(q −pl,k)
+||q −pl,k||2
+(3)
+123
+
+
+===== PDF PAGE 5 =====
+Multidim Syst Sign Process (2019) 30:749–790
+753
+where v is the signal propagation speed and ¯pl,k  [ pT
+l,k ˙pT
+l,k]T. For a given k, we collect
+¯pl,k (1 ≤l ≤L) to form the vector ¯pk  [ ¯pT
+1,k ¯pT
+2,k · · · ¯pT
+L,k]T. Taking into account that
+typically, γ (q, ¯pl,k) << 1 and Δfk << fc, fl,k can be approximated as
+fl,k ≈fc + Δfk + fcγ (q, ¯pl,k)
+(4)
+It is not unreasonable to assume that the nominal frequency fc is known to all receivers.
+Thus, each receiver can perform a down-conversion of the intercepted signal by fc, resulting
+in a signal frequency of
+f ′
+l,k ≈Δfk + fcγ (q, ¯pl,k)
+(5)
+During each interception interval, we assume that each receiver collects N snapshots,
+sampled with period Ts, of the down converted signals. From (1) and (5), the nth sampled
+signal can be modeled as
+ˆzl,k(tn)  αl,ksk(tn) · exp{j2π f ′
+l,ktn} + εl,k(tn)
+ αl,ksk(tn) · exp{j2πΔfktn} · exp{j2π fcγ (q, ¯pl,k)tn} + εl,k(tn)
+(1 ≤l ≤L ; 1 ≤k ≤K ; 1 ≤n ≤N)
+(6)
+where tn  (n −1)Ts denotes the nth sampling instant. Deﬁne the vectors
+⎧
+⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎩
+ˆzl,k  [ˆzl,k(t1) ˆzl,k(t2) · · · ˆzl,k(tN)]T
+εl,k  [εl,k(t1) εl,k(t2) · · · εl,k(tN)]T
+sk  [sk(t1) sk(t2) · · · sk(tN)]T
+b(Δfk)  [1 exp{j2πΔfkTs} exp{j4πΔfkTs} · · · exp{j2πΔfk(N −1)Ts}]T
+(7)
+It follows immediately from (6) and (7) that
+ˆzl,k  αl,k A(q, ¯pl,k)B(Δfk)sk + εl,k  αl,k A(q, ¯pl,k)Skb(Δfk) + εl,k
+ zl,k + εl,k
+(1 ≤l ≤L ; 1 ≤k ≤K)
+(8)
+where
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎩
+A(q, ¯pl,k)  diag[1 exp{j2π fcγ (q, ¯pl,k)Ts} exp{j4π fcγ (q, ¯pl,k)Ts}
+· · · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+B(Δfk)  diag[b(Δfk)]  diag[1 exp{j2πΔfkTs} exp{j4πΔfkTs}
+· · · exp{j2πΔfk(N −1)Ts}]
+Sk  diag[sk]  diag[sk(t1) sk(t2) · · · sk(tN)]
+zl,k  αl,k A(q, ¯pl,k)Skb(Δfk)
+(9)
+Obviously, zl,k is the noise-free measurement vector. Note that the DPD methods devel-
+oped in Amar and Weiss (2008) is based on the signal model in (8).
+The following remarks concern the signal model described above.
+Remark 1 Note that there are multiple spatially separated receivers for sampling the signal.
+Therefore, the data used are actually deﬁned in two-dimensional space, namely the time
+dimension and spatial dimension.
+123
+
+
+===== PDF PAGE 6 =====
+754
+Multidim Syst Sign Process (2019) 30:749–790
+Remark 2 Combining the measurement data from distinct receivers at the kth interception
+interval, we can obtain a novel measurement vector with higher dimension as
+ˆ˜zk  ˜A(q, ¯pk, αk)B(Δfk)sk + ˜εk
+(1 ≤k ≤K)
+(10)
+where
+⎧
+⎨
+⎩
+ˆ˜zk  [ˆzH
+1,k ˆzH
+2,k · · · ˆzH
+L, k]H , ˜εk  [εH
+1,k εH
+2,k · · · εH
+L, k]H , αk  [α1, k α2, k · · · αL, k]T
+˜A(q, ¯pk, αk)  [(α1,k A(q, ¯p1,k)) H (α2,k A(q, ¯p2,k)) H · · · (αL, k A(q, ¯pL, k)) H] H
+(11)
+Note that the signal model in (10) is similar to the array signal model in the well-known
+estimation of signal parameters via rotational invariance techniques (ESPRIT) (Roy and
+Kailath 1989). Speciﬁcally, ˜A(q, ¯pk, αk) can be viewed as the source direction matrix and
+B(Δfk) can be regarded as the rotational matrix, which is diagonal. It is easy to see that the
+array signal is deﬁned in two-dimensional space.
+3 Optimization criterion for direct position determination
+In this section, the DPD method presented in Amar and Weiss (2008) is brieﬂy introduced.
+There are two DPD estimators presented in Amar and Weiss (2008). One is developed for the
+case of unknown waveforms, and the other is used to locate signals with known waveforms.
+Here, we focus on the latter, which can be used in cooperative communication systems (Li
+et al. 1995; Gu et al. 2008).
+In Amar and Weiss (2008), the optimization model for direct localization is established
+according to the maximum likelihood (ML) criterion, which can be formulated as
+min
+{αl,k},{Δfk},q
+ K
+
+k1
+L
+
+l1
+||ˆzl,k −αl,k A(q, ¯pl,k)B(Δfk)sk||2
+2
+
+(12)
+where we assume, without loss of generality, that ||sk||2 1 to avoid scaling ambiguity.
+As the cost function in (12) is quadratic in αl,k, it attains its minimum value at
+ˆαl,k  (sH
+k (B(Δfk))H(A(q, ¯pl,k))H A(q, ¯pl,k)B(Δfk)sk)−1sH
+k (B(Δfk))H(A(q, ¯pl,k))Hˆzl,k
+ sH
+k (B(Δfk))H(A(q, ¯pl,k))Hˆzl,k
+(13)
+where the second equality uses the diagonal structure of A(q, ¯pl,k) and B(Δfk) as well as
+the constraint ||sk||2 1. Substituting (13) into (12) gives the following optimization model
+min
+{Δfk},q
+ K
+
+k1
+L
+
+l1
+(||ˆzl,k||2
+2−sH
+k (B(Δfk))H(A(q, ¯pl,k))Hˆzl,k ˆzH
+l,k A(q, ¯pl,k)B(Δfk)sk)
+
+(14)
+which is equivalent to
+min
+{Δfk},q
+ K
+
+k1
+||( ˆCk(q, ¯pk))HSkb(Δfk)||2
+2
+
+ min
+{Δfk},q
+ K
+
+k1
+(b(Δfk))HSH
+k ˆCk(q, ¯pk)( ˆCk(q, ¯pk))HSkb(Δfk)
+
+(15)
+123
+
+
+===== PDF PAGE 7 =====
+Multidim Syst Sign Process (2019) 30:749–790
+755
+where
+ˆCk(q, ¯pk)  [(A(q, ¯p1,k))Hˆz1,k (A(q, ¯p2,k))Hˆz2,k · · · (A(q, ¯pL,k))HˆzL,k]
+(16)
+As we are mainly interested in estimating the position vector q, it is desirable to design
+a cost function that depends only on q. Note that for any given q, Δfk can be obtained by
+a one-dimensional search. As a result, the optimization criterion for determining the source
+location vector q can be formulated as
+max
+q
+h(q)  max
+q
+ K
+
+k1
+max
+Δfk
+{hk(Δfk, q)}
+
+(17)
+where
+⎧
+⎪⎨
+⎪⎩
+h(q) 
+K	
+k1
+max
+Δfk
+{hk(Δfk, q)}
+hk(Δfk, q)  ||( ˆCk(q, ¯pk))HSkb(Δfk)||2
+2 (b(Δfk))HSH
+k ˆCk(q, ¯pk)( ˆCk(q, ¯pk))HSkb(Δfk)
+(18)
+Because the cost function in (17) is not a closed-form expression for q, the most straight-
+forward method of solving (17) is grid search, as recommended in Amar and Weiss (2008).
+Moreover, recalling the deﬁnition of b(Δfk) in (7), the maximization of hk(Δfk, q) with
+respect to Δfk can be achieved by the fast Fourier transform (FFT), as described in Amar
+and Weiss (2008). Using this property, the complexity of computing h(q) for a given q can
+be substantially reduced. It is worth pointing out that the statistical performance of the DPD
+method inherently relies on the optimization criterion, rather than the speciﬁc numerical
+algorithm.
+4 Statistical assumption and effect of model errors
+In the DPD method described above, the vector ¯pl,k, which consists of the receiver positions
+and velocities, is assumed to be precisely known. However, this is rarely the case in practical
+scenarios. Sometimes, we have a noisy observation of ¯pl,k, which can be expressed as
+ˆ¯pl,k  ¯pl,k + δ ¯pl,k 
+
+ pl,k
+˙pl,k
+
++
+
+ δpl,k
+δ ˙pl,k
+
+(1 ≤l ≤L ; 1 ≤k ≤K)
+(19)
+where δpl,k and δ ˙pl,k are the perturbations in the receiver positions and velocities, respec-
+tively, and δ ¯pl,k  [δpT
+l,k δ ˙pT
+l,k]T is the vector containing the two errors. In this study, δ ¯pl,k
+denotes model errors, which are assumed to have a zero-mean Gaussian distribution with
+covariance matrix ¯Pl,k  E[δ ¯pl,k · δ ¯pT
+l,k].
+For a given k, we collect ˆ¯pl,k and δ ¯pl,k from l  1 to l  L and construct the following
+two vectors
+⎧
+⎨
+⎩
+ˆ¯pk  [ ˆ¯p
+T
+1,k ˆ¯p
+T
+2,k · · · ˆ¯p
+T
+L,k]T
+δ ¯pk  [δ ¯pT
+1,k δ ¯pT
+2,k · · · δ ¯pT
+L,k]T
+(1 ≤k ≤K)
+(20)
+Thus, the error vector δ ¯pk is zero-mean Gaussian with covariance matrix
+¯Pk  E[δ ¯pk · δ ¯pT
+k ]  blkdiag[ ¯P1,k ¯P2,k · · · ¯P L,k] (1 ≤k ≤K)
+(21)
+123
+
+
+===== PDF PAGE 8 =====
+756
+Multidim Syst Sign Process (2019) 30:749–790
+The block-diagonal structure of ¯Pk stems from the fact that δ ¯pl1,k and δ ¯pl2,k are statisti-
+cally independent for l1̸  l2.
+It is evident that, if model mismatch exists, the localization errors come from two sources:
+measurement noise εl,k and model perturbations δ ¯pl,k. In the following sections, the statis-
+tical performance is derived under the combined effects of these two sources of errors. For
+ease of illustration, we gather the two kinds of errors taken at the kth interception interval to
+construct a new error vector
+(22)
+It can be readily veriﬁed that the dimension of ξk is equal to M0  2(D + N)L. Moreover,
+ξk is a zero-mean Gaussian vector with covariance matrix
+Ek  E[ξkξT
+k ]  blkdiag
+
+1
+2σ 2 I2N L ¯Pk
+
+ blkdiag
+
+1
+2σ 2 I2N L ¯P1,k ¯P2,k · · · ¯P L,k
+
+(1 ≤k ≤K)
+(23)
+which follows from the statistical independence of εl,k and δ ¯pl,k. Further, the collection
+of ξk leads to the total error vector ξ  [ξT
+1 ξT
+2 · · · ξT
+K ]T, whose dimension is equal to
+M  2(D + N)K L. It is easy to see that ξ is also zero-mean Gaussian with covariance matrix
+E  E[ξξT]  blkdiag[E1 E2 · · · EK ]
+(24)
+Similarly, the block-diagonal structure of E stems from the fact that ξk1 and ξk2 are
+mutually uncorrelated for k1̸  k2.
+In the presence of model errors, the source position is actually determined by
+max
+q
+φ(q, ξ)  max
+q
+ K
+
+k1
+max
+Δfk
+{φk(Δfk, q, ξk)}
+
+(25)
+where
+⎧
+⎪⎨
+⎪⎩
+φ(q, ξ) 
+K	
+k1
+max
+Δfk
+{φk(Δfk, q, ξk)}
+φk(Δfk, q, ξk)  ||( ˆCk(q, ˆ¯pk))HSkb(Δfk)||2
+2 (b(Δfk))HSH
+k ˆCk(q, ˆ¯pk)( ˆCk(q, ˆ¯pk))HSkb(Δfk)
+(26)
+It can be readily checked from (18) and (26) that hk(Δfk, q)  φk(Δfk, q, ξk) when
+δ ¯pk  O2DL×1, and h(q)  φ(q, ξ) when δ ¯pk  O2DL×1 for all k  1 , 2 , · · · , K.
+Assume that the optimal solution to (25) is ˆq and its estimated error is δq  ˆq −q. As
+stated above, the estimated error δq relies on both measurement noise and model errors. In
+the next section, the statistical performance of δq is derived under the combined effects of
+these two kinds of errors.
+5 MSE of direct position determination method in presence of model
+errors
+In this section, the MSE for the DPD method stated above is addressed. For this purpose, a
+ﬁrst-order perturbation analysis is applied to determine the linear relationship between the
+123
+
+
+===== PDF PAGE 9 =====
+Multidim Syst Sign Process (2019) 30:749–790
+757
+localization errors and the two kinds of errors deﬁned in the previous section. The theoretical
+MSE of the DPD estimator can then be derived based on the statistical assumptions about
+the errors.
+5.1 Expression for localization errors
+By performing a ﬁrst-order perturbation analysis, we can obtain the following result.
+Proposition 1 Assuming the estimation error of ˆq is denoted as δq, i.e., δq  ˆq −q, it
+follows from (25) that
+δq  −( ¨Φ1(q, O M×1))−1 ¨Φ2(q, O M×1)ξ + o(||ξ||2)
+(27)
+where
+¨Φ1(q, O M×1)  ∂2φ(q, O M×1)
+∂q∂qT
+,
+¨Φ2(q, O M×1)  ∂2φ(q, ξ)
+∂q∂ξT
+
+ξO M×1
+(28)
+The proof of Proposition 1 can be found in Appendix A. Note that although (27) describes the
+linear relation between δq and ξ, this formula cannot be directly applied because compact
+expressions for matrices ¨Φ11(q, O M×1) and ¨Φ12(q, O M×1) are not yet available. Indeed,
+it is not trivial to derive expressions for these two matrices, because the functional form of
+φ(q, ξ) is not given explicitly in (26). Hence, some manipulation is required to obtain the
+following results, which are formally stated in a proposition.
+Proposition 2 According to the deﬁnition of φ(q, ξ) in (26), it follows that
+¨Φ1(q, O M×1) 
+K
+
+k1
+
+¨Φk,1(Δfk, q, O M0×1) −¨ϕk,1(Δfk, q, O M0×1)( ¨ϕk,1(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+
+(29)
+¨Φ2(q, O M×1) 
+K
+
+k1
+
+¨Φk,2(Δfk, q, O M0×1) −¨ϕk,1(Δfk, q, O M0×1)( ¨ϕk,2(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+
+(i(k)T
+K
+⊗I M0)
+(30)
+where
+¨φk(Δfk, q, O M0×1)  ∂2φk(Δfk, q, O M0×1)
+∂Δf 2
+k
+(31)
+¨ϕk,1(Δfk, q, O M0×1)  ∂2φk(Δfk, q, O M0×1)
+∂Δfk∂q
+, ¨ϕk,2(Δfk, q, O M0×1)  ∂2φk(Δfk, q, ξk)
+∂Δfk∂ξk
+
+ξkO M0×1
+(32)
+¨Φk,1(Δfk, q, O M0×1)  ∂2φk(Δfk, q, O M0×1)
+∂q∂qT
+,
+¨Φk,2(Δfk, q, O M0×1)  ∂2φk(Δfk, q, ξk)
+∂q∂ξT
+k
+
+ξkO M0×1
+(33)
+Proposition 2 is proved in Appendix B. Note that the results in Proposition 2 play a crucial
+role in the subsequent analysis, because they provide the analytical formulas for calculat-
+ing the matrices ¨Φ11(q, O M×1) and ¨Φ12(q, O M×1). However, it can be seen from (29) and
+(30) that we still need to deduce expressions for ¨φk(Δfk, q, O M0×1), ¨ϕk,1(Δfk, q, O M0×1),
+¨ϕk,2(Δfk, q, O M0×1),
+¨Φk,1(Δfk, q, O M0×1), and
+¨Φk,2(Δfk, q, O M0×1). These can be
+obtained according to the expression for φk(Δfk, q, ξk), which is given in the second equality
+in (26).
+123
+
+
+===== PDF PAGE 10 =====
+758
+Multidim Syst Sign Process (2019) 30:749–790
+First, we deﬁne
+˙φk(Δfk, q, O M0×1)  ∂φk(Δfk, q, O M0×1)
+∂Δfk
+, ˙ϕk,1(Δfk, q, O M0×1)  ∂φk(Δfk, q, O M0×1)
+∂q
+(34)
+Using the second equality in (26), we ﬁnd that
+˙φk(Δfk, q, O M0×1)  2 · Re{(˙b(Δfk))HSH
+k Ck(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
+(35)
+< ˙ϕk,1(Δfk, q, O M0×1) > j 2 · Re{(b(Δfk))HSH
+k ˙C(1)
+k, j(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
+(36)
+where
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎩
+˙b(Δfk)  ∂b(Δfk)
+∂Δfk
+ (j2πTs) · [0 exp{j2πΔfkTs} 2 · exp{j4πΔfkTs}
+· · · (N −1) · exp{j2πΔfk(N −1)Ts}]T
+Ck(q, ¯pk)  ˆCk(q, ¯pk)
+
+¯εkO2N L×1
+ [(A(q, ¯p1,k))Hz1,k (A(q, ¯p2,k))Hz2,k
+· · · (A(q, ¯pL,k))HzL,k]
+˙C(1)
+k, j(q, ¯pk)  ∂Ck(q, ¯pk)
+∂< q > j
+(1 ≤j ≤D)
+(37)
+From (35) and (36), it can then be shown that
+¨φk(Δfk, q, O M0×1)  2 · Re{(˙b(Δfk))HSH
+k Ck(q, ¯pk)(Ck(q, ¯pk))HSk ˙b(Δfk)}
++ 2 · Re{(¨b(Δfk))HSH
+k Ck(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
+(38)
+< ¨ϕk,1(Δfk, q, O M0×1) > j  2 · Re{(˙b(Δfk))HSH
+k ˙C(1)
+k, j(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
++ 2 · Re{(b(Δfk))HSH
+k ˙C(1)
+k, j(q, ¯pk)(Ck(q, ¯pk))HSk ˙b(Δfk)}
+(39)
+where
+¨b(Δfk)  ∂2b(Δfk)
+∂Δf 2
+k
+ −(4π2T 2
+s ) · [0 exp{j2πΔfkTs} 4 · exp{j4πΔfkTs}
+· · · (N −1)2 · exp{j2πΔfk(N −1)Ts}]T
+(40)
+Additionally, using (36) leads to
+< ¨Φk,1(Δfk, q, O M0×1) > j1 j2 2 · Re{(b(Δfk))HSH
+k ¨C
+(1)
+k, j1 j2(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
++2 · Re{(b(Δfk))HSH
+k ˙C(1)
+k, j1(q, ¯pk)( ˙C(1)
+k, j2(q, ¯pk))HSkb(Δfk)}
+(41)
+where
+¨C
+(1)
+k, j1 j2(q, ¯pk) 
+∂2Ck(q, ¯pk)
+∂< q > j1 ∂< q > j2
+(1 ≤j1 , j2 ≤D)
+(42)
+123
+
+
+===== PDF PAGE 11 =====
+Multidim Syst Sign Process (2019) 30:749–790
+759
+The details of calculating the matrices ˙C(1)
+k, j(q, ¯pk) and ¨C
+(1)
+k, j1 j2(q, ¯pk) are provided in
+Appendix C. From (39) and (41) it is straightforward to deduce that
+¨ϕk,1(Δfk, q, O M0×1)  2 · Re{(Ω(1)
+k (q, ¯pk))H(((Ck(q, ¯pk))TS∗
+k(b(Δfk))∗) ⊗(Sk ˙b(Δfk)))}
++ 2 · Re{(Ω(1)
+k (q, ¯pk))H(((Ck(q, ¯pk))TS∗
+k(˙b(Δfk))∗) ⊗(Skb(Δfk)))}
+(43)
+¨Φk,1(Δfk, q, O M0×1)  2 · Re{(Ω(2)
+k (q, ¯pk))H(I D ⊗(((Ck(q, ¯pk))TS∗
+k(b(Δfk))∗)
+⊗(Skb(Δfk))))} + 2 · Re{(Ω(3)
+k (q, ¯pk))HΩ(3)
+k (q, ¯pk)}
+(44)
+where
+Ω(1)
+k (q, ¯pk)  [vec( ˙C(1)
+k,1(q, ¯pk)) vec( ˙C(1)
+k,2(q, ¯pk)) · · · vec( ˙C(1)
+k,D(q, ¯pk))]
+(45)
+Ω(2)
+k (q, ¯pk) 
+⎡
+⎢⎢⎢⎢⎢⎣
+vec( ¨C
+(1)
+k,11(q, ¯pk)) vec( ¨C
+(1)
+k,21(q, ¯pk)) · · · vec( ¨C
+(1)
+k,D1(q, ¯pk))
+vec( ¨C
+(1)
+k,12(q, ¯pk)) vec( ¨C
+(1)
+k,22(q, ¯pk)) · · · vec( ¨C
+(1)
+k,D2(q, ¯pk))
+...
+...
+...
+...
+vec( ¨C
+(1)
+k,1D(q, ¯pk)) vec( ¨C
+(1)
+k,2D(q, ¯pk)) · · · vec( ¨C
+(1)
+k,DD(q, ¯pk))
+⎤
+⎥⎥⎥⎥⎥⎦
+(46)
+Ω(3)
+k (q, ¯pk)  [( ˙C(1)
+k,1(q, ¯pk))HSkb(Δfk) ( ˙C(1)
+k,2(q, ¯pk))HSkb(Δfk)
+· · · ( ˙C(1)
+k,D(q, ¯pk))HSkb(Δfk)]
+(47)
+Similarly, the jth element in
+¨ϕk,2(Δfk, q, O M0×1) and the (j1, j2)th element in
+¨Φk,2(Δfk, q, O M0×1) are, respectively, equal to
+< ¨ϕk,2(Δfk, q, O M0×1) > j 2 · Re{(˙b(Δfk))HSH
+k ˙C(2)
+k, j(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
++ 2 · Re{(b(Δfk))HSH
+k ˙C(2)
+k, j(q, ¯pk)(Ck(q, ¯pk))HSk ˙b(Δfk)}
+(48)
+< ¨Φk,2(Δfk, q, O M0×1) > j1 j2 2 · Re{(b(Δfk))HSH
+k ¨C
+(2)
+k, j1 j2(q, ¯pk)(Ck(q, ¯pk))HSkb(Δfk)}
++ 2 · Re{(b(Δfk))HSH
+k ˙C(1)
+k, j1(q, ¯pk)( ˙C(2)
+k, j2(q, ¯pk))HSkb(Δfk)}
+(49)
+where
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+˙C(2)
+k, j(q, ¯pk)  ∂ˆCk(q, ˆ¯pk)
+∂<ξ k> j
+
+ξkO M0×1
+(1 ≤j ≤M0)
+¨C
+(2)
+k, j1 j2(q, ¯pk) 
+∂2 ˆCk(q, ˆ¯pk)
+∂<q> j1∂<ξ k> j2
+
+ξkO M0×1
+(1 ≤j1 ≤D ; 1 ≤j2 ≤M0)
+(50)
+123
+
+
+===== PDF PAGE 12 =====
+760
+Multidim Syst Sign Process (2019) 30:749–790
+A detailed derivation of ˙C(2)
+k, j(q, ¯pk) and ¨C
+(2)
+k, j1 j2(q, ¯pk) is given in Appendix D. It can be
+veriﬁed from (48) and (49) that
+¨ϕk,2(Δfk, q, O M0×1)  2 · Re{(Ξ(1)
+k (q, ¯pk))H(((Ck(q, ¯pk))TS∗
+k(b(Δfk))∗) ⊗(Sk ˙b(Δfk)))}
++ 2 · Re{(Ξ(1)
+k (q, ¯pk))H(((Ck(q, ¯pk))TS∗
+k(˙b(Δfk))∗) ⊗(Skb(Δfk)))}
+(51)
+¨Φk,2(Δfk, q, O M0×1)  2 · Re{(Ξ(2)
+k (q, ¯pk))H(I M0 ⊗(((Ck(q, ¯pk))TS∗
+k(b(Δfk))∗)
+⊗(Skb(Δfk))))} + 2 · Re{(Ω(3)
+k (q, ¯pk))HΞ(3)
+k (q, ¯pk)}
+(52)
+where
+Ξ(1)
+k (q, ¯pk)  [vec( ˙C(2)
+k,1(q, ¯pk)) vec( ˙C(2)
+k,2(q, ¯pk)) · · · vec( ˙C(2)
+k,M0(q, ¯pk))]
+(53)
+Ξ(2)
+k (q, ¯pk) 
+⎡
+⎢⎢⎢⎢⎢⎣
+vec( ¨C
+(2)
+k,11(q, ¯pk))
+vec( ¨C
+(2)
+k,21(q, ¯pk)) · · · vec( ¨C
+(2)
+k,D1(q, ¯pk))
+vec( ¨C
+(2)
+k,12(q, ¯pk))
+vec( ¨C
+(2)
+k,22(q, ¯pk)) · · · vec( ¨C
+(2)
+k,D2(q, ¯pk))
+...
+...
+...
+...
+vec( ¨C
+(2)
+k,1M0(q, ¯pk)) vec( ¨C
+(2)
+k,2M0(q, ¯pk)) · · · vec( ¨C
+(2)
+k,DM0(q, ¯pk))
+⎤
+⎥⎥⎥⎥⎥⎦
+(54)
+Ξ(3)
+k (q, ¯pk)  [( ˙C(2)
+k,1(q, ¯pk))HSkb(Δfk) ( ˙C(2)
+k,2(q, ¯pk))HSkb(Δfk)
+· · · ( ˙C(2)
+k,M0(q, ¯pk))HSkb(Δfk)]
+(55)
+5.2 Expression for MSE of position estimation
+From (27), it is clear that the localization errors δq are asymptotically Gaussian distributed
+with zero mean and covariance matrix
+Q  E[δq · δqT]  ( ¨Φ1(q, O M×1))−1 ¨Φ2(q, O M×1)E( ¨Φ2(q, O M×1))T( ¨Φ1(q, O M×1))−1
+(56)
+where E is deﬁned in (24). In addition, (30) implies that ¨Φ2(q, O M×1) can be partitioned as
+(57)
+where
+¨Φ2,k(q, O M×1)  ∂2φ(q, ξ)
+∂q∂ξT
+k
+
+ξO M×1
+ ¨Φk,2(Δfk, q, O M0×1)
+−φk,1(Δfk, q, O M0×1)( ¨ϕk,2(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+(1 ≤k ≤K)
+(58)
+Then, combining (24), (56), and (57) gives
+Q  E[δq · δqT]  ( ¨Φ1(q, O M×1))−1
+ K
+
+k1
+¨Φ2,k(q, O M×1)Ek( ¨Φ2,k(q, O M×1))T
+
+× ( ¨Φ1(q, O M×1))−1
+(59)
+123
+
+
+===== PDF PAGE 13 =====
+Multidim Syst Sign Process (2019) 30:749–790
+761
+Inserting (29) and (58) into (59) leads to
+Q 
+ K
+
+k1
+
+¨Φk,1(Δfk, q, O M0×1) −¨ϕk,1(Δfk, q, O M0×1)( ¨ϕk,1(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+−1
+×
+⎛
+⎜⎜⎝
+K
+
+k1
+⎛
+⎜⎜⎝
+
+¨Φk,2(Δfk, q, O M0×1) −¨ϕk,1(Δfk,q,O M0×1)( ¨ϕk,2(Δfk,q,O M0×1))T
+¨φk(Δfk,q,O M0×1)
+
+Ek
+×
+
+( ¨Φk,2(Δfk, q, O M0×1))T −¨ϕk,2(Δfk,q,O M0×1)( ¨ϕk,1(Δfk,q,O M0×1))T
+¨φk(Δfk,q,O M0×1)
+
+⎞
+⎟⎟⎠
+⎞
+⎟⎟⎠
+×
+ K
+
+k1
+
+¨Φk,1(Δfk, q, O M0×1) −¨ϕk,1(Δfk, q, O M0×1)( ¨ϕk,1(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+−1
+(60)
+Partition the matrix ¨Φ2,k(q, O M×1) along the columns into the following blocks
+(61)
+Then, according to (58) and (61), we have
+¨Φ
+(n)
+2,k(q, O M×1)  ∂2φ(q, ξ)
+∂q∂¯εT
+k
+
+ξO M×1
+ ¨Φ
+(n)
+k,2(Δfk, q, O M0×1) −
+¨ϕk,1(Δfk, q, O M0×1)( ¨ϕ(n)
+k,2(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+(62)
+¨Φ
+(e)
+2,k(q, O M×1)  ∂2φ(q, ξ)
+∂q∂δ ¯pT
+k
+
+ξO M×1
+ ¨Φ
+(e)
+k,2(Δfk, q, O M0×1) −
+¨ϕk,1(Δfk, q, O M0×1)( ¨ϕ(e)
+k,2(Δfk, q, O M0×1))T
+¨φk(Δfk, q, O M0×1)
+(63)
+where
+¨Φ
+(n)
+k,2(Δfk, q, O M0×1) and
+¨Φ
+(e)
+k,2(Δfk, q, O M0×1) are constructed from the ﬁrst
+2N L columns and the last 2DL columns of
+¨Φk,2(Δfk, q, O M0×1), respectively, and
+¨ϕ(n)
+k,2(Δfk, q, O M0×1) and ¨ϕ(e)
+k,2(Δfk, q, O M0×1) consist of the ﬁrst 2N L elements and the
+last 2DL elements of ¨ϕk,2(Δfk, q, O M0×1), respectively. Inserting (23) and (61) into (59)
+yields
+Q  σ 2
+2 · ( ¨Φ1(q, O M×1))−1
+ K
+
+k1
+¨Φ
+(n)
+2,k(q, O M×1)( ¨Φ
+(n)
+2,k(q, O M×1))T
+
+( ¨Φ1(q, O M×1))−1
++ ( ¨Φ1(q, O M×1))−1
+ K
+
+k1
+¨Φ
+(e)
+2,k(q, O M×1) ¯Pk( ¨Φ
+(e)
+2,k(q, O M×1))T
+
+( ¨Φ1(q, O M×1))−1
+(64)
+123
+
+
+===== PDF PAGE 14 =====
+762
+Multidim Syst Sign Process (2019) 30:749–790
+It can be observed from (64) that the covariance matrix Q is composed of two parts. The
+ﬁrst part in (64), due to the measurement noise, is expressed as
+Qε  σ 2
+2 · ( ¨Φ1(q, O M×1))−1
+ K
+
+k1
+¨Φ
+(n)
+2,k(q, O M×1)( ¨Φ
+(n)
+2,k(q, O M×1))T
+
+( ¨Φ1(q, O M×1))−1
+(65)
+where the second equality follows from (29) and (62). The second part in (64), due to the
+model errors, can be written as
+Q p  ( ¨Φ1(q, O M×1))−1
+ K
+
+k1
+¨Φ
+(e)
+2,k(q, O M×1) ¯Pk( ¨Φ
+(e)
+2,k(q, O M×1))T
+
+( ¨Φ1(q, O M×1))−1
+(66)
+where the second equality follows from (29) and (63).
+Remark 3 It is clear that the trace of Q can be viewed as the MSE of the localization errors
+under the combined effects of measurement noise and model errors.
+Remark 4 When ¯Pk →O, Q  Qε; when σ 2 →0, Q  Q p.
+Remark 5 It is easy to see that the trace of Qε can be viewed as the MSE of the localization
+errors when model errors are not present. Moreover, the value of the trace of Qε approaches
+the CRB in the absence of model errors, which will be derived in Sect. 6.1. This is because the
+DPD method studied here is derived from the ML criterion, which provides an asymptotically
+efﬁcient solution.
+Remark 6 It is obvious that the trace of Q p can be used to quantify the sensitivity of the
+positioning accuracy to model errors, and represents the additional estimation errors resulting
+from uncertainties in the receiver locations and velocities.
+Remark 7 It is easily seen from (65) and (66) that both Qε and Q p rely on matrix
+¨Φ1(q, O M×1), which is actually the q-corner of the Hessian matrix of the cost function in
+(25). If this matrix has a large condition number, the positioning should be highly accurate;
+conversely, if this matrix is nearly singular, the location errors may be very large.
+6 Cramér–Rao bound expression for direct position determination
+It is well known that the CRB provides a lower bound on parameter estimation variance
+for any unbiased estimator. Moreover, the CRB is expected to be a good predictor of the
+performance of the maximum likelihood estimator (MLE) under moderate noise levels. This
+section derives the CRB on the location estimation precision for two cases: (1) the model
+errors are absent, and (2) the model errors are present.
+6.1 Cramér–Rao bound on position estimate in absence of model errors
+In this subsection, the CRB on the position estimation is derived in the absence of receiver
+location and velocity errors. Although the CRB matrix for all the unknown parameters has
+123
+
+
+===== PDF PAGE 15 =====
+Multidim Syst Sign Process (2019) 30:749–790
+763
+been derived in Amar and Weiss (2008), this does not directly provide the CRB for the
+position parameters in closed form. In the following, a more compact CRB expression for
+the position estimation is presented. To this end, we ﬁrst introduce a useful result, which is
+proved in Stoica and Larsson (2001).
+Proposition 3 Assume that the CRB for the estimation of a real vector x is given by CRB(x).
+If we deﬁne a new vector by ¯x  Jx, where J is an invertible real matrix, then the CRB
+matrix for ¯x can be expressed as CRB(¯x)  J · CRB(x) · JT.
+To proceed, a new parameter vector that contains all the unknowns is introduced as
+ηa  [σ 2 μT
+a ]T  [σ 2 qT Δf T Re{αT} Im{αT}]T
+(67)
+where
+⎧
+⎨
+⎩
+μa  [qT δ f T Re{αT} Im{αT}]T
+α  [αH
+1 αH
+2 · · · αH
+K ]H , αk  [α1,k α2,k · · · αL,k]T
+Δf  [Δf1 Δf2 · · · ΔfK ]T
+(68)
+Next, we deﬁne a vector that gathers all the received data as
+ˆz  [ˆzH
+1,1 ˆzH
+2,1 · · · ˆzH
+L,1 ˆzH
+1,2 ˆzH
+2,2 · · · ˆzH
+L,2 · · · · · · ˆzH
+1,K ˆzH
+2,K · · · ˆzH
+L,K ]H
+(69)
+It is clear from (8) that the mean of ˆz is given by
+z  E[ˆz]  [zH
+1,1 zH
+2,1 · · · zH
+L,1 zH
+1,2 zH
+2,2 · · · zH
+L,2 · · · · · · zH
+1,K zH
+2,K · · · zH
+L,K ]H
+ [(α1,1 A(q, ¯p1,1)S1b(Δf1))H (α2,1 A(q, ¯p2,1)S1b(Δf1))H
+· · · (αl,k A(q, ¯pl,k)Skb(Δfk))H · · · (αL,K A(q, ¯pL,K )SK b(ΔfK ))H]H
+(70)
+According to Stoica and Larsson (2001), the CRB matrix for vector μa can be obtained
+by
+CRB(μa)  σ 2
+2 · (Re{ΣH
+μaΣμa})−1
+(71)
+where
+Σμa  ∂z
+∂μTa
+
+
+ ∂z
+∂qT
+∂z
+∂Δf T
+∂z
+∂(Re{α})T
+∂z
+∂(Im{α})T
+
+ [Σq ΣΔf ΣRe{α} ΣIm{α}]
+(72)
+Using (70) and performing some algebraic manipulations, the sub-matrices in (72) can be
+formulated as
+(73)
+123
+
+
+===== PDF PAGE 16 =====
+764
+Multidim Syst Sign Process (2019) 30:749–790
+where
+(74)
+Note that only the q corner of the CRB matrix is of interest here. However, it can be observed
+from (71) that matrix CRB(μa) does not exhibit a block-diagonal structure. Hence, it is
+somewhat difﬁcult to obtain the exact CRB expression for position vector q. To overcome
+this difﬁculty, we adopt the idea of Pesavento et al. (2002) and redeﬁne a parameter vector
+whose CRB matrix becomes block-diagonal. The new parameter vector is deﬁned as
+(75)
+where
+⎧
+⎨
+⎩
+U1  Σ†
+Re{α}Σq  (ΣH
+Re{α}ΣRe{α})−1ΣH
+Re{α}Σq
+U2  Σ†
+Re{α}ΣΔf  (ΣH
+Re{α}ΣRe{α})−1ΣH
+Re{α}ΣΔf
+(76)
+From (75), it is straightforward to deduce that
+¯μa  Jμa
+(77)
+where
+J 
+⎡
+⎢⎢⎣
+I
+O
+O O
+O
+I
+O O
+Re{U1} Re{U2} I O
+Im{U1} Im{U2} O I
+⎤
+⎥⎥⎦
+(78)
+According to Proposition 3, the CRB matrix for ¯μa is given by
+CRB( ¯μa)  J · CRB(μa) · JT  σ 2
+2 · J(Re{ΣH
+μaΣμa})−1 JT
+ σ 2
+2 · (Re{(Σμa J−1)H(Σμa J−1)})−1
+(79)
+where
+J−1 
+⎡
+⎢⎢⎣
+I
+O
+O O
+O
+I
+O O
+−Re{U1} −Re{U2} I O
+−Im{U1} −Im{U2} O I
+⎤
+⎥⎥⎦
+(80)
+123
+
+
+===== PDF PAGE 17 =====
+Multidim Syst Sign Process (2019) 30:749–790
+765
+Combining (72), (76) and (80) gives
+(81)
+where Π⊥
+ΣRe{α}  I −ΣRe{α}Σ†
+Re{α}. Inserting (81) back into (79) leads to
+CRB( ¯μa)  σ 2
+2 ·
+
+ V 1 O
+O V 2
+−1
+(82)
+where
+(83)
+(84)
+Deﬁne the matrices
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+V 1,1  ΣH
+q Π⊥
+ΣRe{α}Σq  ΣH
+q Σq −ΣH
+q ΣRe{α}(ΣH
+Re{α}ΣRe{α})−1ΣH
+Re{α}Σq
+V 1,2  ΣH
+q Π⊥
+ΣRe{α}ΣΔf  ΣH
+q ΣΔf −ΣH
+q ΣRe{α}(ΣH
+Re{α}ΣRe{α})−1ΣH
+Re{α}ΣΔf
+V 1,3  ΣH
+Δf Π⊥
+ΣRe{α}ΣΔf  ΣH
+Δf ΣΔf −ΣH
+Δf ΣRe{α}(ΣH
+Re{α}ΣRe{α})−1ΣH
+Re{α}ΣΔf
+(85)
+After applying the partitioned matrix inversion formula, the CRB matrix for vector q is
+given by
+CRB(q)  σ 2
+2 · (Re{V 1,1} −Re{V 1,2} · (Re{V 1,3})−1 · Re{V H
+1,2})−1
+ σ 2
+2 · ((Re{V 1,1})−1 + (Re{V 1,1})−1 · Re{V 1,2} · (Re{V 1,3}
+−Re{V H
+1,2} · (Re{V 1,1})−1 · Re{V 1,2})−1 · Re{V H
+1,2} · (Re{V 1,1})−1)
+(86)
+Remark 8 The diagonal elements of CRB(q) give the bounds for the estimation variance of
+the components in q when no model errors are present.
+Remark 9 The trace of CRB(q) is the bound for the localization MSE in the absence of
+model errors.
+Remark 10 Although there is no strict proof, the trace of Qε is expected to be asymptotically
+equal to that of CRB(q). This is because the estimator in (12) is equivalent to the MLE, which
+is capable of achieving optimum performance under the Gaussian assumption.
+Remark 11 The difference between the trace of CRB(q) and that of Q can be used to deter-
+mine the performance degradation caused by model mismatch. If the difference is signiﬁcant,
+it can be concluded that the DPD method in Amar and Weiss (2008) is sensitive to model
+errors.
+123
+
+
+===== PDF PAGE 18 =====
+766
+Multidim Syst Sign Process (2019) 30:749–790
+6.2 Cramér–Rao bound on position estimate in presence of model errors
+This subsection is devoted to the derivation of the CRB for position estimation with model
+uncertainties. The derivation is based on the statistical assumption of the model errors
+described in Sect. 4. To this end, a novel parameter vector that includes the coordinates
+and velocities of the receivers is introduced as
+ηb  [σ 2 μT
+b]T  [σ 2 qT Δf T Re{αT} Im{αT} ¯pT]T
+(87)
+where
+⎧
+⎨
+⎩
+μb  [qT Δf T Re{αT} Im{αT} ¯pT]T
+¯p  [ ¯pT
+1 ¯pT
+2 · · · ¯pT
+K ]T
+(88)
+By performing similar algebraic manipulation as in Viberg and Swindlehurst (1994), the
+CRB matrix for vector μb is formulated as
+CRB(μb) 
+ 2
+σ 2 · Re{ΣH
+μbΣμb} +
+
+ O
+O
+O ¯P−1
+−1
+(89)
+where
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+Σμb  ∂z
+∂μT
+b
+
+
+ ∂z
+∂qT
+∂z
+∂Δf T
+∂z
+∂(Re{α})T
+∂z
+∂(Im{α})T
+∂z
+∂¯pT
+
+ [Σq ΣΔf ΣRe{α} ΣIm{α} Σ ¯p]
+¯P  blkdiag[ ¯P1 ¯P2 · · · ¯P K ]
+(90)
+Note that the second term in the brackets in (89) makes it impossible to obtain a CRB
+matrix with the block-diagonality of (82) through a linear transformation. As a consequence,
+the CRB matrix for position vector q can only be obtained from (89), although this is not
+computationally attractive. In addition, note that the expressions for matrices Σq, ΣΔf ,
+ΣRe{α}, and ΣIm{α} are given in (73); thus, only the expression for matrix Σ ¯p need be
+deduced. From (70) and the deﬁnition of ¯p in (88), it follows that
+(91)
+where
+(92)
+Substituting (90) into (89) leads to
+(93)
+123
+
+
+===== PDF PAGE 19 =====
+Multidim Syst Sign Process (2019) 30:749–790
+767
+where
+(94)
+Through the application of the partitioned matrix inversion formula, the CRB matrix for
+vector q is given by
+CRBe(q)
+ σ 2
+2 ·
+⎛
+⎜⎝(Re{Z1})−1 + (Re{Z1})−1 · Re{Z2} ·
+
+Re{Z3} −Re{ZH
+2 } · (Re{Z1})−1 · Re{Z2} +
+
+O
+O
+O σ 2 ¯P−1/2
+−1
+×Re{ZH
+2 } · (Re{Z1})−1
+⎞
+⎟⎠
+(95)
+Note that the subscript “e” in (95) is used to distinguish the matrix CRB(q) given by (86).
+Remark 12 The trace of CRBe(q) is the bound for the localization MSE when model errors
+exist.
+Remark 13 It is obvious that the trace of CRBe(q) is larger than that of CRB(q) because the
+model errors increase the uncertainties in parameter estimation.
+Remark 14 It can be readily proved that CRB(q)  CRBe(q) when ¯Pk →O. Thus, the
+CRB results derived in the presence of model errors contain those for the case of no model
+errors.
+Remark 15 Although there is no strict proof, the trace of Q is expected to be greater than
+that of CRBe(q). This is because the DPD estimator investigated here does not consider the
+model errors, and is therefore not statistically efﬁcient for the case of model mismatch. By
+comparing the trace of CRBe(q) with that of Q, we can determine whether a novel DPD
+method that accounts for model errors is needed to improve the position estimation accuracy.
+7 Two improved DPD methods
+In this section, two improved DPD methods are presented based on the theoretical analysis
+in previous sections. The ﬁrst method has a lower computational burden than grid search,
+and the second is more robust to model errors.
+7.1 Improved DPD method with less computational complexity
+The improved DPD method given in this subsection can be regarded as a byproduct of the
+performance analysis in Sect. 5. Note that the estimator in (17) provides a solution with
+asymptotically optimal accuracy when the true receiver locations and velocities are known.
+The underlying reason is that the cost function h(q) in (17) is derived from the ML criterion.
+However, solving (17) is non-trivial because of the presence of the nuisance parameters
+123
+
+
+===== PDF PAGE 20 =====
+768
+Multidim Syst Sign Process (2019) 30:749–790
+{Δfk}1≤k≤K . Perhaps the most straightforward method is a grid search in the solution space,
+because the cost function h(q) is not expressed with respect to the position vector q in closed
+form. However, a grid search is computationally very expensive, inefﬁcient, and prohibits
+real-time processing.
+In the following, we present a numerical iteration algorithm based on Newton’s method.
+As the proposed algorithm converges rapidly to the desired solution, it is far more compu-
+tationally efﬁcient than the grid search. Indeed, the major objective in the newly developed
+method is to derive the gradient and Hessian matrix of the cost function h(q). Fortunately,
+these can be easily obtained from the results in Sect. 5.
+For a given q, denote the extreme point that maximizes hk(Δfk, q) with respect to Δfk
+as Δf (o)
+k (q); this can be easily obtained by the FFT algorithm (Amar and Weiss 2008). The
+cost function h(q) can thus be rewritten as
+h(q) 
+K
+
+k1
+hk(Δf (o)
+k (q), q)
+(96)
+The gradient of h(q) can then be formulated as
+hn(q)  ∂h(q)
+∂q
+
+K
+
+k1
+
+∂hk(Δfk, q)
+∂Δfk
+
+ΔfkΔf (o)
+k
+(q)
+· ∂Δf (o)
+k (q)
+∂q
++ ∂hk(Δfk, q)
+∂q
+
+ΔfkΔf (o)
+k
+(q)
+
+
+K
+
+k1
+∂hk(Δfk, q)
+∂q
+
+ΔfkΔf (o)
+k
+(q)
+(97)
+where the last equality follows from the deﬁnition of Δf (o)
+k (q). Based on the result in (36),
+we have
+∂hk(Δfk, q)
+∂< q > j
+
+ΔfkΔf (o)
+k
+(q)
+ 2 · Re{(b(Δf (o)
+k (q)))HSH
+k ˙ˆC
+(1)
+k, j(q, ¯pk)( ˆCk(q, ¯pk))HSkb(Δf (o)
+k (q))}
+(98)
+where ˙ˆC
+(1)
+k, j(q, ¯pk)  ∂ˆCk(q, ¯pk)
+∂<q> j . From (98), it is straightforward to deduce that
+∂hk(Δfk, q)
+∂q
+
+ΔfkΔf (o)
+k
+(q)
+ 2 · Re{( ˆΩ
+(1)
+k (q, ¯pk))H((( ˆCk(q, ¯pk))TS∗
+k(b(Δf (o)
+k (q)))∗)
+⊗(Skb(Δf (o)
+k (q))))}
+(99)
+where
+ˆΩ
+(1)
+k (q, ¯pk)  [vec( ˙ˆC
+(1)
+k,1(q, ¯pk)) vec( ˙ˆC
+(1)
+k,2(q, ¯pk)) · · · vec( ˙ˆC
+(1)
+k,D(q, ¯pk))]
+(100)
+Substituting (99) into (97) yields the expression for the gradient of h(q) (omitted
+here for brevity). The Hessian matrix of h(q), denoted by Hn(q), can be directly deter-
+mined through the matrix ¨Φ1(q, O M×1) deﬁned in (29), with Ck(q, ¯pk), ˙C(1)
+k, j(q, ¯pk), and
+¨C
+(1)
+k, j1 j2(q, ¯pk) replaced by ˆCk(q, ¯pk), ˙ˆC
+(1)
+k, j(q, ¯pk), and ¨ˆC
+(1)
+k, j1 j2(q, ¯pk), respectively. Note
+that ¨ˆC
+(1)
+k, j1 j2(q, ¯pk) 
+∂2 ˆCk(q, ¯pk)
+∂<q> j1∂<q> j2 .
+At this point, it is possible to summarize the proposed DPD method as follows.
+123
+
+
+===== PDF PAGE 21 =====
+Multidim Syst Sign Process (2019) 30:749–790
+769
+We conclude with the following remarks about the proposed method described above.
+Remark 16 The initial estimate of q can be obtained by the differential Doppler (DD) method
+(Amar and Weiss 2008; Stein 1993), which requires two steps for localization. In the ﬁrst
+phase of the DD method, the frequency differences between receivers are measured without
+knowing the exact transmit frequency. In the second phase, the source position is determined
+using the estimated frequency differences. Although this method is suboptimal, it can provide
+a good initial guess that is hopefully not too far from the optimal solution. As a consequence,
+the iteration method is less likely to become trapped around local maxima.
+Remark 17 It is noteworthy that the statistical performance of an arbitrary estimator mainly
+depends on its optimization criterion. As a result, the estimation MSE of the proposed method
+is identical to grid search because their objective functions are the same.
+Next, we compare the computational load of the proposed method with that of a grid
+search. For the sake of comparison, it is necessary to introduce the following parameters:
+• Miter number of iterations for convergence using Newton’s method.
+• Δp width of grid-search interval along each position component.
+• ηp grid step size in each position component.
+Tables 1 and 2 list the complexities of the two DPD methods in terms of multiplication
+operations, respectively.
+It can be seen from Tables 1 and 2 that, although the computational load per Newton
+iteration is larger than that required per grid search, the former is less than twice the latter
+when N >> L and N >> D. More importantly, Newton’s method can generally reach
+the convergence criterion in at most 10 iterations, whereas the number of grid points to be
+computed is very large. If we consider a three-dimensional localization scenario and assume,
+Table 1 Computational complexity of grid search
+Grid search
+( ˆCk(q, ¯pk))HSk
+2N L
+SH
+k ˆCk(q, ¯pk)( ˆCk(q, ¯pk))HSk
+0.5LN2
+max
+Δfk
+||( ˆCk(q, ¯pk))HSk b(Δfk)||2
+2(FFT
+algorithm)
+N · log2 N
+Total number of multiplications
+K · (2N L + 0.5LN2 + N ·
+log2 N) ·
+ Δp
+ηp
+ D
+123
+
+
+===== PDF PAGE 22 =====
+770
+Multidim Syst Sign Process (2019) 30:749–790
+Table 2 Computational complexity of Newton iteration method
+Newton iteration
+method
+( ˆCk(q, ¯pk))HSk
+2N L
+SH
+k ˆCk(q, ¯pk)( ˆCk(q, ¯pk))HSk
+0.5LN2
+max
+Δfk
+||( ˆCk(q, ¯pk))HSk b(Δfk)||2
+2
+(FFT algorithm)
+N · log2 N
+˙ˆC
+(1)
+k, j(q, ¯pk)
+N L
+¨ˆC
+(1)
+k, j1 j2(q, ¯pk)
+N L
+Sk b(Δf (o)
+k
+(q))
+N
+Sk ˙b(Δf (o)
+k
+(q))
+N
+Sk ¨b(Δf (o)
+k
+(q))
+N
+( ˆCk(q, ¯pk))HSk b(Δf (o)
+k
+(q))
+N L
+( ˙ˆC
+(1)
+k, j(q, ¯pk))HSk b(Δf (o)
+k
+(q))
+N L
+( ¨ˆC
+(1)
+k, j1 j2(q, ¯pk))HSk b(Δf (o)
+k
+(q))
+N L
+( ˆCk(q, ¯pk))HSk ˙b(Δf (o)
+k
+(q))
+N L
+( ˙ˆC
+(1)
+k, j(q, ¯pk))HSk ˙b(Δf (o)
+k
+(q))
+N L
+( ˆCk(q, ¯pk))HSk ¨b(Δf (o)
+k
+(q))
+N L
+Total number of multiplications
+MiterK
+
+(5 + 3D + 2D2)N L + 0.5LN2
++N · log2 N + 3N
+
+for example, that the number of grid points in each component of vector q is set to 100, then
+the total number of raster points is 1,000,000, which is several orders of magnitude greater
+than 10. Hence, it can be concluded that Newton’s method is more computationally attractive
+than a grid search. In Sect. 8.4 we compare the running time of the two methods by computer
+simulation. The result also reveals that grid search is computationally more demanding than
+Newton’s method.
+7.2 Improved DPD method with more robustness to model errors
+In this section, an improved DPD method that reduces the effects of model errors is presented.
+The new estimator is established based on the ML criterion, but the receiver positions and
+velocities are considered to be unknown. The corresponding optimization model can be
+formulated as
+min
+{αl,k},{Δfk},{ ¯pl,k},q
+ K
+
+k1
+L
+
+l1
+||ˆzl,k −αl,k A(q, ¯pl,k)B(Δfk)sk||2
+2
++1
+2 ·
+K
+
+k1
+L
+
+l1
+( ˆ¯pl,k −¯pl,k)T ¯¯P
+−1
+l,k ( ˆ¯pl,k −¯pl,k)T
+
+(101)
+where ¯¯Pl,k  ¯Pl,k/σ 2. Note that the second term in (101) is used to mitigate the effects
+of the model errors. Obviously, it is impossible to obtain the optimal solution to (101) in
+123
+
+
+===== PDF PAGE 23 =====
+Multidim Syst Sign Process (2019) 30:749–790
+771
+a closed form. As a consequence, we adopt an alternating minimization technique to solve
+this optimization problem. This kind of numerical method has been successfully applied to
+a variety of signal processing issues (Bao 2005; Wang and Ying 2015; Zheng and Wu 2010).
+First, the unknowns are grouped into two categories: one is composed of Δfk and q,
+and the other comprises αl,k and ¯pl,k. The two sets of variables are alternately optimized as
+follows. First, the minimization is performed with respect to Δfk and q while αl,k and ¯pl,k
+are ﬁxed. Subsequently, we solve the problem over αl,k and ¯pl,k while keeping Δfk and q
+constant. This procedure is repeated until the convergence criterion is satisﬁed. A detailed
+description of the two steps in each iteration is as follows.
+We start by solving the optimization problem over Δfk and q, with αl,k and ¯pl,k given by
+ˆα′
+l,k and ˆ¯ ′pl,k, respectively. For this case, according to the derivation in Sect. 3, the original
+problem can be recast as the maximization problem
+max
+q
+ K
+
+k1
+max
+Δfk
+{ˆh′
+k(Δfk, q)}
+
+(102)
+where
+
+ˆh′
+k(Δfk, q)  ||( ˆCk(q, ˆ¯p′
+k))HSkb(Δfk)||2
+2 (b(Δfk))HSH
+k ˆCk(q, ˆ¯p′
+k)( ˆCk(q, ˆ¯p′
+k))HSkb(Δfk)
+¯p′
+k  [ ¯p′T
+1,k ¯pT
+2,k · · · ˆ¯p′T
+L,k]T
+(103)
+It is obvious that the optimal solution to (102) can be obtained via the Newton iteration
+given in Sect. 7.1.
+Next, the cost function in (101) is minimized with respect to αl,k and ¯pl,k, with Δfk and
+q set to Δ ˆf ′k and ˆq′, respectively. Note that the objective function in (101) is quadratic in
+αl,k and attains its minimum value at
+ˆαl,k  (sH
+k (B(Δ ˆf ′
+k))H(A( ˆq′, ¯pl,k))H A( ˆq′, ¯pl,k)B(Δ ˆf ′
+k)sk)−1sH
+k (B(Δ ˆf ′
+k))H(A( ˆq′, ¯pl,k))Hˆzl,k
+(104)
+Inserting (104) into (101), we have the following optimization problem for the estimation
+of ¯pl,k.
+(105)
+From (105), it is clear that each ¯pl,k can be estimated separately. Therefore, the estimator
+in (105) can be decoupled into K L distinct estimators as
+123
+
+
+===== PDF PAGE 24 =====
+772
+Multidim Syst Sign Process (2019) 30:749–790
+(106)
+It is well known that the criterion in (106) can be minimized using Gauss–Newton iteration.
+To proceed, we introduce the vector function
+(107)
+The iterative formula can then be described as
+(108)
+where β ∈(0 , 1) denotes the step size, superscript i indexes the ith iteration, and
+(109)
+in which the operator vecd [·] produces a vector from the elements of the main diagonal of
+its input matrix.
+Up to this point we can outline the proposed alternating minimization method as follows.
+The following remarks concern the alternating minimization method described above.
+Remark 18 The method iterates until c(n) converges. Similar to the analysis in Friedlander
+and Weiss (1991), it follows that, at each step, the cost function reduces so that c(1) > c(2) >
+· · · > c(n) ≥0. Hence, {c(n)}+∞
+n1 is a convergent series and convergence is guaranteed.
+123
+
+
+===== PDF PAGE 25 =====
+Multidim Syst Sign Process (2019) 30:749–790
+773
+Remark 19 Regarding the choice of the initial values, it is obvious that some initial errors
+exist. However, if the initial values are properly chosen, the effects of these initial errors can
+be removed to a great extent. The initial values of ¯pl,k can be chosen as the prior measurement
+ˆ¯pl,k. Applying the Newton iteration method presented in Sect. 7.1 gives the initial estimates
+of q and Δfk. Additionally, αl,k is initialized using (104). The simulation results in Sect. 8
+show that the proposed method yields satisfactory performance using these initial estimates.
+8 Simulation results
+This section presents several Monte Carlo simulations to demonstrate the effectiveness of the
+theoretical analysis and the advantage of the proposed DPD methods. Three DPD methods
+are applied in the following experiments. DPD-a uses a grid search to estimate the emitter
+position, as in Amar and Weiss (2008). The second and third methods are those developed
+in Sects. 7.1 and 7.2, respectively. These are termed DPD-b and DPD-c, respectively. The
+DPD methods are applied under three scenarios: (i) only measurement noise is present; (ii)
+only model perturbations are present; (iii) both types of errors are present. The empirical
+performance of these DPD methods is compared to the theoretical prediction values given in
+Sect. 5 and the CRBs derived in Sect. 6. All simulated values are averaged over 2000 inde-
+pendent trials. In addition, we use the root-mean-square-error (RMSE) as the performance
+metric, which is deﬁned as
+RMSE 
+!
+"
+"
+#
+1
+2000 ·
+2000
+
+i1
+||ˆqi −q||2
+2
+(110)
+where ˆqi is the estimated emitter position in the ith Montle Carlo run for the speciﬁc noise
+realization.
+8.1 The ﬁrst set of experiments
+In this subsection, the performance of DPD-a and DPD-c method is compared, along with
+the theoretical RMSE derived in Sect. 5 as well as the CRB given in Sect. 6.
+The location geometry of the ﬁrst set of experiments is described in Fig. 1a, where each
+receiver intercepts the signal at ten different intervals (K  10) along its trajectory. The
+receivers’ speed is ﬁxed to 200 m/s. The simulated signal is a single-carrier signal with carrier
+frequency fc  0.2GHz, and its propagation speed is assumed to be v  3 · 108m/s. The
+unknown transmitted frequency shifts are randomly selected from the interval [−100 100]Hz.
+The static emitter position is chosen to be [8000 8000]Tm. The receiver position and velocity
+errorsareassumedtofollowazero-meanGaussiandistributionwithcovariancematrix ¯Pl,k 
+blkdiag[σ 2
+p I D σ 2
+v I D] for all l , k, where σp and σv are the position and velocity standard
+deviations, respectively. Moreover, we set σv  0.01 · σp.
+Unless stated otherwise, we use the following settings: (1) N  100 samples; (2)
+SNR=5 dB; (3) σp  12. Figures 2, 3 and 4 display the RMSEs of the estimated source posi-
+tion as a function of the SNR of the emitter signal, the snapshot number at each interception
+interval, and the receiver position standard deviation σp, respectively.
+It can be observed from Figs. 2, 3 and 4 that the theoretical RMSE provided by (64) agrees
+very well with the simulated RMSE of the DPD-a method in the presence of the two types
+of errors. Moreover, when only measurement noise is present, the empirical RMSE of the
+DPD-a method provides quite a good match with the CRB given by (86) and the analytical
+123
+
+
+===== PDF PAGE 26 =====
+774
+Multidim Syst Sign Process (2019) 30:749–790
+Fig. 2 RMSEs of source position estimation versus SNR of the emitter signal
+Fig. 3 RMSEs of source position estimation versus number of snapshots at each interception interval
+results provided by (65). This indicates that the DPD-a method is asymptotically efﬁcient
+for the case where the receiver positions and velocities are accurately known. Additionally,
+if only model errors exist, there is a close match between the simulated values and the
+analytical results provided by (66). Consequently, the validity of the theoretical study in
+Sect. 5 can be conﬁrmed. It can also be shown that the location accuracy of the DPD-
+a method decreases dramatically as the magnitude of model errors increases. Furthermore,
+from Figs. 2 and 3, it can be seen that the RMSE of the DPD-a method remains approximately
+unchanged, regardless of the SNR and sample number. This is because, when the SNR or
+sample number becomes large, the effects of measurement noise gradually diminish, and
+hence the localization errors are mainly caused by uncertainties in the receiver positions
+and velocities. However, when both errors exist, the RMSE of the DPD-a method is larger
+123
+
+
+===== PDF PAGE 27 =====
+Multidim Syst Sign Process (2019) 30:749–790
+775
+Fig. 4 RMSEs of source position estimation versus standard deviation of receiver position errors
+Fig. 5 RMSEs of source position estimation versus source position coordinate on the x-axis
+than the CRB provided by (95), especially for a larger standard deviation σp with higher
+values of SNR and snapshot number. However, the DPD-c method can attain the CRB and
+is more robust to model errors. The reason is that the DPD-c method takes the model errors
+into account and incorporates the statistical characteristics of receiver location and velocity
+errors into the position estimation procedure.
+In the next experiment, we change the emitter position coordinate and study the effects of
+the source position on the localization accuracy. Assume that the source position coordinate
+on the x-axis is equal to that on the y-axis. In addition, the SNR and snapshot number are set
+to 15 and 100 dB, respectively, and the receiver position standard deviation σp is ﬁxed to 12.
+Figure 5 plots the RMSEs of source position estimation versus source position coordinate on
+the x-axis.
+123
+
+
+===== PDF PAGE 28 =====
+776
+Multidim Syst Sign Process (2019) 30:749–790
+Fig. 6 RMSEs of source position estimation versus SNR of the emitter signal
+It can be seen from Fig. 5 that there is a close match between the predicted RMSE and the
+empirical RMSE of the DPD-a method. Hence, the effectiveness of the theoretical derivation
+in Sect. 5 is again corroborated. Note that the localization accuracy always decreases as the
+distance between the emitter and the receivers increases. Moreover, the DPD-c method still
+outperforms DPD-a when the two errors coexist, and can always achieve the CRB provided
+by (95) before the thresholding effect occurs. Nevertheless, the localization accuracy of the
+DPD-a method tends to be consistent with that of the DPD-c method when the emitter is
+far away from the receivers. This means that the advantage of the DPD-c method over the
+DPD-a method is more pronounced for near-ﬁeld sources.
+It can be observed from Fig. 5 that the localization accuracy is closely related to the
+receiver-emitter geometry. In Nguyen and Dogancay (2015a, b), the optimal receiver place-
+ment for stationary target localization is presented. Undoubtedly, this work is valuable and
+the obtained results are very useful in practical applications. However, we cannot directly
+apply them here, because of two reasons. First, the work in Nguyen and Dogancay (2015a,
+b) only takes the measurement noise into account and ignores the effects of model errors,
+which are carefully considered in this paper. Second, the problem discussed in Nguyen and
+Dogancay (2015a, b) is suitable for two-step localization mechanism, but we focus on the
+single-step localization issue for the case of known signal waveforms. It is worthwhile to
+point out that there still exist the optimal receivers’ trajectories in presence of model errors.
+Hence, our future work includes ﬁnding the optimal receivers’ trajectories for DPD under
+the combined effects of measurement noise and model errors.
+8.2 The second set of experiments
+In this subsection, the performance of the DPD-b method and the conventional two-step
+localization method (i.e., the DD method mentioned in Remark 16) is compared. As stated
+in Remark 17, the DPD-a method has the same estimation accuracy as the DPD-b method,
+hence the RMSE of the DPD-a method is omitted in Figs. 6, 7, 8, 9, 10 and 11 for clarity.
+The geometry for source location in the second set of experiments is depicted in Fig. 1b,
+where each receiver intercepts the signal at twelve different intervals (K  12) along its
+123
+
+
+===== PDF PAGE 29 =====
+Multidim Syst Sign Process (2019) 30:749–790
+777
+Fig. 7 RMSEs of source position
+estimation versus number of
+snapshots at each interception
+interval
+Fig. 8 RMSEs of source position estimation versus standard deviation of receiver position errors
+trajectory. The receivers’ speed is ﬁxed to 50 m/s. The simulated signal is a frequency-
+modulation (FM) signal with carrier frequency fc  0.6GHz, and its propagation speed
+is assumed to be v  3 · 108m/s. The unknown transmitted frequency shifts are ran-
+domly selected from the interval [−200 200]Hz. The static emitter position is chosen to
+be [8000 8000]Tm.
+We ﬁrst assume that the receiver position and velocity errors follow a zero-mean Gaussian
+distribution with covariance matrix ¯Pl,k  blkdiag[σ 2
+p I D σ 2
+v I D] for all l , k, where σp and
+σv  0.01 · σp are the position and velocity standard deviations, respectively. Additionally,
+we use the following settings: (1) N  100 samples; (2) SNR=5 dB; (3)σp  10. Figures 6,
+7 and 8 depict the RMSEs of the estimated source positions as functions of the SNR of the
+emitter signal, snapshot number at each interception interval, and receiver position standard
+deviation σp, respectively.
+123
+
+
+===== PDF PAGE 30 =====
+778
+Multidim Syst Sign Process (2019) 30:749–790
+Fig. 9 RMSEs of source position estimation versus SNR of the emitter signal
+Fig. 10 RMSEs of source position estimation versus number of snapshots at each interception interval
+It can be seen from Figs. 6, 7 and 8 that the RMSE of the DPD-b method is consistent
+with the theoretical RMSE derived in Sect. 5. This result demonstrates that the estimation
+performance of the DPD-b method is identical to that of the DPD-a method, as stated in
+Remark 17. The reason is that the statistical performance of the DPD estimator inherently
+relies on the optimization criterion, rather than the speciﬁc numerical algorithm. However,
+the DPD-b method is more computationally efﬁcient than the DPD-a method, as discussed
+in Sect. 7.1. Note that their running times are also compared in Sect. 8.4. In addition, it
+is worth highlighting that the performance of both the DPD-b method and the DD method
+degrade signiﬁcantly when model errors exist, but the former always outperforms the latter,
+no matter what kind of error exists. This implies that the DPD method has an advantage over
+the conventional two-step method.
+123
+
+
+===== PDF PAGE 31 =====
+Multidim Syst Sign Process (2019) 30:749–790
+779
+Fig. 11 RMSEs of source position estimation versus upper bound of receiver position perturbation
+In the next experiment, the receiver position and velocity perturbations are assumed to
+follow a uniform distribution within the intervals [−σp σp] and [−σv σv], respectively, where
+σp and σv  0.01·σp are the upper bounds of the receiver position and velocity perturbation,
+respectively. The aim is to verify that the theoretical analysis in Sect. 5 is still valid for the case
+of uniformly distributed model errors. We use the following settings: (1) N  100 samples;
+(2) SNR=5 dB; (3) σp  15. Figures 9, 10 and 11 depict the RMSEs of the estimated source
+positions as functions of the SNR of the emitter signal, snapshot number at each interception
+interval, and upper bound of receiver position perturbation, respectively.
+It is straightforward to see from Figs. 6, 7, 8, 9, 10 and 11 that there is a fairly good
+agreement between the theoretical and empirical RMSE for the three scenarios stated at
+the beginning of this section. Consequently, it can be concluded that the theoretical results
+obtained in Sect. 5 are also effective when the model errors follow a uniform distribution.
+8.3 The third set of experiments
+In this subsection, the impact of initial position guess on the convergence performance of
+the DPD-b method is studied. The initial solution is set randomly around the true location
+by adding independent zero-mean Gaussian noise with standard deviation equal to 50Δ m,
+where scalar Δ is used to adjust the amount of initial errors.
+In the ﬁrst experiment, the simulation parameters are the same as those used in Fig. 2,
+except that the SNR is set from 0 to 15 dB with a separation of 5 dB. In Fig. 12a, the divergence
+probability is shown as a function of Δ. In the second experiment, all the simulation settings
+are assumed the same as the ones used to produce Fig. 6, except that the SNR is set to four
+different values: 0, 5, 10, 15 dB. Figure 12b displays the divergence probability versus Δ.
+It can be seen from Fig. 12 that the initial errors really affect the convergence performance
+of the DPD-b method. As expected, the probability of divergence increases as the initial
+errors increase. Therefore, the DPD-b method requires careful initialization. Fortunately, the
+DD method can provide a good initial solution guess. Through a number of simulations, we
+can conclude that the divergence probability is less than 2% if the DD method is used to
+123
+
+
+===== PDF PAGE 32 =====
+780
+Multidim Syst Sign Process (2019) 30:749–790
+Fig. 12 Probability of divergence as a function of Δ. a The ﬁrst simulation results. b The second simulation
+results
+Fig. 13 Average running time versus the snapshot number at each interception interval. a The ﬁrst simulation
+results. b The second simulation results
+get a starting point. Finally, it is worth emphasizing that the convergence performance of the
+DPD-b method is not greatly improved as the SNR increases.
+8.4 The fourth set of experiments
+In this subsection, the running-time for all the localization methods mentioned above is
+compared. All the simulations are implemented using MATLAB R2012b on a ThinkPad
+laptop equipped with a 2.50 GHz Intel Core CPU and 8 GB RAM.
+In the ﬁrst experiment, we adopt the simulation settings that are used to produce Fig. 3.
+Figure 13a depicts the average running time of the considered localization methods as a
+function of the snapshot number at each interception interval. In the second experiment, the
+simulation parameters are the same as those used in Fig. 7. In Fig. 13b, the average running
+time versus the snapshot number at each interception interval is compared for the considered
+localization methods.
+It can be easily observed from Fig. 13 that the DPD-b method has lower running time than
+the DPD-a method, which coincides with the analysis in Sect. 7.1. Moreover, the running
+time of the DPD-c method is signiﬁcantly higher than the other methods. The reason is that
+123
+
+
+===== PDF PAGE 33 =====
+Multidim Syst Sign Process (2019) 30:749–790
+781
+it takes the model errors into accounts and there are too many nuisance variables need to be
+optimized, besides source position vector. On the other hand, the DD method has the fastest
+running time among the compared methods, mainly because it is a decentralized method.
+9 Conclusions
+In this paper, the theoretical performance of the DPD estimator presented in Amar and Weiss
+(2008) for signals with known waveforms is studied in the presence of receiver position and
+velocity errors (also called model errors). We derive a closed-form expression for the MSE
+in source location estimate when the estimator assumes the model errors do not exist, but are
+in fact present. The main difﬁculty in the mathematical analysis stems from the fact that the
+DPD cost function in the estimator is not explicit with respect to the emitter position. As a
+result, some algebraic manipulations are used to deduce closed-form expressions for the ﬁrst-
+and second-order partial derivatives of the cost function. The CRBs for the target position
+estimation are deduced in both the absence and presence of model errors. Additionally, two
+improved DPD methods are presented based on the performance analysis results in this paper.
+The ﬁrst method consumes less computation and the second method is more robust to model
+errors. Simulation results support and corroborate the validation of the theoretical analysis
+as well as the advantage of the proposed DPD methods.
+Acknowledgements The authors would like to thank all the anonymous reviewers for their valuable com-
+ments and suggestions. The author also acknowledges support from National Natural Science Foundation of
+China (Grant Nos. 61201381, 61401513 and 61772548), China Postdoctoral Science Foundation (Grant No.
+2016M592989), the Self-Topic Foundation of Information Engineering University (Grant No. 2016600701),
+and the Outstanding Youth Foundation of Information Engineering University (Grant No. 2016603201).
+Appendix A: Proof of Proposition 1
+A second-order Taylor-series expansion of φ(ˆq, ξ) around ˆq  q and ξ  O M×1 produces
+φ(ˆq, ξ)  φ(q, O M×1) + ˙ϕT
+1(q, O M×1) · δq + ˙ϕT
+2(q, O M×1)ξ + 1
+2 · (δq)T · ¨Φ1(q, O M×1) · δq
++(δq)T · ¨Φ2(q, O M×1)ξ + 1
+2 · ξT ¨Φ3(q, O M×1)ξ + o(||ξ||2
+2)
+(A.1)
+where
+˙ϕ1(q, O M×1)  ∂φ(q, O M×1)
+∂q
+, ˙ϕ2(q, O M×1)  ∂φ(q, ξ)
+∂ξ
+
+ξO M×1
+(A.2)
+¨Φ1(q, O M×1)  ∂2φ(q, O M×1)
+∂q∂qT
+,
+¨Φ2(q, O M×1)  ∂2φ(q, ξ)
+∂q∂ξT
+
+ξO M×1
+,
+¨Φ3(q, O M×1)  ∂2φ(q, ξ)
+∂ξ∂ξT
+
+ξO M×1
+(A.3)
+According to the maximum principle, we have
+˙ϕ1(q, O M×1)  ∂φ(q, O M×1)
+∂q
+ O D×1
+(A.4)
+123
+
+
+===== PDF PAGE 34 =====
+782
+Multidim Syst Sign Process (2019) 30:749–790
+Then, combining (25), (A.1), and (A.4) yields
+δq ≈arg max
+x∈RD×1
+$1
+2 · xT ¨Φ1(q, O M×1)x + xT ¨Φ2(q, O M×1)ξ
+%
+(A.5)
+where the second- and higher-order error terms (i.e., o(||ξ||2)) are neglected. It is straight-
+forward to deduce from the second equality in (A.5) that
+δq  −¨Φ
+−1
+1 (q, O M×1) ¨Φ2(q, O M×1)ξ + o(||ξ||2)
+(A.6)
+which proves Proposition 1.
+Appendix B: Proof of Proposition 2
+Deﬁne Δf (o)
+k (q, ξk) by
+Δf (o)
+k (q, ξk)  arg max
+Δfk
+{φk(Δfk, q, ξk)}
+(B.1)
+Then, it follows from the ﬁrst equality in (26) that
+φ(q, ξ) 
+K
+
+k1
+max
+Δfk
+{φk(Δfk, q, ξk)} 
+K
+
+k1
+φk(Δf (o)
+k (q, ξk), q, ξk)
+(B.2)
+The partial derivative of φ(q, ξ) with respect to q is given by
+˙ϕ1(q, ξ)  ∂φ(q, ξ)
+∂q
+
+K
+
+k1
+
+˙φk(Δf (o)
+k (q, ξk), q, ξk) · ∂Δf (o)
+k (q, ξk)
+∂q
++ ˙ϕk,1(Δf (o)
+k (q, ξk), q, ξk)
+
+(B.3)
+where
+˙φk(Δf (o)
+k (q, ξk), q, ξk)  ∂φk(Δfk, q, ξk)
+∂Δfk
+
+ΔfkΔf (o)
+k
+(q,ξk)
+(B.4)
+˙ϕk,1(Δf (o)
+k (q, ξk), q, ξk)  ∂φk(Δfk, q, ξk)
+∂q
+
+ΔfkΔf (o)
+k
+(q,ξk)
+(B.5)
+Further, using (B.3) we obtain
+¨1(q, ξ) 
+K
+
+k1
+⎛
+⎜⎜⎜⎜⎜⎜⎝
+¨Φk,1(Δf (o)
+k (q, ξk), q, ξk) + ¨φk(Δf (o)
+k (q, ξk), q, ξk) · ∂Δf (o)
+k
+(q,ξ k)
+∂q
+·
+
+∂Δf (o)
+k
+(q,ξ k)
+∂q
+T
++ ∂Δf (o)
+k
+(q,ξ k)
+∂q
+· ¨ϕT
+k,1(Δf (o)
+k (q, ξk), q, ξk) + ¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk) ·
+
+∂Δf (o)
+k
+(q,ξ k)
+∂q
+T
++ ˙φk(Δf (o)
+k (q, ξk), q, ξk) · ∂2Δf (o)
+k
+(q,ξ k)
+∂q∂qT
+⎞
+⎟⎟⎟⎟⎟⎟⎠
+(B.6)
+123
+
+
+===== PDF PAGE 35 =====
+Multidim Syst Sign Process (2019) 30:749–790
+783
+¨2(q, ξ)
+
+K
+
+k1
+⎛
+⎜⎜⎜⎜⎜⎜⎝
+¨Φk,2(Δf (o)
+k (q, ξk), q, ξk) + ¨φk(Δf (o)
+k (q, ξk), q, ξk) · ∂Δf (o)
+k
+(q,ξ k)
+∂q
+·
+
+∂Δf (o)
+k
+(q,ξ k)
+∂ξ k
+T
++ ∂Δf (o)
+k
+(q,ξ k)
+∂q
+· ¨ϕT
+k,2(Δf (o)
+k (q, ξk), q, ξk) + ¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk) ·
+
+∂Δf (o)
+k
+(q,ξ k)
+∂ξ k
+T
++ ˙φk,1(Δf (o)
+k (q, ξk), q, ξk) · ∂2Δf (o)
+k
+(q,ξ k)
+∂q∂ξT
+k
+⎞
+⎟⎟⎟⎟⎟⎟⎠
+(i(k)T
+K
+⊗I M0)
+(B.7)
+where
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk)  ∂2φk(Δfk,q,ξ k)
+∂Δfk∂q
+
+ΔfkΔf (o)
+k
+(q,ξk)
+¨ϕk,2(Δf (o)
+k (q, ξk), q, ξk)  ∂2φk(Δfk,q,ξ k)
+∂Δfk∂ξ k
+
+ΔfkΔf (o)
+k
+(q,ξk)
+(B.8)
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+¨Φk,1(Δf (o)
+k (q, ξk), q, ξk)  ∂2φk(Δfk,q,ξ k)
+∂q∂qT
+
+ΔfkΔf (o)
+k
+(q,ξk)
+¨Φk,2(Δf (o)
+k (q, ξk), q, ξk)  ∂2φk(Δfk,q,ξ k)
+∂q∂ξT
+k
+
+ΔfkΔf (o)
+k
+(q,ξk)
+(B.9)
+On the other hand, combining the maximum principle with the deﬁnition of Δf (o)
+k (q, ξk)
+in (B.1) leads to
+¨φk(Δf (o)
+k (q, ξk), q, ξk)  ∂φk(Δfk, q, ξk)
+∂Δfk
+
+ΔfkΔf (o)
+k
+(q,ξk)
+ 0
+(B.10)
+Taking the derivative with respect to q on both sides of (B.10) yields
+¨φk(Δf (o)
+k (q, ξk), q, ξk) · ∂Δf (o)
+k (q, ξk)
+∂q
++ ¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk)  O D×1
+(B.11)
+which implies
+∂Δf (o)
+k (q, ξk)
+∂q
+ −¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk)
+¨φk(Δf (o)
+k (q, ξk), q, ξk)
+(B.12)
+Similarly, taking the derivative with respect to ξk on both sides of (B.10), we get
+φk(Δf (o)
+k (q, ξk), q, ξk) · ∂Δf (o)
+k (q, ξk)
+∂ξk
++ ¨ϕk,2(Δf (o)
+k (q, ξk), q, ξk)  O M0×1
+(B.13)
+which implies
+∂Δf (o)
+k (q, ξk)
+∂ξk
+ −¨ϕk,2(Δf (o)
+k (q, ξk), q, ξk)
+¨φk(Δf (o)
+k (q, ξk), q, ξk)
+(B.14)
+Inserting (B.10) and (B.12) into (B.6) produces
+¨Φ1(q, ξ) 
+K
+
+k1
+
+¨Φk,1(Δf (o)
+k (q, ξk), q, ξk) −¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk) ¨ϕT
+k,1(Δf (o)
+k (q, ξk), q, ξk)
+¨φk(Δf (o)
+k (q, ξk), q, ξk)
+
+(B.15)
+123
+
+
+===== PDF PAGE 36 =====
+784
+Multidim Syst Sign Process (2019) 30:749–790
+Substituting (B.10), (B.12) and (B.14) into (B.7) yields
+¨Φ2(q, ξ) 
+K
+
+k1
+
+¨Φk,2(Δf (o)
+k (q, ξk), q, ξk) −¨ϕk,1(Δf (o)
+k (q, ξk), q, ξk) ¨ϕT
+k,2(Δf (o)
+k (q, ξk), q, ξk)
+¨φk(Δf (o)
+k (q, ξk), q, ξk)
+
+(i(k)T
+K
+⊗I M0)
+(B.16)
+Furthermore, note that Δfk  Δf (o)
+k (q, O M0×1). As a consequence, if the error vector ξ
+in (B.15) and (B.16) is replaced with O M×1, both (29) and (30) hold. This completes the
+proof of Proposition 2.
+Appendix C: Detailed derivation of ˙C
+(1)
+k, j(q, ¯pk) and ¨C
+(1)
+k, j1 j2(q, ¯pk)
+It can be easily seen from (16) that
+˙C(1)
+k, j(q, ¯pk)  [( ˙A(1)
+j (q, ¯p1,k))Hz1,k ( ˙A(1)
+j (q, ¯p2,k))Hz2,k · · · ( ˙A(1)
+j (q, ¯pL,k))HzL,k]
+(C.1)
+¨C
+(1)
+k, j1 j2(q, ¯pk)  [( ¨A
+(1)
+j1 j2(q, ¯p1,k))Hz1,k ( ¨A
+(1)
+j1 j2(q, ¯p2,k))Hz2,k · · · ( ¨A
+(1)
+j1 j2(q, ¯pL,k))HzL,k]
+(C.2)
+where
+˙A(1)
+j (q, ¯pl,k)  ∂A(q, ¯pl,k)
+∂< q > j
+,
+¨A
+(1)
+j1 j2(q, ¯pl,k) 
+∂2 A(q, ¯pl,k)
+∂< q > j1 ∂< q > j2
+(C.3)
+Using the ﬁrst equality in (9), we have
+˙A(1)
+j (q, ¯pl,k)  (j2π fcTs) · ∂γ (q, ¯pl,k)
+∂< q > j
+× diag[0 exp{j2π fcγ (q, ¯pl,k)Ts} 2 · exp{j4π fcγ (q, ¯pl,k)Ts} · · ·
+(N −1) · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+(C.4)
+which implies
+¨A
+(1)
+j1 j2(q, ¯pl,k)  (j2π fcTs) ·
+∂2γ (q, ¯pl,k)
+∂< q > j1 ∂< q > j2
+× diag[0 exp{j2π fcγ (q, ¯pl,k)Ts} 2 · exp{j4π fcγ (q, ¯pl,k)Ts}
+· · · (N −1) · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+−4π2 f 2
+c T 2
+s · ∂γ (q, ¯pl,k)
+∂< q > j1
+· ∂γ (q, ¯pl,k)
+∂< q > j2
+× diag[0 exp{j2π fcγ (q, ¯pl,k)Ts} 4 · exp{j4π fcγ (q, ¯pl,k)Ts}
+· · · (N −1)2 · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+(C.5)
+Next, expressions for the gradient vector and Hessian matrix of γ (q, ¯pl,k) with respect to
+q are derived, which lead to ∂γ (q, ¯pl,k)
+∂<q> j
+and
+∂2γ (q, ¯pl,k)
+∂<q> j1∂<q> j2 , respectively.
+123
+
+
+===== PDF PAGE 37 =====
+Multidim Syst Sign Process (2019) 30:749–790
+785
+First, it follows from (3) that
+∂γ (q, ¯pl,k)
+∂q
+ 1
+v ·
+
+I D −(q −pl,k)(q −pl,k)T
+||q −pl,k||2
+2
+
+·
+˙pl,k
+||q −pl,k||2
+(C.6)
+which implies
+∂2γ (q, ¯pl,k)
+∂q∂qT
+ 1
+v ·
+⎛
+⎜⎜⎝
+3 ·
+˙pT
+l, k(q−pl, k)
+||q−pl, k||5
+2
+· (q −pl,k)(q −pl,k)T −
+˙pT
+l, k(q−pl, k)
+||q−pl, k||3
+2
+· I D
+−
+(q−pl, k) ˙pT
+l, k
+||q−pl, k||3
+2
+−
+˙pl, k(q−pl, k)T
+||q−pl, k||3
+2
+⎞
+⎟⎟⎠
+(C.7)
+Obviously, ∂γ (q, ¯pl,k)
+∂<q> j
+is the jth component of ∂γ (q, ¯pl,k)
+∂q
+and
+∂2γ (q, ¯pl,k)
+∂<q> j1∂<q> j2 is the (j1, j2)th
+element of ∂2γ (q, ¯pl,k)
+∂q∂qT
+.
+Appendix D: Detailed derivation of ˙C
+(2)
+k, j(q, ¯pk) and ¨C
+(2)
+k, j1 j2(q, ¯pk)
+Using (16) and the deﬁnition of the error vector ξk yields
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎩
+˙C(2)
+k, j(q, ¯pk)  i(N1( j))T
+L
+⊗((A(q, ¯pN1( j),k))Hi(N2( j))
+N
+)
+(1 ≤j ≤2N L ; 1 ≤N2( j) ≤N)
+˙C(2)
+k, j(q, ¯pk)  i(N1( j))T
+L
+⊗(j(A(q, ¯pN1( j),k))Hi(N3( j))
+N
+) (1 ≤j ≤2N L ; N + 1 ≤N2( j) ≤2N)
+˙C(2)
+k, j(q, ¯pk)  i(D1( j))T
+L
+⊗
+
+∂A(q, ¯pD1( j),k)
+∂< ¯pD1( j),k>D2( j)
+H
+zD1( j),k
+
+ i(D1( j))T
+L
+⊗(( ˙A(2)
+D2( j)(q, ¯pD1( j),k))HzD1( j),k)
+(2N L + 1 ≤j ≤2(N + D)L)
+(D.1)
+where
+⎧
+⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎩
+N1( j)  ⌈j/2N⌉, N2( j)  j −2N(⌈j/2N⌉−1) , N3( j)  j −2N(⌈j/2N⌉−1) −N
+D1( j)  ⌈( j −2N L)/2D⌉, D2( j)  j −2N L −2D(⌈( j −2N L)/2D⌉−1)
+˙A(2)
+D2( j)(q, ¯pD1( j),k) 
+∂A(q, ¯pD1( j),k)
+∂< ¯pD1( j),k>D2( j)
+(D.2)
+Furthermore, from (D.1) and the deﬁnition of ξk, we have that
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎩
+¨C
+(2)
+k, j1 j2(q, ¯pk)  i(N1( j2))T
+L
+⊗(( ˙A(1)
+j1 (q, ¯pN1( j2),k))Hi(N2( j2))
+N
+)
+(1 ≤j2 ≤2N L ; 1 ≤N2( j2) ≤N)
+¨C
+(2)
+k, j1 j2(q, ¯pk)  i(N1( j2))T
+L
+⊗(j( ˙A(1)
+j1 (q, ¯pN1( j2),k))Hi(N3( j2))
+N
+) (1 ≤j2 ≤2N L ; N + 1 ≤N2( j2) ≤2N)
+¨C
+(2)
+k, j1 j2(q, ¯pk)  i(D1( j2))T
+L
+⊗
+
+∂2 A(q, ¯pD1( j2),k)
+∂<q> j1 ∂< ¯pD1( j2),k>D2( j2)
+H
+zD1( j2),k
+
+ i(D1( j2))T
+L
+⊗(( ¨A
+(2)
+j1,D2( j2)(q, ¯pD1( j2),k))HzD1( j2),k)
+(2N L + 1 ≤j2 ≤2(N + D)L)
+(D.3)
+where
+¨A
+(2)
+j1,D2( j2)(q, ¯pD1( j2),k) 
+∂2 A(q, ¯pD1( j2),k)
+∂< q > j1 ∂< ¯pD1( j2),k >D2( j2)
+(D.4)
+123
+
+
+===== PDF PAGE 38 =====
+786
+Multidim Syst Sign Process (2019) 30:749–790
+Similar to the derivation in (C.4) and (C.5), it can be checked that
+˙A(2)
+j (q, ¯pl,k)  (j2π fcTs) · ∂γ (q, ¯pl,k)
+∂< ¯pl,k > j
+× diag[0 exp{j2π fcγ (q, ¯pl,k)Ts} 2 · exp{j4π fcγ (q, ¯pl,k)Ts}
+· · · (N −1) · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+(D.5)
+¨A
+(2)
+j1 j2(q, ¯pl,k)  (j2π fcTs) ·
+∂2γ (q, ¯pl,k)
+∂< q > j1 ∂< ¯pl,k > j2
+× diag[0 exp{j2π fcγ (q, ¯pl,k)Ts} 2 · exp{j4π fcγ (q, ¯pl,k)Ts}
+· · · (N −1) · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+−4π2 f 2
+c T 2
+s · ∂γ (q, ¯pl,k)
+∂< q > j1
+· ∂γ (q, ¯pl,k)
+∂< ¯pl,k > j2
+× diag[0 exp{j2π fcγ (q, ¯pl,k)Ts} 4 · exp{j4π fcγ (q, ¯pl,k)Ts}
+· · · (N −1)2 · exp{j2π fcγ (q, ¯pl,k)(N −1)Ts}]
+(D.6)
+In the following, we derive expressions for the ﬁrst-order partial derivative vector ∂γ (q, ¯pl,k)
+∂q
+and second-order partial derivative matrix ∂2γ (q, ¯pl,k)
+∂q∂¯pT
+l,k
+.
+First, combining (3) and the deﬁnition of ¯pl,k leads to
+(D.7)
+which implies
+(D.8)
+It is evident that ∂γ (q, ¯pl,k)
+∂< ¯pl,k> j is the jth component of ∂γ (q, ¯pl,k)
+∂¯pl,k
+and
+∂2γ (q, ¯pl,k)
+∂<q> j1∂< ¯pl,k> j2 is the
+(j1, j2)th entry of ∂2γ (q, ¯pl,k)
+∂q∂¯pT
+l,k
+.
+References
+Amar, A., & Weiss, A. J. (2006). Direct position determination in the presence of model errors—Known
+waveforms. Digital Signal Processing, 16(1), 52–83.
+Amar,A.,& Weiss,A.J.(2007).Adecoupled algorithm for geolocation of multiple emitters. Signal Processing,
+87(10), 2348–2359.
+Amar, A., & Weiss, A. J. (2008). Localization of narrowband radio emitters based on Doppler frequency shifts.
+IEEE Transactions on Signal Processing, 56(11), 5500–5508.
+Bao, Q. M., Ko, C. C., & Zhi, W. J. (2005). DOA estimation under unknown mutual coupling and multipath.
+IEEE Transactions on Aerospace and Electronic Systems, 41(2), 565–573.
+123
+
+
+===== PDF PAGE 39 =====
+Multidim Syst Sign Process (2019) 30:749–790
+787
+Bar-Shalom, O., & Weiss, A. J. (2009). Efﬁcient direct position determination of orthogonal frequency division
+multiplexing signals. IET Radar, Sonar and Navigation, 3(2), 101–111.
+Beck, A., Stoica, P., & Li, J. (2008). Exact and approximate solutions of source localization problems. IEEE
+Transactions on Signal Processing, 56(5), 1770–1778.
+Cheung, K. W., So, H. C., Ma, W. K., & Chan, Y. T. (2004). Least squares algorithms for time-of-arrival-based
+mobile location. IEEE Transactions on Signal Processing, 52(4), 1121–1128.
+Ding, W., & Ying, W. (2017). Statistical performance analysis of direct position determination method based
+on doppler shifts in presence of model errors. Multidimensional Systems and Signal Processing, 28(1),
+149–182.
+Friedlander, B., & Weiss, A. J. (1991). Direction ﬁnding in the presence of mutual coupling. IEEE Transactions
+Antennas and Propagation, 39(3), 273–284.
+Fu, Z. J., Ren, K., Shu, J. G., Sun, X. M., & Huang, F. X. (2016). Enabling personalized search over encrypted
+outsourced data with efﬁciency improvement. IEEE Transactions on Parallel and Distributed Systems,
+27(9), 2546–2559.
+Gogineni, S., & Nehorai, A. (2011). Target estimation using sparse modeling for distributed MIMO radar.
+IEEE Transactions on Signal Processing, 59(11), 5315–5325.
+Gu, J. F., Wei, P., & Tai, H. M. (2008). Fast direction-of-arrival estimation with known waveforms and linear
+operators. IET Signal Processing, 2(1), 27–36.
+Ho, K. C., Lu, X., & Kovavisaruch, L. (2007). Source localization using TDOA and FDOA measurements in
+the presence of receiver location errors: Analysis and solution. IEEE Transactions on Signal Processing,
+55(2), 684–696.
+Ho, K. C., & Sun, M. (2008). Passive source localization using time differences of arrival and gain ratios of
+arrival. IEEE Transactions on Signal Processing, 56(2), 464–477.
+Ho, K. C., & Yang, L. (2008). On the use of a calibration emitter for source localization in the presence of
+sensor position uncertainty. IEEE Transactions on Signal Processing, 56(12), 5758–5772.
+Kutluyil, D. (2005). Bearings-only target localization using total least squares. Signal Processing, 85(9),
+1695–1710.
+Li, J., Halder, B., Stoica, P., & Viberg, M. (1995). Computationally efﬁcient angle estimation for signals with
+known waveforms. IEEE Transactions on Signal Processing, 43(9), 2154–2163.
+Li, J. Z., Yang, L., Guo, F. C., & Jiang, W. L. (2016). Coherent summation of multiple short-time signals for
+direct positioning of a wideband source based on delay and Doppler. Digital Signal Processing, 48(1),
+58–70.
+Mason, J. (2004). Algebraic two-satellite TOA/FOA position solution on an ellipsoidal earth. IEEE Transac-
+tions on Aerospace and Electronic Systems, 40(7), 1087–1092.
+Nguyen, N. H., & Dogancay, K. (2015). Optimal sensor placement for Doppler shift target localization. In
+Proceeding of the IEEE radar conference. Arlington, USA: IEEE Press, pp. 1677–1682.
+Nguyen, N. H., & Dogancay, K. (2015). Optimal sensor-target geometries for Doppler-shift target localization.
+In Proceeding of the European signal processing conference. Nice, France: IEEE Press, pp. 180–184.
+Oispuu, M., & Nickel, U. (2010). Direct detection and position determination of multiple sources with inter-
+mittent emission. Signal Processing, 90(12), 3056–3064.
+Pesavento, M., Gershman, A. B., & Wong, K. M. (2002). Direction ﬁnding in partly-calibrated sensor arrays
+composed of multiple subarrays. IEEE Transactions on Signal Processing, 55(9), 2103–2115.
+Pourhomayoun, M., & Fowler, M. L. (2014). Distributed computation for direct position determination emitter
+location. IEEE Transactions on Aerospace and Electronic Systems, 50(4), 2878–2889.
+Pulford, G. W. (2010). Analysis of a nonlinear least square procedure used in global positioning systems. IEEE
+Transactions on Signal Processing, 58(9), 4526–4534.
+Rahman, M. Z., & Kleeman, L. (2009). Paired measurement localization: A robust approach for wireless
+localization. IEEE Transactions on Mobile Computing, 8(8), 1087–1102.
+Reuven, A. M., & Weiss, A. J. (2009). Direct position determination of cyclostationary signals. Signal Pro-
+cessing, 89(12), 2448–2464.
+Roy, R., & Kailath, T. (1989). ESPRIT-estimation of signal parameters via rotational invariance techniques.
+IEEE Transactions on Acoustics, Speech, and Signal Processing, 37(7), 984–995.
+Schmidt, R. O. (1986). Multiple emitter location and signal parameter estimation. IEEE Transactions on
+Antennas and Propagation, 34(3), 267–280.
+Shen, J., Shen, J., Chen, X. F., Huang, X. Y., & Susilo, W. (2017). An efﬁcient public auditing protocol
+with novel dynamic structure for cloud data. IEEE Transactions on Information Forensics and Security,
+12(10), 2402–2415.
+Shen, Y., & Win, M. Z. (2010). Fundamental limits of wideband localization-Part I: A general framework.
+IEEE Transactions on Information Theory, 56(10), 4956–4980.
+123
+
+
+===== PDF PAGE 40 =====
+788
+Multidim Syst Sign Process (2019) 30:749–790
+Stein, S. (1993). Differential delay/doppler ML estimation with unknown signals. IEEE Transactions on Signal
+Processing, 41(8), 2717–2719.
+Stoica, P., & Larsson, E. G. (2001). Comments on “Linearization method for ﬁnding Cramér–Rao bounds in
+signal processing”. IEEE Transactions on Signal Processing, 49(12), 3168–3169.
+Sun, Y. J., & Gu, F. H. (2017). Compressive sensing of piezoelectric sensor response signal for phased array
+structural health monitoring. International Journal of Sensor Networks, 23(4), 258–264.
+Sun, M., & Ho, K. C. (2011). An asymptotically efﬁcient estimator for TDOA and FDOA positioning of
+multiple disjoint sources in the presence of sensor location uncertainties. IEEE Transactions on Signal
+Processing, 59(7), 3434–3440.
+Viberg, M., & Swindlehurst, A. L. (1994). A Bayesian approach to auto-calibration for parametric array signal
+processing. IEEE Transactions on Signal Processing, 42(12), 3495–3507.
+Wang, Ding, & Ying, Wu. (2015). Sensor array calibration method in presence of gain/phase uncertainties
+and position perturbations using the spatial- and time-domain information of the auxiliary sources.
+Multidimensional Systems and Signal Processing, 26(3), 835–868.
+Wax, M., & Kailath, T. (1985). Decentralized processing in sensor arrays. IEEE Transactions on Signal
+Processing, 33(4), 1123–1129.
+Weiss, A. J. (2004). Direct position determination of narrowband radio frequency transmitters. IEEE Signal
+Processing Letters, 11(5), 513–516.
+Weiss, A. J. (2011). Direct geolocation of wideband emitters based on delay and Doppler. IEEE Transactions
+on Signal Processing, 59(6), 2513–5520.
+Weiss, A. J., & Amar, A. (2005). Direct position determination of multiple radio signals. EURASIP Journal
+on Applied Signal Processing, 2005(1), 37–49.
+Yang, L., & Ho, K. C. (2009). An approximately efﬁcient TDOA localization algorithm in closed-form for
+locating multiple disjoint sources with erroneous sensor positions. IEEE Transactions on Signal Pro-
+cessing, 57(12), 4598–4615.
+Zhang, Y. H., Sun, X. M., & Wang, B. W. (2016). Efﬁcient algorithm for K-barrier coverage based on integer
+linear programming. China Communications, 13(7), 16–23.
+Zheng, J., & Wu, Y. C. (2010). Joint time synchronization and localization of an unknown node in wireless
+sensor networks. IEEE Transactions on Signal Processing, 58(3), 1309–1320.
+Ding Wang is graduated in the Department of Communication Engi-
+neering, Zhengzhou Information Science and Technology Institute,
+China, in 2004. He received the M.S. degree in military communica-
+tion from the Department of Communication Engineering, Zhengzhou
+Information Science and Technology Institute, China, in 2007, and
+the Ph.D. degree in communication and system engineering from the
+Department of Communication Engineering, Zhengzhou Information
+Science and Technology Institute, China, in 2011. He has been an asso-
+ciate Professor since 2016.
+123
+
+
+===== PDF PAGE 41 =====
+Multidim Syst Sign Process (2019) 30:749–790
+789
+Jiexin Yin received the B.S. and M.S. degrees in Zhengzhou Infor-
+mation Science and Technology Institute in 2011 and 2014, respec-
+tively. Since September 2014, she has been a doctor candidate in
+the Zhengzhou Information Science and Technology Institute. Her
+research activities are focused on array signal processing and passive
+location.
+Ruirui Liu received the B.S. degrees in Zhengzhou Information Sci-
+ence and Technology Institute, China, in 2015. She is currently work-
+ing towards the M.S. degree on information and communication engi-
+neering at the Zhengzhou Information Science and Technology Insti-
+tute. Her research interests are in array signal processing and target
+localization.
+Hongyi Yu received the M.S. degree from the Department of Commu-
+nication Engineering, Zhengzhou Information Science and Technol-
+ogy Institute, China, in 1987, and the Ph.D. degree from Xidian Uni-
+versity in 1999. He is currently with the National Digital Switching
+System Engineering and Technological Research Center, Zhengzhou,
+China. His main research interests are in the areas of wireless commu-
+nication theory, visible light communications, and signal processing.
+123
+
+
+===== PDF PAGE 42 =====
+790
+Multidim Syst Sign Process (2019) 30:749–790
+Yunlong Wang received the B.S. and M.S. degrees in Zhengzhou
+Information Science and Technology Institute, China, in 2012 and
+2015, respectively. He is pursuing his Ph.D. degree in Zhengzhou
+Information Science and Technology Institute and also working with
+the Department of Electronic Engineering in Tsinghua University, Bei-
+jing, China.
+123

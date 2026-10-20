@@ -1,0 +1,4784 @@
+
+===== PDF PAGE 1 =====
+Signal Processing 152 (2018) 392–410 
+Contents lists available at ScienceDirect 
+Signal Processing 
+journal homepage: www.elsevier.com/locate/sigpro 
+Single-step localization using multiple moving arrays in the presence 
+of observer location errors 
+Jiexin Yin a , b , Ding Wang a , b , ∗, Ying Wu a , b , Tao Tang a , b 
+a National Digital Switching System Engineering and Technology Research Center, Zhengzhou 450 0 02, China 
+b Zhengzhou Information Science and Technology Institute, Zhengzhou 450 0 02, China 
+a r t i c l e 
+i n f o 
+Article history: 
+Received 1 February 2018 
+Revised 17 May 2018 
+Accepted 11 June 2018 
+Available online 23 June 2018 
+Keywords: 
+Passive localization 
+Array signal processing 
+Direct position determination 
+Maximum likelihood 
+Observer location error 
+Alternating iteration 
+a b s t r a c t 
+Direct position determination (DPD) is a promising technique that offers superior performance compared 
+with conventional two-step localization methods. Existing DPD methods presume that the observer loca- 
+tions are known exactly, whereas in practical environments, a small error in the observer locations will 
+lead to an erroneous localization. This study considers the localization of a stationary transmitter by sepa- 
+rated moving arrays from passive measurements taken at different points along the trajectory. The precise 
+locations and velocities of the observers are not available, but their errors are assumed to be Gaussian 
+distributed. Using this probability distribution, we propose maximum likelihood-based DPD approaches 
+in the presence of observer location errors for both unknown and known signals. The proposed DPDs rely 
+on alternating iteration schemes, which reduce the multidimensional nonlinear optimization problem to 
+optimizations of dimensions that are much smaller than the number of unknowns. As opposed to the 
+conventional two-step methods that extract measurement parameters and then estimate the positions 
+from them, the proposed DPDs achieve the localization in a single step by exploiting the information of 
+angles, time delays, and Doppler frequency shifts, but without computing them. Additionally, we derive 
+the Cramér–Rao bound (CRB) formula for this DPD problem in the presence of observer location errors. 
+The simulation results prove that the performance of our methods attains the associated CRB. Moreover, 
+they are more robust than the conventional two-step approaches with respect to observer location errors. 
+We demonstrate our methods for the scenario of multiple moving arrays, but these methods can easily 
+be extended to DPD problems accounting for observer location errors in different scenarios. 
+© 2018 Elsevier B.V. All rights reserved. 
+1. Introduction 
+The passive localization of stationary transmitters is a clas- 
+sic problem in various ﬁelds such as signal processing, wireless 
+communication, radar, sonar, and radio astronomy. Traditional lo- 
+calization methods employ two-step processing [1–3] , where the 
+measurement parameters (e.g., direction of arrival (DOA), time of 
+arrival, and Doppler frequency shift) are ﬁrst extracted and then 
+the source positions are estimated. Because they estimate pa- 
+rameters at each observer separately and independently without 
+the constraint that the measurements correspond to the same 
+transmitter location, the performance of two-step localization 
+techniques are suboptimal and they cannot guarantee high local- 
+ization accuracy. Recently, there has been an upsurge in interest in 
+the direct position determination (DPD) technique [4–7] because of 
+its performance, which is superior to that of the two-step meth- 
+∗Corresponding author at: National Digital Switching System Engineering and 
+Technology Research Center, Zhengzhou 450 0 02, China. 
+E-mail address: wang_ding814@aliyun.com (D. Wang). 
+ods. Compared with the two-step methods, DPD directly localizes 
+the transmitter from sensor outputs under the constraint that the 
+measurements correspond to the same transmitter location, which 
+enables the estimation of locations in a single step without esti- 
+mating intermediate parameters. 
+A number of maximum likelihood (ML)-based DPD algorithms 
+can be found in the literature. For the scenario of widely separated 
+arrays, Weiss proposed ML-based DPD algorithms in [8] for a sin- 
+gle source with either a known or unknown signal. An ML-based 
+DPD for multiple sources with known waveforms was advocated in 
+[9] . ML-based algorithms can approach the corresponding Cramér–
+Rao bounds (CRBs). However, when solving ML estimators in the 
+presence of multiple sources with unknown waveforms, numerous 
+parameters require considerable computational effort. As one solu- 
+tion, an iterative DPD method for multiple unknown sources was 
+developed in [10] , where a lower dimensional grid search is re- 
+quired during each iteration. The preceding DPD algorithms, which 
+use widely separated arrays, involve a centralized processing of the 
+frequency-domain observations of all the arrays, and implicitly use 
+the location information embedded in angles and time delays. If 
+https://doi.org/10.1016/j.sigpro.2018.06.009 
+0165-1684/© 2018 Elsevier B.V. All rights reserved. 
+
+
+===== PDF PAGE 2 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+393 
+there is relative motion between the observer and transmitter, the 
+Doppler shift of the transmitter frequency can also be exploited 
+for localization [11] . In a localization system consisting of multi- 
+ple moving sensors, [12] proposed a direct geolocation algorithm 
+for a narrowband radio transmitter based on the location infor- 
+mation in the Doppler shift. For the scenario where the source 
+emits a relatively wideband signal (i.e., the bandwidth is consid- 
+erable compared to the inverse of the propagation time delays) 
+and is observed by moving receivers, two kinds of ML-based DPD 
+approaches for a stationary target were developed based on the 
+time delay and Doppler frequency shift [13–15] . One method mod- 
+els the transmitted signal as a random Gaussian signal, whereas 
+the other assumes the signal to be deterministic and considers the 
+cases of known and unknown signal waveforms. To achieve higher 
+accuracy, an ML DPD was developed in [16] using coherent sum- 
+mation that takes into account the coherency among the short- 
+time signals received at the same receiver. Note that the studies 
+in [12–16] are unable to exploit angle information, because they 
+are designed for moving observers, each of which is equipped with 
+a single sensor. The localization accuracy of these ML-based DPDs 
+has shown to be signiﬁcantly better than those of the conventional 
+two-step methods, especially under low signal-to-noise ratio (SNR) 
+conditions. 
+In spite of the above advances of the DPD technique, to the 
+best of our knowledge, most existing DPDs presume that the ac- 
+curate locations or velocities of the observers are known in ad- 
+vance, and few effort s have been devoted to solving the DPD prob- 
+lem accounting for observer location uncertainties. In practice, the 
+receiver locations may not be known exactly [17] . For instance, in 
+underwater acoustic localization applications, sensor nodes are de- 
+ployed randomly and their exact positions are often not available. 
+In airborne localization systems, the positions and velocities of air- 
+planes or unmanned aerial vehicles (UAVs) may not be precisely 
+known. A slight error in observer location will lead to a big error in 
+the location result, and therefore the source location accuracy can 
+be very sensitive to the accuracy of the observer positions and ve- 
+locities in practical environments. It has been known that observer 
+location uncertainty can have a dramatic effect on the performance 
+of the two-step localization [17–19] . As a result, it is important to 
+take the inaccuracy in observer locations into account for the DPD 
+problem. 
+This study investigates the DPD algorithm for a stationary trans- 
+mitter observed by several arrays mounted on fast-moving plat- 
+forms. The observers intercept the transmitted signal during their 
+movements and collect batches of data at different points along 
+the trajectory. Typical examples include a communication or radar 
+transmitter, where the observer platforms are airborne, e.g. on air- 
+craft, helicopters, or UAVs [20–21] . Because the moving observers 
+frequently have errors in their positions and velocities, we deal 
+with a practical environment in our study, where the positions and 
+velocities of the observers are not known exactly but their errors 
+are assumed to obey Gaussian distributions with known covariance 
+matrices. Given that the signal waveform may be known in some 
+cases where the transmitter emits a synchronization sequence 
+or a known message [22] , the DPD problems for both unknown 
+and known signals are considered. We show that the DPD meth- 
+ods proposed here can improve the location accuracy compared 
+with the two-step approaches in the presence of observer location 
+errors. 
+The main contributions are summarized as follows: 
+• We establish a signal model in which the angles, time delays 
+and Doppler shifts are incorporated. This signal model is com- 
+plex and can be regarded as a general version of those in [8,13–
+15] . By combining the established signal model and the prob- 
+ability distribution of the observer location uncertainties, two 
+ML-based functions are formulated for an unknown signal and 
+a known signal with unknown transmission time. The proposed 
+DPDs can exploit the location information contained in the an- 
+gles, time delays and Doppler shifts, and minimize the effect of 
+observer location errors. 
+• To solve the prescribed ML-based functions, which are nonlin- 
+early related to a variety of unknown parameters, we develop 
+two alternating iteration schemes, one for a known signal and 
+one for an unknown signal. In the alternating iteration proce- 
+dures, two sets of parameters, namely, the positions and veloci- 
+ties of the observers, and other parameters including the source 
+position, are updated alternately. A by-product of the alternat- 
+ing iteration is that we can decouple the updating of all ob- 
+server locations and velocities into the updating of the location 
+and velocity for each observer. Additionally, iterative methods 
+are designed and employed to update each set of parameters 
+instead of the commonly used grid search, which makes our 
+method practically more attractive. 
+• We provide a detailed derivation of the compressed CRB of the 
+source position estimation based on the received signal model 
+in the presence of observer location errors. The position-related 
+block of the CRB with observer location errors is proved to be 
+lower bounded by the associated CRB without observer location 
+errors. 
+The paper is organized as follows. Section 2 presents the no- 
+tations used throughout this paper. Section 3 describes the signal 
+model and formulates the problem. In Section 4 , the DPD meth- 
+ods are proposed for the unknown and known signal waveforms. 
+Section 5 derives the CRB expression. In Section 6 , we present two 
+series of simulation results and analyze them. Finally, the conclu- 
+sion is drawn in Section 7 . 
+2. Notations 
+In this paper, boldface italic upper-case letter denotes matrix 
+and boldface italic lower-case letter signiﬁes vector. In addition, 
+{ · } ∗, { · } T , and { · } H stand for the conjugate, transpose, and con- 
+jugate transpose, respectively. Operators blkdiag{ · } and diag{ · } in- 
+dicate the compositions of a block diagonal matrix and diagonal 
+matrix. Operator vec{ · } is the “vectorization” operator that turns 
+a matrix into a vector by stacking the columns of a matrix one 
+below the other. Furthermore,  is the Kronecker matrix product, 
+tr{ · } and E [ ·] are the trace and expectation, respectively, Re {·} and 
+Im {·} signify the real and imaginary parts, respectively, ∥ ·∥ 2 and 
+∥ ·∥ F represent the Euclidean norm and Frobenius norm, respec- 
+tively, [ · ] n and [ · ] n, m are the n th element of a vector and the 
+n,m th entry of a matrix, respectively, and ˙ 
+X and ¨X indicate the 
+ﬁrst-order and second-order partial derivatives of X , respectively. 
+Finally, x ( a ) denotes the updated x in the last update, and x ( b ) de- 
+notes the estimation of x in the on-going update. 
+For convenience, we provide the main notations used through- 
+out this paper in Table 1 . 
+3. Signal model and problem formulation 
+3.1. Signal model over multiple moving arrays 
+Let us consider the scenario in which a stationary transmitter 
+is intercepted by L observer arrays mounted on fast-moving plat- 
+forms and each moving array is composed of M sensors. The trans- 
+mitter is assumed to radiate a signal in the far ﬁeld of the moving 
+arrays with a frequency centered at f c , which is the nominal trans- 
+mitted frequency and thus is known to the observers. We denote 
+the transmitter position by a D × 1 vector of coordinates p ∈ R D ×1 . 
+The observers intercept the transmitted signal during their move- 
+ments and collect batches of data in K short intervals. Considering 
+
+
+===== PDF PAGE 3 =====
+394 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+Table 1 
+Symbols and notations. 
+Symbols 
+Explanation 
+C n ×m 
+Set of the n × m complex matrices 
+R n ×m 
+Set of the n × m real matrices 
+L 
+Number of observers 
+K 
+Number of intervals 
+M 
+Number of array sensors 
+N 
+Number of samples during each interval 
+D 
+Dimension of position vector 
+p 
+Source position 
+u lk 
+True position of the l th observer along its trajectory in the k th 
+interval 
+v lk 
+True velocity of the l th observer along its trajectory in the k th 
+interval 
+ζlk = [ u T 
+lk , v T 
+lk ] T True status vector of the l th observer along its trajectory in the 
+k th interval 
+⌣ 
+u lk 
+presumed position of the l th observer along its trajectory in 
+the k th interval 
+⌣ 
+v lk 
+Presumed velocity of the l th observer along its trajectory in 
+the k th interval 
+⌣ 
+ζlk = [ 
+⌣ 
+u 
+T 
+lk , 
+⌣ 
+v 
+T 
+lk ] T Presumed status vector of the l th observer along its trajectory 
+in the k th interval 
+r lk 
+Observation vector collected by the l th observer in the k th 
+interval 
+s k 
+Unknown signal waveform vector in the k th interval 
+s k 0 
+Known signal waveform vector in the k th interval 
+n lk 
+Circularly white Gaussian noise vector 
+b lk 
+Attenuation coeﬃcient between the source and the l th 
+observer in the k th interval 
+t 0 
+Transmission time 
+c 
+Propagation speed 
+f c 
+Carrier frequency 
+T s 
+Sampling period 
+Q lk 
+Covariance matrix of 
+⌣ 
+ζlk 
+σ 2 
+n 
+Noise power 
+F 
+Discrete Fourier transform operator 
+that the observer locations may not be known exactly, we denote 
+u lk ∈ R D ×1 and v lk ∈ R D ×1 as the true position and velocity, respec- 
+tively, of the l th observer along its trajectory in the k th interval, 
+and 
+⌣ 
+u lk and 
+⌣ 
+v lk are their presumed (or observed) values that con- 
+tain errors. 
+We assume that the transmitted signal has a bandwidth that is 
+considerable compared to the inverse of the propagation time be- 
+tween the source and the observers [13–15] but is relatively nar- 
+row compared to the inverse of the propagation time over the ar- 
+ray aperture [8–10] . After being down-converted to base band and 
+sampled at t = n T s in each interval, where T s represents the sam- 
+pling period, the vector composed of the signals collected by the 
+l th observer array in the k th interception interval, r lk (n ) ∈ C M×1 , is 
+expressed as 
+r lk (n ) = b lk a lk (p, u lk ) s k (n T s −t 0 −τlk (p, u lk )) e j2 π f lk (p, u lk , v lk ) n T s 
++ n lk (n ) n = 1 , 2 , . . . , N 
+(1) 
+for k = 1 , 2 , . . . , K, l = 1 , 2 , . . . , L , where N represents the number 
+of samples in each interval and subscript k indicates the k th inter- 
+val. s k (n T s −t 0 −τlk (p, u lk )) is the sampled baseband signal, trans- 
+mitted at time t 0 and delayed by τ lk ( p , u lk ) which denotes the 
+propagation time between the transmitter and the l th observer. 
+b lk is an unknown complex attenuation coeﬃcient representing the 
+channel effect between the transmitter and the l th observer. a lk ( p , 
+u lk ) is the array response of the l th observer array to the signal 
+transmitted from the position p , which is related to the DOA pa- 
+rameter θ lk ( p , u lk ). f lk ( p , u lk , v lk ) is the Doppler frequency after 
+down conversion, generated by the motion between the transmit- 
+ter and the l th observer. n lk (n ) ∈ C M×1 stands for the circularly 
+white Gaussian noise vector mixed through the sensors of the l th 
+observer, and the noise power is σ 2 
+n . 
+We further composite all the N observation samples into a vec- 
+tor and obtain 
+r lk = [ r T 
+lk (1) , r T 
+lk (2) , . . . , r T 
+lk (N)] T 
+= b lk 
+
+D f lk (p, u lk , v lk )  a lk (p, u lk ) 
+s ′ 
+lk + n lk , 
+(2) 
+where 
+s ′ 
+lk = [ s k ( T s −t 0 −τlk (p, u lk )) , s k (2 T s −t 0 −τlk (p, u lk )) , . . . , s k 
+× (N T s −t 0 −τlk (p, u lk )) ] 
+T , 
+(3) 
+n lk = [ n T 
+lk (1) , n T 
+lk (2) , . . . , n T 
+lk (N)] T , 
+(4) 
+and 
+D f lk (p, u lk , v lk ) = diag { exp ( j2 π f lk (p, u lk , v lk ) N T s ) } 
+(5) 
+with N = [ 1 , 2 , . . . , N ] T . Vectors s ′ lk and n lk include the N sam- 
+ples of the baseband signal and noise received by the l th ob- 
+server during the k th interval, respectively. The diagonal elements 
+of D τlk (p, u lk ) are associated with the corresponding Doppler fre- 
+quency shift. 
+We deﬁne s k = [ s k ( T s −t 0 ) , s k (2 T s −t 0 ) , . . . , s k (N T s −t 0 )] T , which 
+consists of the N samples of the signal transmitted at time t 0 dur- 
+ing the k th interval. As the received signal s ′ lk is a delayed version 
+of the transmitted signal s k by τ lk ( p , u lk ), the Fourier coeﬃcients 
+of s ′ 
+lk and s k satisfy 
+F s ′ 
+lk = D τlk (p, u lk ) F s k , 
+(6) 
+where D τlk (p, u lk ) ∈ C N×N and F ∈ C N×N are given by 
+D τlk (p, u lk ) = diag 
+
+exp 
+
+−j 2 πτlk (p, u lk ) 
+N T s 
+N 
+
+, 
+(7) 
+F = 1 
+√ 
+N 
+exp 
+
+−j 2 π
+N N N T 	
+. 
+(8) 
+Note that the diagonal elements of D τlk (p, u lk ) are the phase 
+shifts of the Fourier coeﬃcients, which are related to the corre- 
+sponding time delay. Matrix F is the discrete Fourier transform op- 
+erator, and it can be veriﬁed that F H F = I N , where I N signiﬁes the 
+N × N identity matrix. Using this equality and multiplying each side 
+of (6) by F H , it follows that 
+s ′ 
+lk = F H D τlk (p, u lk ) F s k . 
+(9) 
+Substituting (9) back into (2) yields 
+r lk = b lk 
+
+D f lk (p, u lk , v lk )  a lk (p, u lk ) 
+F H D τlk (p, u lk ) F s k + n lk 
+= b lk C lk (p, u lk , v lk ) s k + n lk 
+(10) 
+with 
+C lk (p, u lk , v lk ) = 
+D f lk (p, u lk , v lk )  a lk (p, u lk ) 
+F H D τlk (p, u lk ) F . 
+(11) 
+We observe that all the information about the source position 
+including angles, time delays, and Doppler shifts are incorporated 
+in C lk ( p , u lk , v lk ). To relate these parameters with the source po- 
+sition, we take the planar geometry as an example, and therefore 
+express θ lk ( p , u lk ), τ lk ( p , u lk ) as 
+θlk (p, u lk ) = arctan p(2) −u lk (2) 
+p(1) −u lk (1) , 
+(12) 
+τlk (p, u lk ) = 1 
+c ∥ p −u lk ∥ 2 , 
+(13) 
+and f lk ( p , u lk , v lk ) is given by [12–15] 
+f lk (p, u lk , v lk ) = f c 
+c 
+v T 
+lk (p −u lk ) 
+∥ p −u lk ∥ 2 
+, 
+(14) 
+where c denotes the propagation speed. On this basis, we have es- 
+tablished a relationship between the observation and the source 
+position as well as the observer locations and velocities. 
+
+
+===== PDF PAGE 4 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+395 
+3.2. Observer location and velocity errors 
+For notational simplicity, we collect the presumed location and 
+velocity of the l th observer in the k th interval as the vector 
+⌣ 
+ζlk = 
+[ 
+⌣ 
+u 
+T 
+lk , 
+⌣ 
+v 
+T 
+lk ] T , which is available, but has errors. Generally, 
+⌣ 
+ζlk can be 
+modeled as a Gaussian random variable with mean being its true 
+value, ζlk = [ u T 
+lk , v T 
+lk ] T , and the covariance matrix is assumed to sat- 
+isfy 
+
+ 
+E [( 
+⌣ 
+ζlk −ζlk )( 
+⌣ 
+ζlk −ζlk ) T ] = Q lk 
+∀ l, k 
+E [( 
+⌣ 
+ζl 1 k 1 −ζl 2 k 2 )( 
+⌣ 
+ζl 1 k 1 −ζl 2 k 2 ) T ] = O ∀ l 1 ̸ = l 2 or k 1 ̸ = k 2 
+(15) 
+for k = 1 , 2 , . . . , K, l = 1 , 2 , . . . , L . In our study, we assume that Q lk 
+is known in advance. These covariance matrices can be deter- 
+mined, for example, using sample statistics from a number of in- 
+dependent, identical experiments. 
+Furthermore, we list the following assumptions adopted in this 
+study: 
+A1) The source and noise are assumed to be uncorrelated and have 
+a mean of zero. 
+A2) The noise power σ 2 
+n and the covariance matrices of observer 
+location errors Q lk (k = 1 , 2 , . . . , K, l = 1 , 2 , . . . , L ) are known. 
+A3) Without loss of generality, we normalize the energy of the 
+transmitted waveform during each interval and assume that 
+∥ s k ∥ 2 
+2 = 1 , ∀ k. 
+(16) 
+This assumption eliminates the ambiguous estimation of the 
+signal waveform and attenuation coeﬃcients. 
+Relying on these assumptions and the a priori information pro- 
+vided in (15) , the problem that we address now is to directly locate 
+the source position from r lk (k = 1 , 2 , . . . , K, l = 1 , 2 , . . . , L ) using 
+the angles, time delays, and Doppler shifts expressed in (12) to 
+(14) but without estimating them. 
+4. Proposed DPD methods 
+In this section, we exploit the a priori information in (15) in the 
+form of a probability distribution to develop robust ML-based DPD 
+methods with regard to observer location and velocity uncertain- 
+ties. Here, we establish two ML-based functions, one of which is 
+for a signal with an unknown waveform, and the other is for a sig- 
+nal with a known waveform but unknown transmission time. Be- 
+cause the observer location and velocity uncertainties add to the 
+unknowns, the major computational challenge is that optimizing 
+the ML-based functions requires a multidimensional search over 
+the parameter space. To deal with the overwhelming size of pa- 
+rameters in each of the two cases, different alternating iteration 
+schemes are proposed. 
+4.1. DPD for an unknown signal 
+In this section, we assume that the transmitted waveform is 
+unknown to the observers. The optimization model for this case 
+is provided ﬁrst, and then the corresponding alternating iteration 
+scheme is developed. 
+4.1.1. Optimization model 
+Using the described signal model, combined with the proba- 
+bility distribution of the presumed observer locations and veloc- 
+ities, the ML-based function for the unknown signal waveform is 
+expressed as 
+f(ρ) = 1 
+σ 2 
+n 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+∥ r lk −b lk C lk (p, ζlk ) s k ∥ 2 
+2 
++ 1 
+2 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+, 
+(17) 
+where ζlk = [ u T 
+lk , v T 
+lk ] T has been substituted and ρ is the vector con- 
+taining all the unknowns to be estimated: 
+ρ = [ p T , s T , b T , ζT ] T . 
+(18) 
+Here, s = [ s T 
+1 , s T 
+2 , . . . , s T 
+K ] T ∈ C KN×1 includes all the transmitted 
+signal waveforms during K time intervals, b = [ b T 
+1 , b T 
+2 , . . . , b T 
+L ] T ∈ 
+C KL ×1 ( b l = [ b l1 , b l2 , . . . , b lK ] T ) consists of all the complex atten- 
+uation coeﬃcients between the transmitter and L observers, and 
+ζ = [ ζT 
+11 , . . . , ζT 
+L 1 , . . . , ζT 
+1 K , . . . , ζT 
+LK ] T ∈ R 2 KLD ×1 is the vector compris- 
+ing all the positions and velocities of the L observers in the K in- 
+tervals. 
+Using ¯Q lk = 2 Q lk /σ 2 
+n to denote Q lk scaled by the noise power, 
+(17) is proportional to 
+f(ρ) ∝ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+∥ r lk −b lk C lk (p, ζlk ) s k ∥ 2 
+2 + 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+. 
+(19) 
+Following from (19) , the joint ML estimate of ρ can be given 
+by 
+ˆ 
+ρ = arg min 
+ρ
+
+ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+∥ r lk −b lk C lk (p, ζlk ) s k ∥ 2 
+2 
++ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+ 
+. 
+(20) 
+Given the optimization problem in (20) , we can ﬁrst minimize 
+the cost function with respect to b lk and thus obtain the estimation 
+of b lk as follows: 
+ˆ 
+b lk = 
+s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) s k 
+−1 s H 
+k C H 
+lk (p, ζlk ) r lk . 
+(21) 
+With the help of the equalities a H 
+lk (p, u lk ) a lk (p, u lk ) = M, 
+D H 
+f lk (p, ζlk ) D f lk (p, ζlk ) = I N , D H 
+τlk (p, u lk ) D τlk (p, u lk ) = I N , and F F H = 
+I N , it can be veriﬁed that 
+C H 
+lk (p, ζlk ) C lk (p, ζlk ) = M I N , 
+∀ l, k. 
+(22) 
+Applying (22) and Assumption A3 to (21) yields 
+ˆ 
+b lk = 1 
+M s H 
+k C H 
+lk (p, ζlk ) r lk . 
+(23) 
+After replacing b lk in the cost function with the estimated ˆ 
+b lk in 
+(23) , we have 
+f(p, s , ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k C H 
+lk (p, ζlk ) r lk 
+
+C lk (p, ζlk ) s k 
+
+2 
+2 
++ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+. 
+(24) 
+In this way, we have removed the nuisance parameters b lk ( l = 
+1 , 2 , . . . , L, k = 1 , 2 , . . . , K) in the cost function. 
+Based on (24) , we further decompose f ( p , s , ζ) as 
+f(p, s , ζ) = f 1 (p, s , ζ) + f 2 (ζ) , 
+(25) 
+where f 1 ( p , s , ζ) is associated with the observed signal as follows: 
+f 1 (p, s , ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k C H 
+lk (p, ζlk ) r lk 
+
+C lk (p, ζlk ) s k 
+
+2 
+2 
+, 
+(26) 
+
+
+===== PDF PAGE 5 =====
+396 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+and f 2 ( ζ) is related to the presumed locations and velocities of the 
+observers as 
+f 2 (ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+. 
+(27) 
+As a solution for this ML-based function, we propose an al- 
+ternating iteration scheme. For the alternating iteration technique, 
+an optimization is performed with respect to a set of parameters 
+while all the other parameters remain unchanged in each updating 
+iteration. The updating procedure continues iteratively until a con- 
+vergence occurs. We here divide the unknowns { p , s , ζ} into two 
+parts (i.e., { p , s } and ζ), and therefore they can be updated in turn 
+during our alternating iteration procedure. The detailed updating 
+of { p , s } and ζ will be derived in the next section. 
+4.1.2. Updating of the source location and signal waveform 
+Because p and s are contained only in f 1 ( p , s , ζ), given the up- 
+dated ζ(a) , the estimate of { p , s } is 
+{ ˆ 
+p , ˆ 
+s } = arg min 
+p, s 
+f 1 (p, s , ζ(a) ) 
+= arg min 
+p, s 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k C H 
+lk (p, ζ(a) 
+lk ) r lk 
+
+C lk (p, ζ(a ) 
+lk ) s k 
+2 
+2 , 
+(28) 
+where ζ(a) 
+lk denotes the updated ζlk , which remains unchanged and 
+can be regarded as a constant vector when optimizing p and s . 
+Using (22) and Assumption A3, and considering that 
+L 
+ 
+l=1 
+K 
+ 
+k =1 
+r H 
+lk r lk is a constant, (28) leads to the estimate of { p , s } 
+from the following problem: 
+{ ˆ 
+p , ˆ 
+s } = argmax 
+p, s 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+
+s H 
+k C H 
+lk (p, ζ(a) 
+lk ) r lk 
+
+r H 
+lk C lk (p, ζ(a) 
+lk ) s k . 
+(29) 
+We 
+denote 
+T k (p, ζ(a) 
+k ) = [ C H 
+1 k (p, ζ(a) 
+1 k ) r 1 k , C H 
+2 k (p, ζ(a) 
+2 k ) r 2 k , . . . , 
+C H 
+Lk (p, ζ(a) 
+Lk ) r Lk ] ∈ C N×L , where ζ(a) 
+k = [ ζ(a)T 
+1 k , ζ(a)T 
+2 k , . . . , ζ(a)T 
+Lk ] T repre- 
+sents the updated locations and velocities of all the observers in 
+the k th interval, and (29) can be recast as 
+{ ˆ 
+p , ˆ 
+s } = argmax 
+p, s 
+K 
+ 
+k =1 
+s H 
+k T k (p, ζ(a) 
+k ) T H 
+k (p, ζ(a) 
+k ) s k . 
+(30) 
+We see from (30) that the estimation of s k is the eigenvector 
+corresponding to the largest eigenvalue of T k (p, ζ(a) 
+k ) T H 
+k (p, ζ(a) 
+k ) , 
+and the estimation of p is the position that maximizes the sum of 
+the largest eigenvalues of T k (p, ζ(a) 
+k ) T H 
+k (p, ζ(a) 
+k ) for k = 1 , 2 , . . . , K. 
+It has been readily proven that for a matrix A , the largest nonzero 
+eigenvalues of A H A and AA H are identical [8] . Because the dimen- 
+sion of T H 
+k (p, ζ(a) 
+k ) T k (p, ζ(a) 
+k ) ∈ C L ×L is signiﬁcantly smaller than 
+that of T k (p, ζ(a) 
+k ) T H 
+k (p, ζ(a) 
+k ) ∈ C N×N in most cases, we solve ˆ 
+p by 
+ˆ 
+p = arg max 
+p 
+K 
+ 
+k =1 
+λmax 
+
+T H 
+k (p, ζ(a) 
+k ) T k (p, ζ(a) 
+k ) 
+. 
+(31) 
+Here, λmax { · } signiﬁes the largest eigenvalue of the input ma- 
+trix. 
+Usually (31) is solved via a two- or three-dimensional grid 
+search. Considering that a grid search is computationally demand- 
+ing when the area of interest is large and the grid step size is 
+small, we devise a Newton-type iterative method to implement the 
+ﬁne search. A Newton-type method often requires computing the 
+gradient and Hessian matrix of the cost function, which is quite 
+easy if the cost function is explicitly expressed. However, the cost 
+function in (31) is the sum of the largest eigenvalues of several 
+Hermitian matrices, and thus it is not straightforward to obtain 
+its gradient and Hessian matrix. Therefore, we apply the eigen- 
+perturbation theory to derive the gradient and Hessian matrix of 
+(31) in what follows. 
+Now let us denote X k (p, ζ(a) 
+k ) = T H 
+k (p, ζ(a) 
+k ) T k (p, ζ(a) 
+k ) , whose 
+eigenvalues and eigenvectors are respectively λk , min = λk, 1 ≤λk, 2 ≤
+· · · ≤λk,L = λk , max and e k, 1 , e k, 2 , . . . , e k,L . Deﬁne δp as the perturba- 
+tion of p and ˆ 
+p = p + δp as the perturbed position. Then the eigen- 
+values and eigenvectors of ˆ 
+X k ( ˆ 
+p , ζ(a) 
+k ) are ˆ λk , min = ˆ λk, 1 ≤ˆ λk, 2 ≤
+· · · ≤ˆ λk,L = ˆ λk , max and ˆ 
+e k, 1 , ˆ 
+e k, 2 , . . . , ˆ 
+e k,L , respectively. Introducing 
+δX k = ˆ 
+X k ( ˆ 
+p , ζ(a) 
+k ) −X k (p, ζ(a) 
+k ) and following the result in [23] , we 
+can express ˆ λk , max in terms of the perturbation δX k as 
+ˆ λk , max = λk , max + e H 
+k,L δX k e k,L + e H 
+k,L δX k E k,L δX k e k,L + o ∥ δX k ∥ 2 
+F 
+
+, 
+(32) 
+in which 
+E k,L = 
+L −1 
+ 
+l=1 
+λk , max −λk,l 
+−1 e k,l e H 
+k,l , 
+(33) 
+and o( ∥ δX k ∥ 2 
+F ) signiﬁes the inﬁnitesimal term of ∥ δX k ∥ 2 
+F . 
+We recall that  K 
+k =1 ˆ λk , max is the search function for p as 
+shown in (31) , and therefore our purpose is to link δp 
+to 
+ K 
+k =1 ˆ λk , max . 
+Using 
+vec { A 1 A 2 A 3 } = (A T 
+3  A 1 ) vec { A 2 } 
+and 
+tr { A 1 A 2 A 3 A 4 } = ve c T { A T 
+4 } ( A T 
+3  A 1 )vec { A 2 } 
+[24] , 
+(32) 
+can
+be 
+further expressed as a function of δx k = vec { δX k } as follows: 
+ˆ λk , max = λk , max + vec { e H 
+k,L δX k e k,L } + tr { E k,L δX k e k,L e H 
+k,L δX k } 
++ o ∥ δX k ∥ 2 
+F 
+
+= λk , max + (e T 
+k,L  e H 
+k,L ) δx k + δx H 
+k (e ∗
+k,L e T 
+k,L  E k,L ) δx k 
++ o ∥ δx k ∥ 2 
+2 
+
+, 
+(34) 
+where the Hermitian property of δX k is used. 
+Deﬁne 
+x k (p, ζ(a) 
+k ) = vec { X k (p, ζ(a) 
+k ) } 
+and 
+ˆ 
+x k ( ˆ 
+p , ζ(a) 
+k ) = 
+vec { ˆ 
+X k ( ˆ 
+p , ζ(a) 
+k ) } . Applying the conclusion in [25] , we can take 
+the second-order Taylor expansion of ˆ 
+x k ( ˆ 
+p , ζ(a) 
+k ) around p as 
+ˆ 
+x k ( ˆ 
+p , ζ(a) 
+k ) = x k (p, ζ(a) 
+k ) + ˙ 
+X p 
+k (p, ζ(a) 
+k ) δp 
++ 1 
+2 ( I L 2  δp T ) ¨X pp 
+k (p, ζ(a) 
+k ) δp + o ∥ δp ∥ 2 
+2 
+
+, 
+(35) 
+where 
+˙ 
+X p 
+k (p, ζ(a) 
+k ) = ∂ x k (p, ζ(a) 
+k ) 
+∂ p T 
+∈ C L 2 ×D , 
+(36) 
+and 
+¨X pp 
+k (p, ζ(a) 
+k ) = 
+⎡ 
+⎢ 
+⎢ 
+⎢ 
+⎢ 
+⎢ 
+⎣ 
+∂ 2 [ x k (p, ζ(a) 
+k )] 
+1 
+∂ p∂ p 
+T 
+∂ 2 [ x k (p, ζ(a) 
+k )] 
+2 
+∂ p∂ p 
+T 
+. . . 
+∂ 2 [ x k (p, ζ(a) 
+k )] 
+4 L 2 
+∂ p∂ p 
+T 
+⎤ 
+⎥ 
+⎥ 
+⎥ 
+⎥ 
+⎥ 
+⎦ 
+∈ C L 2 D ×D . 
+(37) 
+The detailed expressions for (36) and (37) can be found in 
+Appendix A . 
+Relying on (35) , we can relate δx k with δp as 
+δx k = ˙ 
+X p 
+k (p, ζ(a) 
+k ) δp + 1 
+2 ( I L 2  δp T ) ¨X pp 
+k (p, ζ(a) 
+k ) δp + o ∥ δp ∥ 2 
+2 
+
+. 
+(38) 
+Then, substituting (38) back into (34) yields 
+ˆ λk , max = λk , max + (e T 
+k,L  e H 
+k,L ) δx k + δx H 
+k (e ∗
+k,L e T 
+k,L  E k,L ) δx k 
++ o ∥ δx k ∥ 2 
+2 
+
+
+
+===== PDF PAGE 6 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+397 
+= λk , max + (e T 
+k,L  e H 
+k,L ) ˙ 
+X p 
+k (p, ζ(a) 
+k ) δp 
++ 1 
+2 (e T 
+k,L  e H 
+k,L )( I L 2  δp T ) ¨X pp 
+k (p, ζ(a) 
+k ) δp 
++ δp T  ˙ 
+X p 
+k (p, ζ(a) 
+k ) H (e ∗
+k,L e T 
+k,L  E k,L ) ˙ 
+X p 
+k (p, ζ(a) 
+k ) δp 
++ o ∥ δp ∥ 2 
+2 
+
+. 
+(39) 
+Because 
+(e T 
+k,L  e H 
+k,L )( I L 2  δp T ) ¨X pp 
+k (p, ζ(a) 
+k ) δp 
+= δp T (e T 
+k,L  e H 
+k,L  I D ) ¨X pp 
+k (p, ζ(a) 
+k ) δp, 
+(40) 
+(39) is equivalent to 
+ˆ λk , max = λk , max + (e T 
+k,L  e H 
+k,L ) ˙ 
+X p 
+k (p, ζ(a) 
+k ) δp 
++ 1 
+2 δp T  
+(e T 
+k,L  e H 
+k,L  I D ) ¨X pp 
+k (p, ζ(a) 
+k ) + 2  ˙ 
+X p 
+k (p, ζ(a) 
+k ) H 
+×(e ∗
+k,L e T 
+k,L  E k,L ) ˙ 
+X (p) 
+k (p, ζ(a) 
+k ) δp + o | δp | 2 
+2 
+
+. 
+(41) 
+This further leads to 
+K 
+ 
+k =1 
+ˆ λk , max = 
+K 
+ 
+k =1 
+λk , max + h T (p, ζ(a) ) δp + 1 
+2 δp T H(p, ζ(a) ) δp 
++ o ∥ δp ∥ 2 
+2 
+
+, 
+(42) 
+where h ( p , ζ(a) ) and H ( p , ζ(a) ) are given by 
+h (p, ζ(a) ) = 
+K 
+ 
+k =1 
+ ˙ 
+X p 
+k (p, ζ(a) 
+k ) T 
+e k,L  e ∗
+k,L 
+
+, 
+(43) 
+and 
+H(p, ζ(a) ) = 
+K 
+ 
+k =1 
+(e T 
+k,L  e H 
+k,L  I D ) ¨X pp 
+k (p, ζ(a) 
+k ) 
++ 2  ˙ 
+X p 
+k (p, ζ(a) 
+k ) H (e ∗
+k,L e T 
+k,L  E k,L ) ˙ 
+X p 
+k (p, ζ(a) 
+k ) 
+ 
+. (44) 
+From (42) , it can be found that h ( p , ζ(a) ) and H ( p , ζ(a) ) are the 
+gradient and Hessian matrix of the search function in (31) , respec- 
+tively. Therefore, we can update p using the following Newton-type 
+iterative procedure [26] : 
+ˆ 
+p (m + 1) = ˆ 
+p (m ) −μm H −1 ( ˆ 
+p (m ) , ζ(a) ) h ( ˆ 
+p (m ) , ζ(a) ) , 
+(45) 
+where the superscript m denotes the Newton-type iteration num- 
+ber, and μ is the step factor deciding the iteration step size. 
+Given the updated source position, s k is thus estimated through 
+s (b) 
+k = 
+e L 
+
+T H 
+k ( p (b) , ζ(a) 
+k ) T k ( p (b) , ζ(a) 
+k ) 
+e L 
+
+T H 
+k ( p (b) , ζ(a) 
+k ) T k ( p (b) , ζ(a) 
+k ) 
+2 
+(46) 
+for k = 1 , 2 , . . . , K, where p (b) is the estimate result from the 
+Newton-type iterative procedure. 
+4.1.3. Updating of observer locations and velocities 
+After estimating the source location and waveform, which are 
+denoted by p (b) and s (b) = [ s (b) T 
+1 , s (b) T 
+2 , . . . , s (b) T 
+K ] 
+T , we turn t o up- 
+dating the true locations and velocities of the observers. Based on 
+(24) , the ML estimate of ζ can be obtained as 
+ˆ 
+ζ = arg min 
+ζ
+f( p (b) , s (b) , ζ) 
+= arg min 
+ζ
+
+ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s (b)H 
+k C H 
+lk ( p (b) , ζlk ) r lk 
+
+C lk ( p (b) , ζlk ) s (b) 
+k 
+
+2 
+2 
++ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+ 
+. 
+(47) 
+We then decompose the above cost function into a sum of the 
+following LK sub-functions: 
+f( p (b) , s (b) , ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+V lk ( p (b) , s (b) 
+k , ζlk ) , 
+(48) 
+where 
+V lk ( p (b) , s (b) 
+k , ζlk ) 
+= 
+r lk −1 
+M 
+
+s (b)H 
+k C H 
+lk ( p (b) , ζlk ) r lk 
+
+C lk ( p (b) , ζlk ) s (b) 
+k 
+
+2 
+2 
++ 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+. 
+(49) 
+Recalling the statistical property of observer location errors as- 
+sumed in Section 3.2 , the presumed observer locations are statisti- 
+cally independent from interval to interval and independent from 
+observer to observer. Hence, we can decouple the updating of ζ
+into the updating of ζ11 , . . . , ζ1 K , . . . , ζL 1 , . . . , ζLK , which is solved 
+by 
+ˆ 
+ζlk = arg min 
+ζlk 
+V lk ( p (b) , s (b) 
+k , ζlk ) 
+(50) 
+for l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K. 
+For exhibition convenience, we deﬁne 
+˜ 
+r lk = [ r T 
+lk , 
+⌣ 
+ζ
+T 
+lk ¯Q −1 / 2 
+lk 
+] T , 
+(51) 
+which comprises the observation and the presumed status of the 
+l th observer in the k th interval, and 
+˜ 
+g lk ( p (b) , s (b) 
+k , ζlk ) = [ g T 
+lk ( p (b) , s (b) 
+k , ζlk ) , ζT 
+lk ¯Q −1 / 2 
+lk 
+] T , 
+(52) 
+which is a vector function in terms of the unknown status of the 
+l th observer in the k th interval, where 
+g lk ( p (b) , s (b) 
+k , ζlk ) = 1 
+M 
+
+s (b)H 
+k 
+C H 
+lk ( p (b) , ζlk ) r lk 
+
+C lk ( p (b) , ζlk ) s (b) 
+k . 
+(53) 
+Therefore, (49) can be rewritten as 
+V lk ( p (b) , s (b) , ζlk ) = 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ζlk ) 
+2 
+2 . 
+(54) 
+Notice that (54) is a nonlinear least-squares problem, and 
+therefore we resort to the Taylor-series method [27] . Let us de- 
+note ˆ 
+ζ(m ) 
+lk as the estimated ζlk in the m th Taylor iteration, and the 
+ﬁrst-order Taylor expansion of ˜ 
+g lk ( p (b) , s (b) 
+k , ζlk ) with respect to ζlk 
+around ˆ 
+ζ(m ) 
+lk is given by 
+˜ 
+g lk ( p (b) , s (b) 
+k , ζlk ) ≈˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) + ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk )(ζlk −ˆ 
+ζ(m ) 
+lk ) , 
+(55) 
+where ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ζlk ) = ∂ ˜ 
+g 
+lk ( p 
+(b) , s (b) 
+k , ζlk ) 
+∂ζT 
+lk 
+. Then, the estimation of ζlk in the 
+(m + 1) th Taylor iteration can be obtained from the following least-squares 
+problem: 
+ˆ 
+ζ(m +1) 
+lk 
+= arg min 
+ζlk 
+ ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk )(ζlk −ˆ 
+ζ(m ) 
+lk ) −( ˜ 
+r lk 
+−˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 2 
+2 . 
+(56) 
+Because ζlk is real-valued, according to the derivation in 
+Appendix B , minimizing the above function yields the following 
+Taylor-series iteration formula for updating ζlk : 
+ˆ 
+ζ(m +1) 
+lk 
+= ˆ 
+ζ(m ) 
+lk + Re −1 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+
+· Re 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+. 
+(57) 
+
+
+===== PDF PAGE 7 =====
+398 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+Algorithm 1 
+DPD for an unknown signal considering observer location errors. 
+1: Set e as a suﬃciently small positive number and choose an appropriate step factor μ. 
+2: Initialize p (a) and ζ(a) 
+lk (l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K) , and insert them into (46) to compute the initialized s (a) 
+k (k = 1 , 2 , . . . , K) . Then, make 
+ζ(a) = [ ζ(a)T 
+11 , . . . , ζ(a)T 
+L 1 , . . . , ζ(a)T 
+1 K , . . . , ζ(a)T 
+LK ] T and s (a) = [ s (a) T 
+1 , s (a) T 
+2 , . . . , s (a) T 
+K ] T , and insert p (a) , s (a) , ζ(a) into (24) to compute f ( p (a) , s (a) , ζ(a) ). 
+3: Substitute ζ(a) into (43) and (44) , and use (45) to update p (b) with p (a) as the initial value. 
+4: Substitute p (b) and ζ(a) 
+k = [ ζ(a)T 
+1 k , ζ(a)T 
+2 k , . . . , ζ(a)T 
+Lk ] T (k = 1 , 2 , . . . , K) into (46) to update s (b) 
+k (k = 1 , 2 , . . . , K) . 
+5: Put p (b) and s (b) 
+k (k = 1 , 2 , . . . , K) into (57) , and use (57) to update ζ(b) 
+lk (l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K) with ζ(a) 
+lk (l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K) as their initial values. 
+6: Insert p (b) , s (b) = [ s (b) T 
+1 , s (b) T 
+2 , . . . , s (b) T 
+K ] T , and ζ(b) = [ ζ(b)T 
+11 , . . . , ζ(b)T 
+L 1 , . . . , ζ(b)T 
+1 K , . . . , ζ(b)T 
+LK ] T into (24) to compute f ( p (b) , s (b) , ζ(b) ). 
+7: Compute 
+ = | f( p (b) , s (b) , ζ(b) ) −f( p (a) , s (a) , ζ(a) ) | . If 
+ ≤e , stop iterating and output p (b) as the estimated source position; otherwise, set p (a) = p (b) , s (a ) = s (b) , 
+ζ(a) = ζ(b) and return to Step 3. 
+Algorithm 2 
+DPD for an unknown signal assuming no observer location errors. 
+1: Choose an appropriate step factor μ. 
+2: Initialize p (a) . 
+3: Substitute the presumed 
+⌣ 
+ζ = [ 
+⌣ 
+ζ
+T 
+11 , . . . , 
+⌣ 
+ζ
+T 
+L 1 , . . . , 
+⌣ 
+ζ
+T 
+1 K , . . . , 
+⌣ 
+ζ
+T 
+LK ] T into (43) and (44) , and use (45) to update p ( b ) with p ( a ) as the initial value. Output p ( b ) as the 
+estimated source position. 
+To summarize this alternating iteration scheme, we provide the 
+procedure in Algorithm 1 . 
+If we use the presumed locations and velocities of the observers 
+to update the source location and signal waveform, Algorithm 1 is 
+reduced to a process that assumes no observer location errors. This 
+technique may be implemented as described in Algorithm 2 . Note 
+that Algorithm 2 is also a single-step approach based on the ML 
+criterion for an unknown signal, but it does not take the observer 
+location errors into account. When there are no observer location 
+errors, Algorithm 2 will provide accurate location results and its 
+performance can attain the corresponding CRB. We emphasize that 
+when the signal is unknown, we in fact implicitly use the location 
+information embedded in the time of difference but not the time 
+of arrival. 
+4.2. DPD for a known signal 
+In this section, we concentrate on the localization of a source 
+whose waveform is available. This could be the case when the 
+transmitter emits a synchronization sequence or a known message, 
+whereas the time at which the transmitter begins its transmission, 
+t 0 , is unknown to the observers [22] . For these kinds of transmis- 
+sion systems in the presence of observer location errors, a position 
+estimation strategy is proposed. 
+4.2.1. Optimization model 
+For the source with a known signal waveform but unknown 
+transmission time, we use a transformation similar to that in (9) , 
+and thus represent s k by 
+s k = F H D ( t 0 ) F s k 0 , 
+(58) 
+where 
+D ( t 0 ) = diag { exp ( −j 2 πt 0 
+N T s N ) } 
+and 
+s k 0 = 
+[ s k ( T s ) , s k (2 T s ) , . . . , s k (N T s )] T consists of the known waveform 
+during the k th interval. Therefore, the unknown parameters here 
+are 
+ρ′ = [ p T , t 0 , b T , ζT ] T , 
+(59) 
+and the ML estimate of ρ′ can be obtained as 
+ˆ 
+ρ′ = arg min 
+ρ′ 
+f ′ ( ρ′ ) 
+= arg min 
+ρ′ 
+{ f ′ 
+1 ( ρ′ ) + f 2 (ζ) } . 
+(60) 
+Here, f ′ 
+1 ( ρ′ ) is equivalent to f 1 ( ρ) in (26) with s k replaced by 
+(58) , i.e., 
+f ′ 
+1 ( ρ′ ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −b lk C lk (p, ζlk ) F H D ( t 0 ) F s k 0 
+2 
+2 , 
+(61) 
+and f 2 ( ζ) remains the same as that in (27) . 
+By minimizing f ′ 
+1 ( ρ′ ) with respect to b lk , ˆ 
+b lk is ﬁrst estimated 
+by 
+ˆ 
+b lk = 
+s H 
+k 0 F H D H ( t 0 ) F C H 
+lk (p, ζlk ) C lk (p, ζlk ) F H D ( t 0 ) F s k 0 
+−1 
+s H 
+k 0 F H D H ( t 0 ) F C H 
+lk (p, ζlk ) r lk . 
+(62) 
+Applying the readily proved equality in (22) and Assumption A3 
+to the above formula, it follows that 
+ˆ 
+b lk = 1 
+M s H 
+k 0 F H D H ( t 0 ) F C H 
+lk (p, ζlk ) r lk . 
+(63) 
+Upon the substitution of (63) back into (61) , f ′ 
+1 ( ρ′ ) is recast 
+as 
+f ′ 
+1 (p, t 0 , ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k 0 F H D H ( t 0 ) F C H 
+lk (p, ζlk ) r lk 
+
+C lk (p, ζlk ) F H D ( t 0 ) F s k 0 
+
+2 
+2 
+= 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k 0 C ′ 
+lk (p, t 0 , ζlk ) r lk 
+
+C ′ 
+lk (p, t 0 , ζlk ) s k 0 
+
+2 
+2 
+, 
+(64) 
+where 
+C ′ 
+lk (p, t 0 , ζlk ) = C lk (p, ζlk ) F H D ( t 0 ) F . 
+(65) 
+Consequently, the ML function for a known signal is reduced to 
+a function of { p , t 0 , ζ}, and their joint ML estimate can be given 
+by 
+{ ˆ 
+p , ˆ 
+t 0 , ˆ 
+ζ} = arg min 
+p, t 
+0 , ζ
+f ′ (p, t 0 , ζ) 
+= arg min 
+p, t 
+0 , ζ
+
+f ′ 
+1 (p, t 0 , ζ) + f 2 (ζ) 
+= arg min 
+p, t 
+0 , ζ
+
+ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k 0 C ′ 
+lk (p, t 0 , ζlk ) r lk 
+
+C ′ 
+lk (p, t 0 , ζlk ) s k 0 
+
+2 
+2 
++ 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+ 
+. 
+(66) 
+To solve the above optimization problem, we design another al- 
+ternating iteration, where { p , t 0 } and ζ are updated in turn until 
+f ′ ( p , t 0 , ζ) converges to a small number. Next, the updating proce- 
+dures of { p , t 0 } and ζ will be developed. 
+4.2.2. Updating of the source location and transmission time 
+The purpose of this section is to estimate { p , t 0 } through min- 
+imizing f ′ 
+1 (p, t 0 , ζ) because { p , t 0 } are related to only f ′ 
+1 (p, t 0 , ζ) . 
+We ﬁrst transform t 0 to the corresponding range parameter d 0 = 
+c t 0 so that D ( t 0 ) becomes the matrix function of d 0 . Then, 
+f ′ 
+1 (p, t 0 , ζ) is equivalent to 
+f ′ 
+1 (p, d 0 , ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+r lk −1 
+M 
+
+s H 
+k 0 C ′ 
+lk (p, d 0 , ζlk ) r lk 
+
+C ′ 
+lk (p, d 0 , ζlk ) s k 0 
+
+2 
+2 
+, 
+(67) 
+
+
+===== PDF PAGE 8 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+399 
+where C ′ 
+lk ( p , d 0 , ζlk ) is C ′ 
+lk ( p , t 0 , ζlk ) deﬁned in (65) with t 0 = d 0 /c. In this way, 
+the unknown parameters are scaled to the same order of magnitude, and we 
+can apply the classical Taylor-series method to estimate ˜ 
+p = [ p T , d 0 ] T while the 
+updated ζ(a) = [ ζ(a)T 
+11 , . . . , ζ(a)T 
+L 1 , . . . , ζ(a)T 
+1 K , . . . , ζ(a)T 
+LK ] T remains constant. Base d on 
+the key idea of Taylor-series methods, we denote ˆ 
+˜ 
+p 
+(m ) as the estimated ˜ 
+p in 
+the m th Taylor iteration, and then take the ﬁrst-order Taylor expansion of 
+g ′ 
+lk ( ˜ 
+p , ζ(a ) 
+lk ) = 1 
+M 
+
+s H 
+k 0 C ′ 
+lk (p, d 0 , ζ(a ) 
+lk ) r lk 
+
+C ′ 
+lk (p, d 0 , ζ(a ) 
+lk ) s k 0 
+(68) 
+around ˆ 
+˜ 
+p 
+(m ) as follows: 
+g ′ 
+lk ( ˜ 
+p , ζ(a ) 
+lk ) ≈g ′ 
+lk ( ˆ 
+˜ 
+p 
+(m ) , ζ(a ) 
+lk ) + ˙ 
+G ′ ˜ 
+p 
+lk ( ˆ 
+˜ 
+p 
+(m ) , ζ(a ) 
+lk )( ˜ 
+p −ˆ 
+˜ 
+p 
+(m ) ) , 
+(69) 
+where ˙ 
+G ′ ˜ 
+p 
+lk ( ˜ 
+p , ζ(a ) 
+lk ) = ∂ g 
+′ 
+lk ( ˜ 
+p , ζ(a 
+) 
+lk ) 
+∂ ˜ 
+p 
+T 
+. Subsequently, the estimation of ˜ 
+p in the 
+(m + 1) th Taylor iteration can be obtained from the following least-squares 
+problem: 
+ˆ 
+˜ 
+p 
+(m + 1) = arg min 
+˜ 
+p 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+ ˙ 
+G ′ ˜ 
+p 
+lk ( ˆ 
+˜ 
+p 
+(m ) , ζ(a ) 
+lk )( ˜ 
+p −ˆ 
+˜ 
+p 
+(m ) ) −
+r lk −g ′ 
+lk ( ˜ 
+p (m ) , ζ(a ) 
+lk ) 
+2 
+2 
+, 
+(70) 
+which can be further expressed in a compact form as 
+ˆ 
+˜ 
+p 
+(m + 1) = arg min 
+˜ 
+p 
+ ˙ 
+G ′ ˜ 
+p ( ˆ 
+˜ 
+p 
+(m ) , ζ(a ) )( ˜ 
+p −ˆ 
+˜ 
+p 
+(m ) ) −
+
+r −g ′ ( ˆ 
+˜ 
+p 
+(m ) , ζ(a ) ) 
+	
+2 
+2 
+, 
+(71) 
+where 
+˙ 
+G ′ ˜ 
+p ( ˜ 
+p , ζ(a ) ) = 
+
+˙ 
+G ′ ˜ 
+p 
+11 ( ˜ 
+p , ζ(a ) 
+11 ) 
+	T 
+, . . . , 
+
+˙ 
+G ′ ˜ 
+p 
+L 1 ( ˜ 
+p , ζ(a ) 
+L 1 ) 
+	T 
+, . . . , 
+
+˙ 
+G ′ ˜ 
+p 
+1 K ( ˜ 
+p , ζ(a ) 
+1 K ) 
+	T 
+, 
+. . . , 
+
+˙ 
+G ′ ˜ 
+p 
+LK ( ˜ 
+p , ζ(a ) 
+LK ) 
+	T T 
+, 
+(72) 
+and 
+g ′ ( ˜ 
+p , ζ(a ) ) = [ g ′ T 
+11 ( ˜ 
+p , ζ(a ) 
+11 ) , . . . , g ′ T 
+L 1 ( ˜ 
+p , ζ(a ) 
+L 1 ) , . . . , g ′ T 
+1 K ( ˜ 
+p , ζ(a ) 
+1 K ) , . . . , g ′ T 
+LK ( ˜ 
+p , ζ(a ) 
+LK )] T . 
+(73) 
+Here, ˙ 
+G ′ ˜ 
+p ( ˜ 
+p , ζ(a ) ) and g ′ ( ˜ 
+p , ζ(a ) ) encompass ˙ 
+G ′ ˜ 
+p 
+lk ( ˜ 
+p , ζ(a ) 
+lk ) and 
+g ′ 
+lk ( ˜ 
+p , ζ(a ) 
+lk ) , respectively, for all the observers during all the inter- 
+vals. 
+Because ˜ 
+p is real-valued, based on a derivation similar to that 
+of (57) , minimizing (71) with respect to ˜ 
+p yields its least-squares 
+solution as follows: 
+ˆ ˜ 
+p 
+(m +1) = ˆ ˜ 
+p 
+(m ) + Re −1 
+
+˙ 
+G ′ ˜ 
+p ( ˆ ˜ 
+p 
+(m ) , ζ(a ) 	H 
+˙ 
+G ′ ˜ 
+p ( ˆ ˜ 
+p 
+(m ) , ζ(a ) ) 
+
+· Re 
+
+˙ 
+G ′ ˜ 
+p ( ˆ ˜ 
+p 
+(m ) , ζ(a ) ) 
+	H 
+r −g ′ ( ˆ ˜ 
+p 
+(m ) , ζ(a ) ) 
+	
+. 
+(74) 
+This provides the Taylor iteration formula for updating ˜ 
+p . The 
+next section investigates how to update the locations and velocities 
+of the observers in the case of a known signal after ˜ 
+p is updated 
+based on (74) , which is denoted by ˜ 
+p (b) . 
+4.2.3. Updating of observer locations and velocities 
+In this case, the updating of observer locations and velocities 
+can be implemented following the steps similar to those proposed 
+for unknown signal waveform. To achieve the decoupled updating 
+of ζ, we also decompose the cost function f ′ ( p , d 0 , ζ) as 
+f ′ (p, d 0 , ζ) = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+V ′ 
+lk (p, d 0 , ζlk ) , 
+(75) 
+where 
+V ′ 
+lk (p, d 0 , ζlk ) = 
+r lk −1 
+M 
+
+s H 
+k 0 C ′ 
+lk (p, d 0 , ζlk ) r lk 
+
+C ′ 
+lk (p, d 0 , ζlk ) s k 0 
+
+2 
+2 
++ 
+ ¯Q −1 / 2 
+lk ( 
+⌣ 
+ζlk −ζlk ) 
+
+2 
+2 
+. 
+(76) 
+Then, the minimization of (75) can be performed via solving the 
+following LK sub-problems: 
+ˆ 
+ζlk = arg min 
+ζlk 
+V ′ 
+lk ( ˜ 
+p (b) , ζlk ) . 
+(77) 
+For the sake of presentation, we extend g ′ 
+lk ( ˜ 
+p (b) , ζlk ) deﬁned in 
+(68) to the new observation vector: 
+˜ 
+g ′ 
+lk ( ˜ 
+p (b) , ζlk ) = [ g ′ T 
+lk ( ˜ 
+p (b) , ζlk ) , ζT 
+lk ¯Q −1 / 2 
+lk 
+] T , 
+(78) 
+and express V ′ 
+lk ( ˜ 
+p (b) , ζlk ) in the form of the following nonlinear 
+least-squares function: 
+V ′ 
+lk ( ˜ 
+p (b) , ζlk ) = 
+˜ 
+r lk −˜ 
+g ′ 
+lk ( ˜ 
+p (b) , ζlk ) 
+2 
+2 . 
+(79) 
+Following the derivations similar to those in Section 4.1.3 , the 
+Taylor-series iteration formula for ζlk in the case of a known signal 
+waveform is obtained as 
+ˆ 
+ζ(m +1) 
+lk 
+= ˆ 
+ζ(m ) 
+lk + Re −1 
+
+˙ ˜ 
+G ′ ζ
+lk ( ˜ 
+p (b) , ˆ 
+ζ(m ) 
+lk ) 
+	H ˙ ˜ 
+G ′ ζ
+lk ( ˜ 
+p (b) , ˆ 
+ζ(m ) 
+lk ) 
+
+· Re 
+
+˙ ˜ 
+G ′ ζ
+lk ( ˜ 
+p (b) , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+˜ 
+r lk −˜ 
+g ′ 
+lk ( ˜ 
+p (b) , ˆ 
+ζ(m ) 
+lk ) 
+, 
+(80) 
+where ˙ ˜ 
+G ′ ζ
+lk ( ˜ 
+p (b) , ζlk ) = ∂ ˜ 
+g ′ 
+lk ( ˜ 
+p (b) , ζlk ) 
+∂ ζlk 
+. 
+For the updating procedures developed in Sections 4.2.2 and 
+4.2.3 , we summarize the steps of this alternating iteration scheme 
+in the case of a known signal in Algorithm 3 . 
+Moreover, it is straightforward to devise an algorithm for a 
+known signal waveform without considering observer location er- 
+rors. In this case, a position estimation strategy such as the one 
+described in Algorithm 4 may be employed. Like Algorithm 2 , this 
+algorithm is also an ML-based DPD but for a known signal, which 
+can yield the optimal solution in the absence of observer location 
+errors. 
+Remark 1: According to the proposed alternating iteration 
+schemes of Algorithms 1 and 3 , the attenuation coeﬃcients are 
+ﬁrst estimated and therefore an ML-based function is obtained in 
+which the parameters of the attenuation coeﬃcients are replaced 
+with their ML estimates, thus decreasing the number of nuisance 
+parameters. Then, by grouping the rest of the unknowns into two 
+categories, we reduce the multidimensional nonlinear optimization 
+problem to the optimizations of dimensions that are much smaller 
+than the number of unknowns. Interestingly, the alternating iter- 
+ation leads to the updating of locations and velocities of all ob- 
+servers in a decoupled manner. These techniques guarantee accu- 
+rate and fast localization. 
+Remark 2: As aforementioned, Algorithms 2 and 4 provide ML 
+estimations given the accurate knowledge of the observer loca- 
+tions and velocities. Note that in contrast to the studies in [8–
+10] , where the DOAs and time delays of the source signal are ob- 
+served by multistatic arrays, and the methods in [13–15] that use 
+moving sensors to exploit the time delays and Doppler shifts, our 
+work takes full advantage of the location information embedded in 
+DOAs, time delays, and Doppler shifts, which is more complicated 
+and can be regarded as a general version of these previously pro- 
+posed DPDs. 
+5. CRB on source position estimation 
+We now turn to analyzing the performance of the proposed 
+methods using the well-known CRB, which provides a benchmark 
+for the highest localization accuracy that can be attained by any 
+unbiased estimator. Considering that the source position is the pa- 
+rameter vector of most interest, in this section, we derive the com- 
+pact CRB formula for source position for both cases of unknown 
+and known signal waveforms. 
+
+
+===== PDF PAGE 9 =====
+400 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+Algorithm 3 
+DPD for a known signal considering observer location errors. 
+1: Set e as a suﬃciently small positive number. 
+2: Initialize p (a) , t (a) 
+0 , and ζ(a) 
+lk (l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K) . Make ζ(a) = [ ζ(a)T 
+11 , . . . , ζ(a)T 
+L 1 , . . . , ζ(a)T 
+1 K , . . . , ζ(a)T 
+LK ] T , and insert p (a) , t (a) 
+0 , ζ(a) into (66) to compute 
+f ′ ( p (a) , t (a) 
+0 , ζ(a) ) . Make d (a) 
+0 = ct (a) 
+0 and ˜ 
+p (a) = [ p (a) T , d (a) 
+0 ] T . 
+3: Substitute ζ(a) into (74) , and use (74) to update ˜ 
+p (b) with ˜ 
+p (a) as the initial value. 
+4: Insert ˜ 
+p (b) into (80) to update ζ(b) 
+lk (l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K) with ζ(a) 
+lk (l = 1 , 2 , . . . , L, k = 1 , 2 , . . . , K) as their initial values. 
+5: Make p (b) = [ ˜ 
+p (b) ] 1: D and t (b) 
+0 = [ ˜ 
+p (b) ] D +1 /c. Insert p (b) , t (b) 
+0 and ζ(b) = [ ζ(b)T 
+11 , . . . , ζ(b)T 
+L 1 , . . . , ζ(b)T 
+1 K , . . . , ζ(b)T 
+LK ] T into (66) to compute f ′ ( p (b) , t (b) 
+0 , ζ(b) ) . 
+6: Compute 
+ = | f ′ ( p (b) , t (b) 
+0 , ζ(b) ) −f ′ ( p (a) , t (a) 
+0 , ζ(a) ) | . If 
+ ≤e , stop iterating and output p (b) as the estimated source position; otherwise, set ˜ 
+p (a ) = ˜ 
+p (b) , ζ(a ) = ζ(b) 
+and return to Step 3. 
+Algorithm 4 
+DPD for a known signal assuming no observer location errors. 
+1: Initialize p ( a ) and t (a ) 
+0 . Make d (a ) 
+0 = ct (a ) 
+0 and ˜ 
+p (a ) = [ p (a ) T , d (a ) 
+0 ] T . 
+2: Substitute the presumed 
+⌣ 
+ζ = [ 
+⌣ 
+ζ
+T 
+11 , . . . , 
+⌣ 
+ζ
+T 
+L 1 , . . . , 
+⌣ 
+ζ
+T 
+1 K , . . . , 
+⌣ 
+ζ
+T 
+LK ] T into (74) , and use (74) to update ˜ 
+p (b) with ˜ 
+p (a) as the initial value. 
+3: Make p (b) = [  
+p (b) ] 1: D , and output p ( b ) as the estimated source position. 
+Let us compose all the observations into a new vector as 
+r = [ r T 
+11 , . . . , r T 
+L 1 , . . . , r T 
+1 K , . . . , r T 
+LK ] T ∈ C MLKN×1 , 
+(81) 
+and introduce a vector comprising all the presumed locations and 
+velocities of observers as follows: 
+⌣ 
+ζ = [ 
+⌣ 
+ζ
+T 
+11 , . . . , 
+⌣ 
+ζ
+T 
+L 1 , . . . , 
+⌣ 
+ζ
+T 
+1 K , . . . , 
+⌣ 
+ζ
+T 
+LK ] T ∈ R 2 LKD ×1 . 
+(82) 
+Based on the investigated signal model and the probability dis- 
+tribution of the presumed observer locations and velocities, the 
+log-likelihood function is proportional to 
+¯f 
+ 
+r , 
+⌣ 
+ζ
+ω 
+ 
+= −1 
+σ 2 
+n 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+∥ r lk −b lk C lk (p , ζlk ) s k ∥ 2 
+2 
+−1 
+2 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Q −1 / 2 
+lk ( 
+⌣ 
+ζ lk −ζlk ) 
+
+2 
+2 
+, 
+(83) 
+in which ω includes all the real unknowns: 
+ω = [ p T , βT , ζT ] T , 
+(84) 
+where β is parameterized by the real unknowns except for the 
+source position, observer positions, and observer velocities. 
+When the signal waveform is unknown, the attenuation coef- 
+ﬁcients at the ﬁrst observer array can be assumed to be ones in 
+order to eliminate the ambiguous estimation, and thus the entries 
+of β are shown as 
+β = [ s (R)T 
+1 , . . . , s (R)T 
+K , s (I)T 
+1 , . . . , s (I)T 
+K , b (R)T 
+2 , . . . , b (R)T 
+L , b (I)T 
+2 , . . . , b (I)T 
+L ] T , 
+(85) 
+where s (R) 
+k = Re { s k } , s (I) 
+k = Im { s k } , b (R) 
+l 
+= Re { b l } , and b (I) 
+l = Im { b l } . 
+When the signal waveform is known but the transmission time 
+is unknown, we recall that s k = F H D ( t 0 ) F s k 0 , and therefore β con- 
+sists of 
+β = [ t 0 , b (R)T 
+1 , . . . , b (R)T 
+L , b (I)T 
+1 , . . . , b (I)T 
+L ] T . 
+(86) 
+In light of the conclusions in [16] and [17] , it follows that the 
+Fisher information matrix for parameter ω is computed by 
+CR B −1 (ω) = J ωω 
+= 2 
+σ 2 
+n 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+
+ ∂ ( b lk C lk (p, ζlk ) s k ) 
+∂ ω T 
+H ∂ ( b lk C lk (p, ζlk ) s k ) 
+∂ ω T 
+ 
++ 
+
+O 
+O 
+O 
+Q −1 
+
+, 
+(87) 
+where Q is formulated as 
+Q = blkdiag { Q 11 , . . . , Q 1 K , . . . , Q L 1 , . . . , Q LK } , 
+(88) 
+and s k can be expressed in the form of (58) in the case of a known 
+waveform and unknown transmission time. 
+For clear presentation, we deﬁne 
+y lk (ω) = b lk C lk (p, ζlk ) s k , 
+(89) 
+and hence rewrite (87) as 
+J ωω = 2 
+σ 2 
+n 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+
+ ∂y lk ( ω ) 
+∂ω T 
+H ∂y lk ( ω ) 
+∂ω T 
+ 
++ 
+O 
+O 
+O 
+Q −1 
+
+. (90) 
+Let us denote Y pp =  K 
+k =1 
+ L 
+l=1 Re { ( ∂y lk (ω) 
+∂p T ) 
+H ∂y lk (ω) 
+∂p T } , Y pβ = 
+ K 
+k =1 
+ L 
+l=1 Re { ( ∂y lk (ω) 
+∂p T ) 
+H ∂y lk (ω) 
+∂βT } , 
+Y pζ =  K 
+k =1 
+ L 
+l=1 Re { ( ∂y lk (ω) 
+∂p T ) 
+H 
+∂y lk (ω) 
+∂ζT } , Y ββ =  K 
+k =1 
+ L 
+l=1 Re { ( ∂y lk (ω) 
+∂βT ) 
+H ∂y lk (ω) 
+∂βT } , Y βζ =  K 
+k =1 
+ L 
+l=1 
+Re { ( ∂y lk (ω) 
+∂βT ) 
+H ∂y lk (ω) 
+∂ζT } , and Y ζζ =  K 
+k =1 
+ L 
+l=1 Re { ( ∂y lk (ω) 
+∂ζT ) 
+H ∂y lk (ω) 
+∂ζT } . 
+Then, J ωω can be expressed in the sub-matrix form: 
+J ωω = 2 
+σ 2 
+n 
+⎡ 
+⎢ 
+⎣ 
+Y pp 
+Y pβ
+Y pζ
+Y T 
+βζ
+Y ββ
+Y βζ
+Y T 
+pζ
+Y T 
+pβ
+Y ζζ + σ 2 
+n Q −1 / 2 
+⎤ 
+⎥ 
+⎦ . 
+(91) 
+Then, according to the derivation provided in Appendix C , we 
+can compute the position-related block of the CRB in the presence 
+of observer location errors: 
+CRB ( p ) = σ 2 
+n 
+2 
+
+Y pp −Y pβY −1 
+ββ Y T 
+pβ −
+	−1 
+, 
+(92) 
+where  is expressed as 
+ = 
+
+Y pζ −Y pβY −1 
+ββ Y βζ
+	
+Y ζζ + σ 2 
+n Q −1 
+2 
+−Y T 
+βζY −1 
+ββ Y βζ
+−1 
+
+Y pζ −Y pβY −1 
+ββ Y βζ
+	T 
+. 
+(93) 
+The details of calculating the matrices in (92) and (93) are 
+shown in Appendix D . 
+Remark 3: Based on the above derivation, it is straightforward 
+to get the CRB formula without observer location errors, i.e., 
+CRB ′ ( p ) = σ 2 
+n 
+2 
+
+Y pp −Y pβY −1 
+ββ Y T 
+pβ
+	−1 
+. 
+(94) 
+By comparing the terms in (92) and those in (94) , we ﬁnd that 
+the term  represents the additional uncertainty resulting from 
+the observer location errors. Because  can be proved to be posi- 
+tive semi-deﬁnite according to the conclusion in [28] , the following 
+inequality holds: 
+C RB ( p ) ≥C RB ′ ( p ) , 
+(95) 
+
+
+===== PDF PAGE 10 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+401 
+-2
+-1
+0
+1
+2
+3
+4
+5
+-2
+-1
+0
+1
+2
+3
+4
+5
+6
+7
+8
+X (km)
+Y (km)
+Target
+Observer 1
+Observer 2
+Observer 3
+Fig. 1. Trajectories of three moving observers (triangles indicate the interception 
+points). 
+which indicates that the position-related block of the CRB with 
+observer location errors is lower bounded by the associated CRB 
+without observer location errors. 
+6. Numerical results 
+The purpose of this section is to examine the performance of 
+the proposed DPD algorithms for the unknown and known signal 
+cases. The simulations are based on the application of three ob- 
+servers mounted on fast-moving UAVs, whose locations and ve- 
+locities cannot be obtained precisely at any time. Each observer 
+is equipped with a uniform linear array comprising M = 3 sen- 
+sors. The adjacent sensors are spaced at 0.5 λ intervals, where λ
+denotes the wavelength. Without loss of generality, we assume 
+a planar geometry, that is, D = 2 . The ﬁrst observer array moves 
+from [0, 6] T (km) to [1, 6] T (km), the second array moves from 
+[ −0 . 5 , 5] T ( km ) to [0.5, 5] T (km), and the third array starts at 
+[ −1 , 0] T ( km ) and ﬁnishes at [0, 0] T (km). All observers have a con- 
+stant velocity v = [200 , 0] T (m/ s) . As shown in Fig. 1 , each observer 
+intercepts the transmitted signal twice (i.e., K = 2 ), per kilometer. 
+The signal waveform has a bandwidth of 300 (kHz) with a fre- 
+quency centered at f c = 200 ( MHz) . We collect N = 64 samples 
+with a sample rate of 800 k (samples/s) in each interval. The chan- 
+nel attenuation is drawn from a normal distribution with mean of 
+1 and standard deviation of 0.1, and the channel phase is selected 
+from a uniform distribution over [ −π, π] . The covariance matrix 
+of the location errors of each observer is identical with Q lk = 
+σ 2 
+ζ blkdiag { Q u , Q v } , where Q u = diag [2 , 1] ( m 2 ) , Q v = 0 . 5 Q u , and σ 2 
+ζ
+denotes the observer error power. The noises are uncorrelated, cir- 
+cularly symmetric Gaussian random variables with constant power 
+σ 2 
+n . 
+For the different scenarios, each simulation performed 10 0 0 
+Monte Carlo trials. We employ the root mean square error (RMSE) 
+to evaluate the localization performance, which is computed by 
+RMSE = 
+ 
+1 
+10 0 0 
+10 0 0 
+ 
+i =1 
+p −ˆ 
+p i 
+2 , 
+(96) 
+where ˆ 
+p i denotes the estimation of the source position in the i th 
+Monte Carlo trial. 
+6.1. Unknown signal case 
+In the case of an unknown signal waveform, we invoke different 
+estimators for comparison: 
+-4
+0
+4
+8
+12
+16
+20
+0
+0.02
+0.04
+0.06
+0.08
+0.1
+0.12
+0.14
+0.16
+0.18
+SNR (dB)
+RMSE (km)
+ 
+ 
+Algorithm 1
+Algorithm 2 with observer error
+Algorithm 2 without observer error
+Two-step 1
+Two-step 2
+CRB with observer error
+CRB without observer error
+Fig. 2. Estimated RMSEs and square-root of the CRBs for an unknown signal versus 
+SNR. 
+• Algorithm 1 in the presence of observer location errors. 
+• Algorithm 2 in the presence of observer location errors 
+( Algorithm 2 with observer error). 
+• Algorithm 2 in the absence of observer location errors 
+( Algorithm 2 without observer error). 
+• Two-step approach in the presence of observer location er- 
+rors, taking them into account (Two-step 1). The angle, time 
+difference of delay (TDOA) between the observer pair l(l = 
+2 , 3 , . . . , L ) and 1, and Doppler frequency based on the ML cri- 
+terion are ﬁrst estimated at each observer independently, and 
+then these measurements are used to locate the transmitter 
+through the Taylor-series method in [29] . 
+• Two-step approach in the presence of observer location errors, 
+which does not take them into account (Two-step 2). The an- 
+gle, TDOA, and Doppler frequency based on the ML criterion 
+are ﬁrst estimated at each observer independently, and then 
+these measurements are used to locate the transmitter using 
+the Taylor-series method in [30] . 
+For all iterative algorithms, the source position is initialized via 
+the pseudo-linear least squares approach without accounting for 
+observer location errors, and the observer positions and velocities 
+are initialized using their presumed values. 
+Note that Algorithm 2 with observer error provides the lo- 
+cation accuracy obtained by the ML-based DPD which assumes 
+that the observer locations are correct but in fact have errors, 
+and this can be used to measure the reduction in RMSE in the 
+source location estimated by Algorithm 1 . The purpose of simulat- 
+ing Algorithm 2 without observer error is to validate its eﬃciency 
+in the absence of observer location errors. To make our results as 
+comprehensive as possible, we also display the curves of the CRBs 
+for the unknown signal waveform with and without observer loca- 
+tion errors derived in this study. 
+We ﬁrst consider the transmitter placed at p = [4 , 2] T ( km ) , and 
+ﬁx the observer error power σ 2 
+ζ at 15 dB. When the SNR varies 
+from −4 dB to 20 dB, the RMSEs of the comparison algorithms are 
+exhibited in Fig. 2 . It can be seen from Fig. 2 that when there exist 
+observer location errors, Algorithm 1 and Two-step 1 yield more 
+accurate locations at high SNRs. On the contrary, the performances 
+of Algorithm 2 and Two-step 2 are severely deteriorated by the 
+presence of observer location errors when the SNR is higher than 
+4 dB, and this effect becomes more critical as the SNR increases. 
+Unsurprisingly, as the SNR decreases, the proposed DPDs, includ- 
+ing Algorithms 1 and 2 perform much better than the two-step ap- 
+proaches. Note that the CRB with observer error is higher than the 
+corresponding CRB without observer error over the whole range of 
+SNRs, and this is consistent with the remark in Section 5. 
+
+
+===== PDF PAGE 11 =====
+402 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+-10
+-5
+0
+5
+10
+15
+20
+0.02
+0.03
+0.04
+0.05
+0.06
+0.07
+0.08
+Observer Error Power (dB)
+RMSE (km)
+Algorithm 1
+Algorithm 2 with observer error
+Algorithm 2 without observer error
+Two-step 1
+Two-step 2
+CRB with observer error
+CRB without observer error
+Fig. 3. Estimated RMSEs and square-root of the CRBs for an unknown signal versus 
+observer error power. 
+-2
+-1
+0
+1
+2
+3
+4
+5
+6
+7
+-2
+-1
+0
+1
+2
+3
+4
+5
+6
+7
+8
+X (km)
+Y (km)
+Observer 1
+Observer 2
+Observer 3
+Target
+Fig. 4. Scenario of three moving observers and a transmitter with varying positions. 
+Fig. 3 depicts the localization accuracy with an increase in 
+the observer error power σ 2 
+ζ , when the SNR is 10 dB. It is clear 
+that there is no signiﬁcant difference between Algorithms 1 and 
+2 (with observer error) and between Two-step 1 and Two-step 2 
+for σ 2 
+ζ ≤5 dB . As σ 2 
+ζ becomes larger, Algorithm 1 and Two-step 
+1 turn out to be more robust than Algorithm 2 (with observer er- 
+ror) and Two-step 2. The CRB with observer error is lower bounded 
+by the corresponding CRB without observer error, and this differ- 
+ence is more evident for larger observer location errors. Further- 
+more, we note that the proposed DPDs hold lower RMSEs than the 
+corresponding two-step approaches even when the observer error 
+power is suﬃciently large. 
+To further broaden the applicability of the proposed methods, 
+we now consider different positions for the transmitter, and this 
+scenario is displayed in Fig. 4 . When the SNR and the observer er- 
+ror power are 10 dB and 15 dB, respectively, we assess the location 
+RMSEs of the proposed DPD algorithms and compare them with 
+those of the two-step methods as the X coordinate of the source 
+changes. As clearly shown in Fig. 5 , the location result of each al- 
+gorithm is erroneous with a larger X coordinate, when the trans- 
+mitter and each observer are spaced further apart. In the pres- 
+ence of observer location errors, the performance advantage of 
+Algorithm 1 over other positioning methods is more prominent as 
+the location geometry becomes worse, i.e., the source becomes far 
+away from the observers. Furthermore, Figs. 2, 3 , and 5 show that 
+both the proposed Algorithms 1 and 2 without observer error are 
+2
+2.5
+3
+3.5
+4
+4.5
+5
+5.5
+6
+0.01
+0.02
+0.03
+0.04
+0.05
+0.06
+0.07
+0.08
+0.09
+0.1
+0.11
+ X (km)
+RMSE (km)
+ 
+ 
+Algorithm 1
+Algorithm 2 with observer error
+Algorithm 2 without observer error
+Two-step 1
+Two-step 2
+CRB with observer error
+CRB without observer error
+Fig. 5. Estimated RMSEs and square-root of the CRBs for an unknown signal with 
+different source positions. 
+able to attain the accuracy set by the corresponding CRBs with and 
+without observer error when the SNR is higher than 0 dB. 
+6.2. Known signal case 
+This section evaluates the performance of Algorithms 3 and 
+4 for a known signal waveform by comparing them with two-step 
+processing estimators. The comparison algorithms are listed as fol- 
+lows: 
+• Algorithm 3 in the presence of observer location errors. 
+• Algorithm 4 in the presence of observer location errors 
+( Algorithm 4 with observer error). 
+• Algorithm 4 in the absence of observer location errors 
+( Algorithm 4 without observer error). 
+• Two-step approach with a known signal in the presence of ob- 
+server location errors that takes them into account (Two-step 
+3). The known signal waveform is exploited to estimate angle, 
+time delay, and Doppler frequency based on the ML criterion at 
+each observer independently, and then these measurements are 
+used to locate the transmitter using the Taylor-series method in 
+[29] . 
+• Two-step approach with a known signal in the presence of ob- 
+server location errors that does not take them into account 
+(Two-step 4). The known signal waveform is exploited to esti- 
+mate angle, time delay, and Doppler frequency based on the ML 
+criterion at each observer independently, and then these mea- 
+surements are used to locate the transmitter using the Taylor- 
+series method in [30] . 
+Here, the initialization is similar to that for an unknown signal, 
+and the performances of the aforementioned estimators are also 
+compared with the CRBs for the known signal with and without 
+observer location errors. 
+For the scenario where the transmitter is placed at p = 
+[4 , 2] T ( km ) and σ 2 
+ζ is 15 dB, we plot the RMSE curves and the cor- 
+responding CRBs for different SNRs in Fig. 6 . As the SNR increases, 
+Algorithm 3 and Two-step 3 outperform the other two methods 
+that do not account for the observer location uncertainties but in 
+fact have observer errors. Furthermore, the proposed DPDs perform 
+signiﬁcantly better than the two-step methods at low SNRs where 
+the noise dominates the accuracy. This proves the advantage of the 
+DPD technique. 
+When σ 2 
+ζ varies from −10 dB to 20 dB, the RMSEs of the pre- 
+scribed algorithms are exhibited in Fig. 7 . It can be observed that 
+the accuracies of Algorithms 3 and 4 (with observer error) are 
+
+
+===== PDF PAGE 12 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+403 
+-4
+0
+4
+8
+12
+16
+20
+0
+0.02
+0.04
+0.06
+0.08
+0.1
+0.12
+0.14
+0.16
+0.18
+SNR (dB)
+RMSE (km)
+ 
+ 
+Algorithm 3
+Algorithm 4 with observer error
+Algorithm 4 without observer error
+Two-step 3
+Two-step 4
+CRB with observer error
+CRB without observer error
+Fig. 6. Estimated RMSEs and square-root of the CRBs for a known signal versus 
+SNR. 
+-10
+-5
+0
+5
+10
+15
+20
+0.02
+0.03
+0.04
+0.05
+0.06
+0.07
+Observer Error Power (dB)
+RMSE (km)
+ 
+ 
+Algorithm 3
+Algorithm 4 with observer error
+Algorithm 4 without observer error
+Two-step 3
+Two-step 4
+CRB with observer error
+CRB without observer error
+Fig. 7. Estimated RMSEs and square-root of the CRBs for a known signal versus 
+observer error power. 
+2
+2.5
+3
+3.5
+4
+4.5
+5
+5.5
+6
+0
+0.01
+0.02
+0.03
+0.04
+0.05
+0.06
+0.07
+0.08
+0.09
+0.1
+X (km)
+RMSE (km)
+ 
+ 
+Algorithm 3
+Algorithm 4 with observer error
+Algorithm 4 without observer error
+Two-step 3
+Two-step 4
+CRB with observer error
+CRB without observer error
+Fig. 8. Estimated RMSEs and square-root of the CRBs for a known signal with dif- 
+ferent source positions. 
+almost the same for σ 2 
+ζ ≤5 dB , where the observer location er- 
+rors are negligible. For σ 2 
+ζ = 20 dB , Algorithm 3 achieves an al- 
+most 10 m reduction in the source location RMSE with respect 
+to Two-step 3 and a more than 30 m reduction with respect to 
+Algorithm 4 (with observer error). This reveals the improved per- 
+formance gained from both the DPD technique and the calibration 
+of observer location errors. 
+Fig. 8 gives the result for the different source positions illus- 
+trated in Fig. 4 . At SNR = 10 dB and σ 2 
+ζ = 15 dB , the RMSEs and 
+1.9
+1.92
+1.94
+1.96
+1.98
+2
+2.02
+2.04
+2.06
+2.08
+2.1
+1.95
+1.97
+1.99
+2.01
+2.03
+2.05
+X (km)
+Y (km)
+ 
+ 
+Algorithm 1
+Algorithm 3
+Unknown Sig. Ellipse
+Known Sig. Ellipse
+Target
+Fig. 9. Uncertainty ellipses for unknown and known signals ( p = [2 , 2] T (km ) ). 
+5.5
+5.6
+5.7
+5.8
+5.9
+6
+6.1
+6.2
+6.3
+6.4
+6.5
+1.9
+1.92
+1.94
+1.96
+1.98
+2
+2.02
+2.04
+2.06
+2.08
+2.1
+X (km)
+Y (km)
+ 
+ 
+Algorithm 1
+Algorithm 3
+Unknown Sig. Ellipse
+Known Sig. Ellipse
+Target
+Fig. 10. Uncertainty ellipses for unknown and known signals ( p = [6 , 2] T (km ) ). 
+the corresponding CRBs for different X coordinates of the source 
+are shown. We note that Algorithm 3 outperforms other methods 
+with observer error for each X coordinate, demonstrating its ro- 
+bustness to location geometry in the presence of observer location 
+errors. Because the two-step methods degrade faster than the pro- 
+posed DPDs when the distances between the source and observers 
+increase, it can be found that the DPD technique is more precise 
+than the conventional two-step processing approach in situations 
+with poor location geometry. 
+Based on the above results, we conclude that the proposed 
+DPDs accounting for observer location errors are less sensitive to 
+the observer location uncertainties, in contrast to the two-step ap- 
+proaches. Additionally, in the absence of observer location errors, 
+the proposed Algorithms 2 and 4 can reach the associated CRBs 
+without observer error. 
+Finally, for different source positions, we compare the distri- 
+butions of the source location estimated using the proposed al- 
+gorithms for unknown and known signals ( Algorithms 1 and 3 ) 
+when the SNR is as low as 0 dB and σ 2 
+ζ
+is 15 dB. Their esti- 
+mation distributions and the concentration ellipses encapsulat- 
+ing 50% of the location estimates are shown in Fig. 9 for p = 
+[2 , 2] T ( km ) and in Fig. 10 for p = [6 , 2] T ( km ) . It is evident that 
+the uncertainty ellipses for a known signal are smaller than 
+those for an unknown signal, indicating the higher localization 
+accuracy of Algorithm 3 compared with Algorithm 1 . Besides, 
+the simulation results in Fig. 6 prove that the performance of 
+Algorithm 3 is capable of meeting the corresponding CRB at low 
+SNRs, whereas Fig. 2 shows that the RMSE of Algorithm 1 devi- 
+ates from the CRB for an unknown signal as the SNR decreases. 
+
+
+===== PDF PAGE 13 =====
+404 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+Therefore, Algorithm 3 exhibits superior localization performance 
+to Algorithm 1 even for a weak source in the presence of observer 
+location uncertainties. This may be due to the exploitation of the 
+information about the known signal waveform. 
+7. Conclusion 
+This study investigated the localization of a stationary transmit- 
+ter using separated passive arrays mounted on fast-moving plat- 
+forms. We consider a practical environment where the observer 
+locations and velocities are not precisely known. To minimize the 
+effect of observer location errors, we proposed ML-based single- 
+step localization algorithms by introducing the probability distri- 
+bution of the random observer location errors. Alternating itera- 
+tion schemes were developed to solve the ML functions for the two 
+commonly occurring cases of an unknown signal waveform and a 
+known signal waveform with unknown transmission time. The pro- 
+posed DPDs exploit the location information embedded in the an- 
+gles, time delays, and Doppler shifts but do not estimate them. The 
+solution accuracy was veriﬁed by simulations to achieve the corre- 
+sponding CRBs. Moreover, the simulation results demonstrate that 
+the proposed DPDs are more precise than the two-step methods. 
+Because this study deals with a rather general and complex model, 
+we think that the proposed methods can be extended to various 
+DPD problems in the presence of observer location errors. 
+Acknowledgments 
+This work was supported by the National Natural Science 
+Foundation of China [grant numbers 61201381 , 61401513 and 
+61772548 ]; the China Postdoctoral Science Foundation [grant num- 
+ber 2016M592989 ]; the Outstanding Youth Foundation of Informa- 
+tion Engineering University [grant number 2016603201 ]; and the 
+Self-Topic Foundation of Information Engineering University [grant 
+number 2016600701 ]. 
+
+
+===== PDF PAGE 14 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+405 
+Appendix A 
+Derivation of the expression for ( 36 ) and ( 37 ): 
+We begin with the derivation of ˙ 
+X p 
+k (p, ζ(a ) 
+k ) , which is computed by 
+˙ 
+X p 
+k (p, ζ(a ) 
+k ) = ∂ x k (p, ζ(a ) 
+k ) 
+∂ p T 
+= ∂ vec { X k (p, ζ(a ) 
+k ) } 
+∂ p T 
+. 
+(A.1) 
+For convenience, we restate the expression for X k (p, ζ(a ) 
+k ) : 
+X k (p, ζ(a ) 
+k ) = T H 
+k (p, ζ(a ) 
+k ) T k (p, ζ(a ) 
+k ) . 
+(A.2) 
+Based on (A.2) and using vec { A 1 A 2 A 3 } = (A T 
+3  A 1 ) vec { A 2 } [24] , we can express vec { X k (p, ζ(a ) 
+k ) } as 
+vec { X k (p, ζ(a ) 
+k ) } = 
+I N  T H 
+k (p, ζ(a ) 
+k ) 
+vec { T k (p, ζ(a ) 
+k ) } , 
+(A.3) 
+and it can be also written as 
+vec { X k (p, ζ(a ) 
+k ) } = 
+T ∗
+k (p, ζ(a ) 
+k )  I L 
+
+vec { T H 
+k ( p, ζ(a ) 
+k ) } = 
+T ∗
+k ( p, ζ(a ) 
+k )  I L 
+
+P vec { T ∗
+k ( p, ζ(a ) 
+k ) } , 
+(A.4) 
+where P is a vec-permutation matrix that transforms vec { T ∗
+k (p, ζ(a ) 
+k ) } to vec { T H 
+k (p, ζ(a ) 
+k ) } , i.e., vec { T H 
+k (p, ζ(a ) 
+k ) } = P vec { T ∗
+k (p, ζ(a ) 
+k ) } . 
+Applying the results in (A.3) and (A.4) to (A.1) yields 
+˙ 
+X p 
+k (p, ζ(a ) 
+k ) = w k 1 (p, ζ(a ) 
+k ) + w k 2 (p, ζ(a ) 
+k ) , 
+(A.5) 
+where 
+w k 1 (p, ζ(a ) 
+k ) = 
+I N  T H 
+k (p, ζ(a ) 
+k )  ˙ 
+T p 
+k (p, ζ(a ) 
+k ) , 
+(A.6) 
+w k 2 (p, ζ(a ) 
+k ) = 
+T ∗
+k (p, ζ(a ) 
+k )  I L 
+
+P  ˙ 
+T p 
+k (p, ζ(a ) 
+k ) ∗
+(A.7) 
+with 
+˙ 
+T p 
+k (p, ζ(a ) 
+k ) = ∂ vec { T k (p, ζ(a ) 
+k ) } 
+∂ p T 
+. 
+(A.8) 
+Next we come to derive ¨X pp 
+k (p, ζ(a ) 
+k ) . Based on (37) , we ﬁrst derive its (mL −L + n ) th sub-block as follows: 
+∂ 2 [ x k (p, ζ(a ) 
+k )] mL −L + n 
+∂ p∂ p T 
+= ∂ 2 [ X k (p, ζ(a ) 
+k )] n,m 
+∂ p∂ p T 
+, 
+(A.9) 
+where n, m = 1 , 2 , . . . , L . Let v n be the L × 1 unit vector with the n th element being one, and v m is deﬁned similarly as v n . Therefore, the 
+n,m th entry of X k (p, ζ(a ) 
+k ) is given by 
+[ X k (p, ζ(a ) 
+k )] n,m = v T 
+n T H 
+k (p, ζ(a ) 
+k ) T k (p, ζ(a ) 
+k ) v m . 
+(A.10) 
+Denote ˙ 
+T p d 
+k (p, ζ(a ) 
+k ) = ∂ T k (p, ζ(a ) 
+k ) 
+∂ p d 
+and ¨T 
+p d 1 p d 2 
+k 
+(p, ζ(a ) 
+k ) = ∂ 2 T k (p, ζ(a ) 
+k ) 
+∂ p d 1 ∂ p d 2 
+, where p d is the d th element of p . Using tr { A 1 A 2 A 3 } = ve c T { A T 
+3 } ( A T 
+2 
+I )vec { A 1 } and tr { A 1 A 2 A 3 } = ve c T { A 3 } ( A 1  I )vec { A T 
+2 } (see [24] ), we compute the second-order derivative of [ X k (p, ζ(a ) 
+k )] n,m as follows: 
+∂ 2 [ X k (p, ζ(a ) 
+k )] n,m 
+∂ p d1 ∂ p d2 
+= v T 
+n ( ¨T 
+p d 1 p d 2 
+k 
+) H T k v m + v T 
+n ( ˙ 
+T 
+p d 1 
+k ) H ˙ 
+T 
+p d 2 
+k v m + v T 
+n ( ˙ 
+T 
+p d 2 
+k ) H ˙ 
+T 
+p d 1 
+k v m + v T 
+n T H 
+k ¨T 
+p d 2 p d 1 
+k 
+v m 
+= v T 
+n ( ¨T 
+p d 1 p d 2 
+k 
+) H T k v m + tr { ˙ 
+T 
+p d 2 
+k v m v T 
+n ( ˙ 
+T 
+p d 1 
+k ) H } + tr { v m v T 
+n ( ˙ 
+T 
+p d 2 
+k ) H ˙ 
+T 
+p d 1 
+k } + v T 
+n T H 
+k ¨T 
+p d 1 p d 2 
+k 
+v m 
+= v T 
+m T T 
+k ( ¨T 
+p d 1 p d 2 
+k 
+) ∗v n + ve c H { ˙ 
+T 
+p d 1 
+k } ( v n v T 
+m  I L )vec { ˙ 
+T 
+p d 2 
+k } + ve c T { ˙ 
+T 
+p d 1 
+k } ( v m v T 
+n  I L )ve c ∗{ ˙ 
+T 
+p d 2 
+k } + v T 
+n T H 
+k ¨T 
+p d 1 p d 2 
+k 
+v m 
+(A.11) 
+for d 1 , d 2 = 1 , 2 , . . . , D . Here, T k , ˙ 
+T p d 
+k , and ¨T 
+p d 1 p d 2 
+k 
+are short for T k (p, ζ(a ) 
+k ) , ˙ 
+T p d 
+k (p, ζ(a ) 
+k ) , and ¨T 
+p d 1 p d 2 
+k 
+(p, ζ(a ) 
+k ) , respectively. From (A.11), it can 
+be veriﬁed that the terms on the right side of (A.11) are respectively the d 1 , d 2 th entries of 
+W k 1 (p, ζ(a ) 
+k ) = ( I D  v T 
+m T T 
+k (p, ζ(a ) 
+k ))  ¨T pp 
+k (p, ζ(a ) 
+k ) ∗( I D  v n ) , 
+W k 2 (p, ζ(a ) 
+k ) =  ˙ 
+T p 
+k (p, ζ(a ) 
+k ) H ( v n v T 
+m  I L ) ˙ 
+T p 
+k (p, ζ(a ) 
+k ) , 
+W T 
+k 2 (p, ζ(a ) 
+k ) =  ˙ 
+T p 
+k (p, ζ(a ) 
+k ) T v m v T 
+n  I L 
+ ˙ 
+T p 
+k (p, ζ(a ) 
+k ) ∗, 
+W k 3 (p, ζ(a ) 
+k ) = ( I D  v T 
+n T H 
+k (p, ζ(a ) 
+k )) ¨T pp 
+k (p, ζ(a ) 
+k )( I D  v m ) , 
+(A.12) 
+where ˙ 
+T p 
+k (p, ζ(a ) 
+k ) has been deﬁned in (A.8), and ¨T pp 
+k (p, ζ(a ) 
+k ) has the following structure: 
+¨T pp 
+k (p, ζ(a ) 
+k ) = 
+⎡ 
+⎢ 
+⎣ 
+¨T p 1 p 1 
+k 
+(p, ζ(a ) 
+k ) 
+· · ·
+¨T p 1 p D 
+k 
+(p, ζ(a ) 
+k ) 
+. . . 
+. . . 
+. . . 
+¨T p D p 1 
+k 
+(p, ζ(a ) 
+k ) 
+· · ·
+¨T p D p D 
+k 
+(p, ζ(a ) 
+k ) 
+⎤ 
+⎥ 
+⎦ . 
+(A.13) 
+
+
+===== PDF PAGE 15 =====
+406 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+Therefore, 
+∂ 2 [ x k (p, ζ(a ) 
+k )] mL −L + n 
+∂ p∂ p T 
+can be expressed in the matrix form as 
+∂ 2 [ x k (p, ζ(a ) 
+k )] mL −L + n 
+∂ p∂ p T 
+= W k 1 (p, ζ(a ) 
+k ) + W k 2 (p, ζ(a ) 
+k ) + W T 
+k 2 (p, ζ(a ) 
+k ) + W k 3 (p, ζ(a ) 
+k ) . 
+(A.14) 
+Finally, we can construct ¨X pp 
+k (p, ζ(a ) 
+k ) with (A.14) applied to (37) . This completes our derivation. 
+Appendix B 
+Proof of ( 57 ): 
+Because ζlk is real-valued, the function in (56) can be rewritten as 
+ ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk )(ζlk −ˆ 
+ζ(m ) 
+lk ) −
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+2 
+2 
+= 
+
+(ζlk −ˆ 
+ζ(m ) 
+lk ) 
+T 
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+−
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) H 
+×
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk )(ζlk −ˆ 
+ζ(m ) 
+lk ) −
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 	
+. 
+(B.1) 
+Therefore, the partial derivative of this function with respect to ζlk is calculated by 
+∂ 
+ ˙ 
+˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk )(ζlk −ˆ 
+ζ(m ) 
+lk ) −
+
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	
+2 
+2 
+∂ζlk 
+= 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) + 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	T 
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	∗
+(ζlk −ˆ 
+ζ(m ) 
+lk ) 
+−
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+−
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	T 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) ∗
+= 2 Re 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+
+(ζlk −ˆ 
+ζ(m ) 
+lk ) −2 Re 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+. 
+(B.2) 
+Making (B.2) equal to zero, it follows that 
+ζlk −ˆ 
+ζ(m ) 
+lk 
+= Re −1 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+
+· Re 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+, 
+(B.3) 
+which leads to the updating formula of ζlk : 
+ˆ 
+ζ(m +1) 
+lk 
+= ˆ 
+ζ(m ) 
+lk + Re −1 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H ˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+
+· Re 
+
+˙ ˜ 
+G 
+ζ
+lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+	H 
+˜ 
+r lk −˜ 
+g lk ( p (b) , s (b) 
+k , ˆ 
+ζ(m ) 
+lk ) 
+. 
+(B.4) 
+The proof of (57) is complete. 
+Appendix C 
+Proof of ( 92 ): 
+We begin with presenting the following two partitioned matrix inversion formulas which have been proved in [24] and [28] . 
+For a partitioned matrix A = 
+
+A 11 
+A 12 
+A 21 
+A 22 
+
+where A 11 and A 22 are nonsingular, the inverse of A can be calculated by 
+A −1 = 
+ 
+
+A 11 −A 12 A −1 
+22 A 21 
+−1 
+−
+A 11 −A 12 A −1 
+22 A 21 
+−1 A 12 A −1 
+22 
+−
+A 22 −A 21 A −1 
+11 A 12 
+−1 A 21 A −1 
+11 
+
+A 22 −A 21 A −1 
+11 A 12 
+−1 
+ 
+, 
+(C.1) 
+or 
+A −1 = 
+
+I 
+O 
+
+A −1 
+11 
+ 
+I 
+O !
++ 
+
+−A −1 
+11 A 12 
+I 
+
+A 22 −A 21 A −1 
+11 A 12 
+−1  
+−A 21 A −1 
+11 
+I !
+. 
+(C.2) 
+Based on (91) , we invoke the partitioned matrix inversion formula ( C.1 ), and thus express the position-related block of CRB as 
+CRB ( p ) = σ 2 
+n 
+2 
+⎧ 
+⎨ 
+⎩ 
+Y pp − 
+Y pβ
+Y pp 
+!
+ 
+Y ββ
+Y βζ
+Y T 
+βζ
+Y ζζ + σ 2 
+n Q −1 / 2 
+ −1  
+Y T 
+pβ
+Y T 
+pζ
+ ⎫ 
+⎬ 
+⎭ 
+−1 
+. 
+(C.3) 
+
+
+===== PDF PAGE 16 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+407 
+Then applying the formula ( C.2 ) to ( C.3 ) yields 
+CRB ( p ) 
+= σ 2 
+n 
+2 
+
+ 
+Y pp − 
+Y pβ
+Y pζ
+!
+( I 
+O 
+
+Y −1 
+ββ
+ 
+I 
+O !
++ 
+−Y −1 
+ββ Y βζ
+I 
+
+Y ζζ + σ 2 
+n Q −1 
+2 
+−Y T 
+βζY −1 
+ββ Y βζ
+−1  
+−Y T 
+βζY −1 
+ββ
+I !
+)  
+Y T 
+pβ
+Y T 
+pζ
+  −1 
+= σ 2 
+n 
+2 
+( 
+Y pp −Y pβY −1 
+ββ Y βp −
+
+Y pζ −Y pβY −1 
+ββ Y βζ
+	
+Y ζζ + σ 2 
+n Q −1 
+2 
+−Y T 
+βζY −1 
+ββ Y βζ
+−1 
+Y pζ −Y pβY −1 
+ββ Y βζ
+	T ) −1 
+= σ 2 
+n 
+2 
+
+Y pp −Y pβY −1 
+ββ Y T 
+pβ −
+	−1 
+, 
+(C.4) 
+which concludes the proof of (92) . 
+Appendix D 
+Derivation of the matrices in ( 92 ) and ( 93 ): 
+For easy reference, we restate the expression for y lk ( ω) here: 
+y lk (ω) = b lk C lk (p, ζlk ) s k . 
+(D.1) 
+To derive the expressions for the matrices in (92) and (93) , we ﬁrst present the partial derivative of y lk ( ω) with respect to p d by 
+∂ y lk (ω) 
+∂ p d 
+= b lk ˙ 
+C p d 
+lk (p, ζlk ) s k 
+d = 1 , 2 , . . . , D, 
+(D.2) 
+where ˙ 
+C p d 
+lk (p, ζlk ) = ∂ C lk (p, ζlk ) 
+∂ p d 
+. Then let us deﬁne 
+˙ 
+C p 
+lk (p, ζlk ) = [ ˙ 
+C p 1 
+lk (p, ζlk ) , ˙ 
+C p 2 
+lk (p, ζlk ) , . . . , ˙ 
+C p D 
+lk (p, ζlk )] , 
+(D.3) 
+and therefore we have 
+∂ y lk (ω) 
+∂ p T 
+= b lk ˙ 
+C p 
+lk (p, ζlk )( I D  s k ) . 
+(D.4) 
+Subsequently, we turn to computing ∂ y lk (ω) 
+∂ζT 
+mn . Similarly, we express the partial derivative of y lk ( ω) with respect to [ ζmn ] d as 
+∂ y lk (ω) 
+∂ [ ζmn ] d 
+= b lk ˙ 
+C ζd 
+lk (p, ζlk ) s k δlm δkn 
+d = 1 , 2 , . . . , 2 D, 
+(D.5) 
+where 
+˙ 
+C ζd 
+lk (p, ζlk ) = ∂ C lk (p, ζlk ) 
+∂ [ ζlk ] d 
+, 
+(D.6) 
+and δlm represents the Kronecker Delta function, namely, if l = m , δlm = 1 , and otherwise δlm = 0 . Then deﬁne 
+˙ 
+C ζ
+lk (p, ζlk ) = [ ˙ 
+C ζ1 
+lk (p, ζlk ) , ˙ 
+C ζ2 
+lk (p, ζlk ) , . . . , ˙ 
+C ζ2 D 
+lk (p, ζlk )] . 
+(D.7) 
+Combing ( D.5 ) and ( D.7 ) leads to 
+∂ y lk (ω) 
+∂ζT 
+mn 
+= b lk ˙ 
+C ζ
+lk (p, ζlk )( I 2 D  s k ) δlm δkn . 
+(D.8) 
+Furthermore, according to (D.1), it is straightforward to obtain 
+∂ y lk (ω) 
+∂b (R) 
+mn 
+= C lk (p, ζlk ) s k δlm δkn , ∂ y lk (ω) 
+∂b (I) 
+mn 
+= j C lk (p, ζlk ) s k δlm δkn . 
+(D.9) 
+Note that ( D.4 ), ( D.8 ), and ( D.9 ) are valid for both cases of unknown and known signals. We next come to derive the partial derivatives 
+of y lk ( ω) with respect to the parameters that are different for these two cases. 
+For an unknown signal waveform, we calculate 
+∂ y lk (ω) 
+∂s (R)T 
+n 
+= b lk C lk (p, ζlk ) δkn , ∂ y lk (ω) 
+∂s (I)T 
+n 
+= j b lk C lk (p, ζlk ) δkn , 
+(D.10) 
+For a known signal waveform and unknown transmission time, we substitute s k = F H D ( t 0 ) F s k 0 into ( D.1 ) and rewrite it by 
+y lk (ω) = b lk C lk (p, ζlk ) F H D ( t 0 ) F s k 0 , 
+(D.11) 
+which yields 
+∂ y lk (ω) 
+∂ t 0 
+= b lk C lk (p, ζlk ) F H ˙ 
+D ( t 0 ) F s k 0 
+(D.12) 
+with ˙ 
+D ( t 0 ) = ∂D ( t 0 ) 
+∂ t 0 . 
+
+
+===== PDF PAGE 17 =====
+408 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+Finally, in the case of an unknown signal, some algebraic manipulations based on ( D.4 ), ( D.8 ), ( D.9 ), and ( D.10 ) lead to 
+Y pp = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+  ∂ y lk (ω) 
+∂ p 
+T 
+H ∂ y lk (ω) 
+∂ p 
+T 
+ 
+= 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+| b lk | 2 Re 
+ 
+I H 
+D  s H 
+k 
+ ˙ 
+C p 
+lk (p, ζlk ) H ˙ 
+C p 
+lk (p, ζlk )( I D  s k ) 
+ 
+, 
+Y p ζlk = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ p 
+T 
+	H ∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+
+= | b lk | 2 Re 
+ 
+I H 
+D  s H 
+k 
+ ˙ 
+C p 
+lk (p, ζlk ) H ˙ 
+C ζ
+lk (p, ζlk )( I 2 D  s k ) 
+ 
+, 
+y pb (R) 
+lk = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ p 
+T 
+	H ∂ y l ′ k ′ (ω) 
+∂b (R) 
+lk 
+
+= Re 
+ 
+b H 
+lk 
+
+I H 
+D  s H 
+k 
+ ˙ 
+C p 
+lk (p, ζlk ) H C lk (p, ζlk ) s k 
+ 
+, 
+y pb (I) 
+lk = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ p 
+T 
+	H ∂ y l ′ k ′ (ω) 
+∂b (I) 
+lk 
+
+= −Im 
+ 
+b H 
+lk 
+
+I H 
+D  s H 
+k 
+ ˙ 
+C p 
+lk (p, ζlk ) H C lk (p, ζlk ) s k 
+ 
+, 
+Y ps (R) 
+n = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+  ∂ y lk (ω) 
+∂ p 
+T 
+H ∂ y lk (ω) 
+∂s (R)T 
+n 
+ 
+= 
+L 
+ 
+l=1 
+| b ln | 2 Re 
+ 
+I H 
+D  s H 
+n 
+ ˙ 
+C p 
+ln (p, ζln ) H C ln (p, ζln ) 
+ 
+, 
+Y ps (I) 
+n = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+  ∂ y lk (ω) 
+∂ p 
+T 
+H ∂ y lk (ω) 
+∂s (I)T 
+n 
+ 
+= −
+L 
+ 
+l=1 
+| b ln | 2 Im 
+ 
+I H 
+D  s H 
+n 
+ ˙ 
+C p 
+ln (p, ζln ) H C ln (p, ζln ) 
+ 
+, 
+Y ζlk ζmn = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂ζT 
+mn 
+
+= | b lk | 2 Re 
+ 
+I H 
+2 D  s H 
+k 
+ ˙ 
+C ζ
+lk (p, ζlk ) H ˙ 
+C ζ
+lk (p, ζlk )( I 2 D  s k ) 
+ 
+δlm δkn , 
+y ζlk b (R) 
+mn = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂b (R) 
+mn 
+
+= Re 
+ 
+b H 
+lk 
+
+I H 
+2 D  s H 
+k 
+ ˙ 
+C ζ
+lk (p, ζlk ) H C lk (p, ζlk ) s k 
+ 
+δlm δkn , 
+y ζlk b (1) 
+mn = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂b (I) 
+mn 
+
+= −Im 
+ 
+b H 
+lk 
+
+I H 
+2 D  s H 
+k 
+ ˙ 
+C ζ
+lk (p, ζlk ) H C lk (p, ζlk ) s k 
+ 
+δlm δkn , 
+Y ζlk s (R) 
+n = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂s (R)T 
+n 
+
+= | b lk | 2 Re 
+ 
+I H 
+2 D  s H 
+k 
+ ˙ 
+C ζ
+lk (p, ζlk ) H C lk (p, ζlk ) 
+ 
+δkn , 
+Y ζlk s (I) 
+n = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂s (I)T 
+n 
+
+= −| b lk | 2 Im 
+ 
+I H 
+2 D  s H 
+k 
+ ˙ 
+C ζ
+lk (p, ζlk ) H C lk (p, ζlk ) 
+ 
+δkn , 
+Y b (R) 
+lk b (R) 
+mn = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (R) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂b (R) 
+mn 
+
+= Re 
+s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) s k 
+δlm δkn , 
+Y b (R) 
+lk b (I) 
+mn = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (R) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂b (I) 
+mn 
+
+= −Im 
+s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) s k 
+δlm δkn , 
+y b (R) 
+lk s (R) 
+n = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (R) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂s (R)T 
+n 
+
+= Re 
+b lk s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) δkn , 
+y b (R) 
+lk s (I) 
+n = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (R) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂s (I)T 
+n 
+
+= −Im 
+b lk s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) δkn , 
+Y b (I) 
+lk b (I) 
+mn = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (I) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂b (I) 
+mn 
+
+= Re 
+s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) s k 
+δlm δkn , 
+y b (I) 
+lk s (R) 
+n = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (I) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂s (R)T 
+n 
+
+= Im 
+b lk s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) δkn , 
+y b (I) 
+lk s (I) 
+n = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂b (I) 
+lk 
+	H ∂ y l ′ k ′ (ω) 
+∂s (I)T 
+n 
+
+= Re 
+b lk s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) δkn , 
+Y s (R) 
+n s (R) 
+m = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂s (R)T 
+n 
+	H ∂ y l ′ k ′ (ω) 
+∂s (R)T 
+m 
+
+= 
+L 
+ 
+l=1 
+| b ln | 2 Re 
+C H 
+ln (p, ζln ) C ln (p, ζln ) δmn , 
+Y s (R) 
+n s (I) 
+m = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂s (R)T 
+n 
+	H ∂ y l ′ k ′ (ω) 
+∂s (I)T 
+m 
+
+= −
+L 
+ 
+l=1 
+| b ln | 2 Im 
+C H 
+ln (p, ζln ) C ln (p, ζln ) δmn , 
+Y s (I) 
+n s (I) 
+m = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+∂ y l ′ k ′ (ω) 
+∂s (I)T 
+n 
+	H ∂ y l ′ k ′ (ω) 
+∂s (I)T 
+m 
+
+= 
+L 
+ 
+l=1 
+| b ln | 2 Re 
+C H 
+ln (p, ζln ) C ln (p, ζln ) δmn . 
+(D.13) 
+As the above matrices are the sub-blocks of the matrices in (92) and (93) , we can constitute the matrices in (92) and (93) using the 
+results in ( D.13 ). 
+Similarly, in the case of a known signal waveform and unknown transmission time, it can be shown that 
+y p t 0 = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+
+ ∂ y lk (ω) 
+∂ p T 
+H ∂ y lk (ω) 
+∂ t 0 
+ 
+= 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+| b lk | 2 Re 
+ 
+I H 
+D  s H 
+k 
+ ˙ 
+C p 
+lk (p, ζlk ) H C lk (p, ζlk ) F H ˙ 
+D ( t 0 ) F s k 0 
+ 
+, 
+y ζlk t 0 = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+
+ ∂ y l ′ k ′ (ω) 
+∂ζT 
+lk 
+H ∂ y l ′ k ′ (ω) 
+∂ t 0 
+ 
+= | b lk | 2 Re 
+ 
+I H 
+2 D  s H 
+k 
+ ˙ 
+C ζ
+lk (p, ζlk ) H C lk (p, ζlk ) F H ˙ 
+D ( t 0 ) F s k 0 
+ 
+, 
+Y b (R) 
+lk t 0 = 
+K 
+ 
+k ′ =1 
+L 
+ 
+l ′ =1 
+Re 
+⎧ 
+⎨ 
+⎩ 
+( 
+∂ y l ′ k ′ (ω) 
+∂b (R) 
+lk 
+) H 
+∂ y l ′ k ′ (ω) 
+∂ t 0 
+⎫ 
+⎬ 
+⎭ 
+= Re 
+b lk s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) F H ˙ 
+D ( t 0 ) F s k 0 
+
+, 
+
+
+===== PDF PAGE 18 =====
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+409 
+Y b (I) 
+lk t 0 = 
+L 
+ 
+k ′ =1 
+K 
+ 
+l ′ =1 
+Re 
+⎧ 
+⎨ 
+⎩ 
+( 
+∂ y l ′ k ′ (ω) 
+∂b (I) 
+lk 
+) H 
+∂ y l ′ k ′ (ω) 
+∂ t 0 
+⎫ 
+⎬ 
+⎭ 
+= Im 
+b lk s H 
+k C H 
+lk (p, ζlk ) C lk (p, ζlk ) F H ˙ 
+D ( t 0 ) F s k 0 
+
+, 
+Y t 0 t 0 = 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+Re 
+
+ ∂ y lk (ω) 
+∂ t 0 
+H ∂ y lk (ω) 
+∂ t 0 
+ 
+= 
+K 
+ 
+k =1 
+L 
+ 
+l=1 
+| b lk | 2 Re 
+s H 
+k 0 F H ˙ 
+D H ( t 0 ) F C H 
+lk (p, ζlk ) C lk (p, ζlk ) F H ˙ 
+D ( t 0 ) F s k 0 
+
+. 
+(D.14) 
+Combing the results in ( D.14 ) and some related expressions in ( D.13 ), the matrices in (92) and (93) for a known signal can be compos- 
+ited. This concludes our derivation. 
+
+
+===== PDF PAGE 19 =====
+410 
+J. Yin et al. / Signal Processing 152 (2018) 392–410 
+References 
+[1] J.Y. Shen , A.F. Molisch , J. Salmi , Accurate passive location estimation using TOA 
+measurements, IEEE Trans. Wireless Commun. 11 (6) (2011) 253–257 . 
+[2] P. Stoica , A. Nehorai , T. Söderström , Decentralized array processing using the 
+MODE algorithm, Circuits Syst. Signal Process. 14 (1) (1995) 17–38 . 
+[3] R.R. Liu , Y.L. Wang , J.X. Yin , Passive source localization using importance sam- 
+pling based on TOA and FOA measurements, Front. Inf. Technol. Electron. Eng. 
+18 (8) (2017) 1167–1179 . 
+[4] M. Wax , T. Kailath , Optimum localization of multiple sources by passive arrays, 
+IEEE Trans. Acoust. Speech Signal Process. 31 (5) (1983) 1210–1217 . 
+[5] L. Tzafri , A.J. Weiss , High-resolution direct position determination using MVDR, 
+IEEE Trans. Wireless Commun. 15 (9) (2016) 6449–6461 . 
+[6] T. Tirer , A.J. Weiss , High resolution direct position determination of radio fre- 
+quency sources, IEEE Signal Process Lett. 23 (2) (2016) 192–196 . 
+[7] Z. Cheng , Y. Wang , Y. Shen , Direct position determination of multiple tar- 
+gets via reduced-dimension beamspace, in: Proceedings of the IEEE Interna- 
+tional Conference on Communications Workshops, Paris, France, May 2017, 
+pp. 1030–1035 . 
+[8] A.J. Weiss , Direct position determination of narrowband radio frequency trans- 
+mitters, IEEE Signal Process Lett. 11 (5) (2004) 513–516 . 
+[9] A .J. Weiss , A . Amar , Direct position determination of multiple radio signals, 
+EURASIP J. Appl. Signal Process. 2005 (1) (2005) 37–49 . 
+[10] A . Amar , A .J. Weiss , A decoupled algorithm for geolocation of multiple emit- 
+ters, Signal Process. 87 (10) (2007) 2348–2359 . 
+[11] Y. Han , Y. Shen , X.P. Zhang , et al. , Performance limits and geometric properties 
+of array localization, IEEE Trans. Inf. Theory 62 (2) (2014) 1054–1075 . 
+[12] A . Amar , A .J. Weiss , Localization of narrowband radio emitters based on 
+Doppler frequency shifts, IEEE Trans. Signal Process. 56 (11) (2008) 5500–5508 . 
+[13] A .J. Weiss , A . Amar , Direct geolocation of stationary wideband radio signal 
+based on time delays and Doppler shifts, in: Proceedings of the IEEE Work- 
+shop on Statistical Signal Processing, Cardiff, UK, October 2009, pp. 101–104 . 
+[14] A.J. Weiss , Direct geolocation of wideband emitters based on delay and 
+Doppler, IEEE Trans. Signal Process. 59 (6) (2011) 2513–2521 . 
+[15] Y.L. Wang , Y. Wu , S.C. Yi , An eﬃcient direct position determination algorithm 
+combined with time delay and Doppler, Circuits Syst. Signal Process. 35 (2) 
+(2016) 635–649 . 
+[16] J. Li , L. Yang , F. Guo , Coherent summation of multiple short-time signals for 
+direct positioning of a wideband source based on delay and Doppler, Digit. 
+Signal Process. 48 (C) (2016) 58–70 . 
+[17] K.C. Ho , X. Lu , L. Kovavisaruch , Source localization using TDOA and FDOA mea- 
+surements in the presence of receiver location errors: analysis and solution, 
+IEEE Trans. Signal Process. 55 (2) (2007) 684–696 . 
+[18] Y. Wang , K.C. Ho , TDOA source localization in the presence of synchronization 
+clock bias and sensor position errors, IEEE Trans. Signal Process. 61 (18) (2013) 
+4532–4544 . 
+[19] K.C. Ho , L. Yang , On the use of a calibration emitter for source localization in 
+the presence of sensor position uncertainty, IEEE Trans. Signal Process. 56 (12) 
+(2008) 5758–5772 . 
+[20] M. Oispuu , U. Nickel , Direct detection and position determination of multiple 
+sources with intermittent emission, Signal Process. 90 (12) (2010) 3056–3064 . 
+[21] L. Tzafri , A.J. Weiss , Application of capon method to direct position determina- 
+tion, Ict Express 2 (1) (2016) 5–9 . 
+[22] O. Bar-Shalom , A.J. Weiss , Emitter geolocation using single moving receiver, 
+Signal Process. 105 (12) (2014) 70–83 . 
+[23] D. Wang , Y. Wu , Statistical performance analysis of direct position determina- 
+tion method based on Doppler shifts in presence of model errors, Multidimen- 
+sion. Syst. Signal Process. 28 (1) (2015) 1–34 . 
+[24] X.D. Zhang , Matrix Analysis and Application, Tsinghua University Press, Beijing, 
+China, 2004 . 
+[25] A. Hjrungnes , Complex-valued Matrix derivatives: With Applications in Signal 
+Processing and Communications, Cambridge University Press, Cambridge, UK, 
+2011 . 
+[26] D. Wang , Sensor array calibration in presence of mutual coupling and 
+gain/phase errors by combining the spatial-domain and time-domain wave- 
+form information of the calibration sources, Circuits Syst. Signal Process. 32 
+(3) (2013) 1257–1292 . 
+[27] W.H. Foy , Position-location solutions by Taylor-series estimation, IEEE Trans. 
+Aerosp. Electron. Syst. AES-12 (2) (2007) 187–194 . 
+[28] S.G. Wang , M.X. Wu , Z.Z. Jia , Matrix Inequality, Science Press, Beijing, China, 
+2006 . 
+[29] H. Wu , W.M. Su , H. Gu , A novel Taylor series method for source and receiver 
+localization using TDOA and FDOA measurements with uncertain receiver posi- 
+tions, in: Proceedings of the IEEE International Conference on Radar, Chengdu, 
+China, October 2011, pp. 1037–1044 . 
+[30] L.F. Peng , Q.Z. Huang , Y.S. Lin , A cooperative localization method based on 
+conjugate gradient and Taylor series expansion algorithms, in: Proceedings of 
+the International Conference on Computer Science and Network Technology, 
+Harbin, China, December 2011, pp. 1108–1112 . 

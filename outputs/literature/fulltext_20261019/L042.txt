@@ -1,0 +1,2876 @@
+
+===== PDF PAGE 1 =====
+340
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+Target Localization and Sensor Self-Calibration of
+Position and Synchronization by Range and
+Angle Measurements
+Tianyi Jia
+, Member, IEEE, Xiaochuan Ke
+, Hongwei Liu
+, Senior Member, IEEE, K. C. Ho
+, Fellow, IEEE,
+and Hongtao Su
+Abstract—The sensor position uncertainties and synchroniza-
+tion offsets can cause substantial performance degradation if the
+sensors are not properly calibrated. This paper investigates the
+localization of a constant velocity moving target and the self-
+calibration of sensors using a sequence of range and azimuth
+measurements observed at successive instants. A theoretical study
+by the Cramer-Rao Lower Bound (CRLB) reveals that the sensor
+positions can only be self-calibrated when there are at least
+two sensors and synchronization offsets can be handled by joint
+estimation. A low complexity sequential closed-form solution is
+proposed to estimate the target position and velocity ﬁrst, and the
+coordinates of each sensor and synchronization offset afterward.
+While less intuitive, the analysis shows that the closed-form
+solutions for both the target and sensor parameters can reach
+the CRLB accuracy under small Gaussian noise. We also develop
+a semideﬁnite programming (SDP) solution by semideﬁnite re-
+laxation (SDR) for joint localization and calibration from the
+Maximum Likelihood formulation, which exhibits higher noise
+tolerance than the closed-form solution. Simulations validate the
+analysis and the performance of the proposed methods.
+Index Terms—Sensor calibration, range bias, sensor position
+error, closed-form solution, semideﬁnite programming (SDP).
+I. INTRODUCTION
+T
+ARGET localization and tracking using observations ac-
+quired by several sensors is a fundamental problem for
+many applications in radar, sonar, wireless sensor networks,
+and Internet of Things (IoT) [1], [2], [3], [4], [5], [6], [7]. By
+exploiting the geometric relations with the sensors at known
+positions, the target can be localized by range, angle, Doppler,
+or other geometry-dependent measurements [8], [9], [10], [11].
+Received 17 April 2024; revised 4 October 2024; accepted 6 December
+2024. Date of publication 23 December 2024; date of current version 8 January
+2025. The work of Tianyi Jia, Hongwei Liu, and Hongtao Su was supported
+in part by the National Natural Science Foundation of China under Grant
+62192714 and Grant 62201418, and in part by the Ministry of Education Key
+Laboratory of Information Fusion Technology under Grant 202312-IFTKFKT-
+001. The associate editor coordinating the review of this article and approving
+it for publication was Foad Sohrabi. (Corresponding author: Tianyi Jia.)
+Tianyi Jia, Hongwei Liu, and Hongtao Su are with the National Key Lab-
+oratory of Radar Signal Processing, Xidian University, Xi’an 710071, China
+(e-mail: jiatianyi@xidian.edu.cn; hwliu@xidian.edu.cn; suht@xidian.edu.cn).
+Xiaochuan Ke and K. C. Ho are with the Electrical Engineering and
+Computer Science Department, University of Missouri, Columbia, MO 65211
+USA (e-mail: xkm3k@missouri.edu; hod@missouri.edu).
+Digital Object Identiﬁer 10.1109/TSP.2024.3520909
+Apart from the geometric factor, the target localization per-
+formance is mostly dominated by the quality of measurements
+and the precision of sensor positions. A number of methods
+have been proposed to limit their inaccuracies on performance
+loss by exploiting their statistical properties [12], [13], [14],
+[15]. These methods include the Maximum Likelihood (ML)
+estimator [14], [16], [17], [18], the closed-form solution [9],
+[12], [19], [20], [21], [22], [23], and the semideﬁnite program-
+ming (SDP) method [13], [24], [25], [26]. The ML estimator
+maximizes the likelihood function constructed by the statistical
+models of the measurements and sensor positions. It is often
+expressed in an iterative form, requiring a good initial guess
+and signiﬁcant amount of computation due to the nonlinear and
+nonconvex relations between the measurements and unknowns.
+The ML estimator is asymptotically efﬁcient. Applying it in
+practice will require some levels of global convergence guar-
+antee and divergence avoidance. The closed-form solutions,
+such as the pseudolinear estimator [9], the instrumental variable
+(IV) method [9], [19], and the two-step closed-form solution
+[8], [12], [27], are based on the least squares (LS) technique
+and offer computational efﬁciency. They can be regarded as
+approximate realizations of the ML estimator [28], [29] and are
+accurate under mild noise conditions. The SDP method [24],
+[25], [30], [31] converts the nonconvex localization problem
+to be convex by semideﬁnite relaxation (SDR) and obtains the
+solution by a convex optimization software package. It can
+achieve desirable performance even under large noise condi-
+tions, at the cost of computational complexity. Unlike the ML
+estimator, it ensures global convergence without falling into a
+local minimum.
+When the measurements are time-based, an additional chal-
+lenge is the synchronization issue. Time difference of arrival
+(TDOA) [8], [12], [30] measurements require precise synchro-
+nization of the sensors, and time of arrival (TOA) [32], [33]
+measurements demand additional synchronization with the tar-
+get. Most research studies in the literature assume the sensors
+are perfectly synchronized. Synchronization errors among the
+sensors, however, often exist in practice due to clock drifts and
+clock offsets [34], [35]. The time errors translate to biases in the
+measurements that can lead to signiﬁcant performance drops.
+As a result, joint synchronization and localization has been
+considered to mitigate their detrimental effects [24], [30], [35],
+1053-587X © 2024 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+341
+[36], [37]. For example, the paper [36] proposed an iterative
+ML algorithm based on alternating projection by estimating
+one while ﬁxing the other. Lately, SDP solutions [24], [35]
+were developed by relaxing the original nonconvex problem
+for simultaneous joint estimation. These works [24], [35], [36]
+assume the positions of the sensors are accurate. The studies
+[30], [37], [38], [39] extended the research by accounting for
+errors in the sensor positions. Speciﬁcally, [37] proposed a
+computationally less demanding method than the ML estimator
+by using the generalized total least squares (GTLS) technique,
+but the performance is suboptimal and cannot reach the Cramer-
+Rao Lower Bound (CRLB). In [38], by treating the sensor posi-
+tion errors as noise terms and applying the weighted LS (WLS)
+method, a new closed-form joint localization and synchroniza-
+tion approach was proposed to estimate the user nodes position,
+velocity and the clock parameters. The work [39] developed a
+novel method of obtaining sequentially an algebraic solution
+for the target position ﬁrst, and then the synchronization offset
+with the target and the positions of the sensors.
+The localization scenario in this paper consists of a number
+of asynchronous sensors. The purpose is to locate a constant
+velocity moving target by collecting a sequence of propaga-
+tion time delays, equivalent to ranges with known propagation
+speed, and azimuth angles at regular intervals. In addition to the
+time offsets that lead to biases in the range measurements, the
+precise sensor positions are not known. The task is to estimate
+the position and velocity of the moving target, and the positions
+and range biases of the sensors.
+There are many works in the literature by using both range
+related and arrival angle measurements for localization, includ-
+ing [5], [6], [7], [11], [18], [22], [23], [26], [40]. They are either
+considering the stationary object scenario or focusing on locat-
+ing an object only rather than simultaneous object localization
+and sensor self-calibration.
+We begin with the CRLB investigation to examine the esti-
+mation performance in such a scenario. The analysis illustrates
+that while the target can be localized in the presence of sensor
+position error(s) and unknown time offset(s) even with one
+sensor, the sensor positions can be updated to be more accurate
+only if there are two or more sensors. A low complexity closed-
+form solution is then proposed to estimate the unknown param-
+eters sequentially by using the WLS formulation. The method
+ﬁrst estimates the target location parameters without involving
+the estimation of range offsets and sensor positions. It then
+determines the range bias and position of each sensor based
+on the target position and velocity estimate from the ﬁrst step.
+Although performing estimation sequentially, the novel analysis
+shows that the closed-form solution with a special choice of the
+weighting matrices can reach the CRLB accuracy for the target
+and sensor parameters under small Gaussian noise. A beneﬁt to
+the proposed sequential estimation method is that sensor self-
+calibration can be made at a later time when the computational
+resources are less demanding. In addition to the closed-form
+solution, an SDP solution by the ML formulation for jointly
+estimating all parameters together is proposed to extend the
+optimum performance to a higher noise level than the closed-
+form solution, at the expense of computational complexity.
+The closest related work is [39] for the localization of a
+stationary target using TDOAs only with synchronized sensor
+groups. We address here a complicated scenario where the
+target is moving, the sensors are not synchronized and the
+measurements are ranges and azimuths over several instants.
+The work [39] cannot be extended to the current scenario.
+Although we use the sequential estimation approach, the closed-
+form algorithm and analysis are different from [39] and more
+involved, and [39] does not have the SDP solution. While [38]
+addresses the moving target scenario, it uses TOA measure-
+ments only and does not consider the calibration of sensor
+positions.
+We would like to highlight the contributions of this paper.
+They include
+• A proposition illustrating self-calibration of the sensor
+positions is not possible with only one sensor, implying
+that sensor position self-calibration is possible when there
+are at least two sensors.
+• A low complexity sequential closed-form solution for joint
+object localization and sensor self-calibration, which sep-
+arately estimates the target position and velocity ﬁrst and
+then the sensor positions and range offsets.
+• An analysis of the solution in reaching the CRLB perfor-
+mance under mild Gaussian noise, although the estimation
+was done sequentially rather than jointly.
+• An SDP solution based on ML formulation for better noise
+resilience, which is able to provide optimum performance
+with a shorter observation period or a higher noise level
+compared to the closed-form solution but at the expense
+of higher complexity.
+In the following, we ﬁrst give the measurement model and
+problem formulation. Section III derives the CRLB for the
+localization and self-calibration problem, and establishes an
+interesting proposition related to sensor position estimation.
+Section IV develops a closed-form solution that sequentially
+estimates the position and velocity of the moving target, and
+then the range bias and position of each sensor. Section V
+derives the SDP solution for achieving higher noise tolerance.
+Section VI presents the performance analysis of the closed-
+form solution. Section VII shows the simulation results and
+Section VIII concludes the paper.
+We use a bold lowercase letter to denote a column vector and
+a bold uppercase letter for a matrix. ⊗denotes the Kronecker
+product, and R(•) is the range space of •. •(i) is the i-th
+element and •(i : j) is a subvector of the i-th to the j-th element
+of •. (·)o is the true value of a measurement or variable and the
+error is Δ(·) = (·) −(·)o. tr(•) is the trace and •(i, :) is the i-th
+row of a matrix. diag(•) is the diagonal matrix of a vector and
+blkdiag(•) is a block diagonal matrix with the blocks speciﬁed.
+1 and 0 are the all-one and all-zero vectors, I is the identity
+matrix and O is a zero matrix, with the subscript indicating the
+size if needed.
+II. MEASUREMENT MODEL AND PROBLEM FORMULATION
+There are M sensors at uo
+i = [uo
+ix, uo
+iy]T , i = 1, 2, · · · , M
+in a positioning network and they are not synchronized.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+342
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+Fig. 1.
+Target localization scenario with sensor position errors and synchro-
+nization offsets.
+The network intends to locate a moving target in a surveillance
+region using the range and azimuth observed at each sensor
+derived from the emitted signal of the target. The true range
+and azimuth between the sensor and target at time index k, k =
+0, 1, · · · , N −1 are
+ro
+i (k) = ∥uo
+i −to
+k∥,
+(1a)
+θo
+i (k) = arctan
+uo
+iy −to
+ky
+uo
+ix −to
+kx
+
+,
+(1b)
+where to
+k = [to
+kx, to
+ky]T is the true value of the target position at
+time kT and T is the measurement interval. Using the assump-
+tion of linear constant velocity target motion model that is valid
+over a short duration, to
+k can be expressed in terms of the initial
+position to
+0 and velocity vo by
+to
+k = to
+0 + kTvo.
+(2)
+In the scenario considered, the sensors are deployed at ran-
+dom and their true positions uo
+i are not known exactly to an
+estimator and only their inaccurate positions ui = [uix, uiy]T
+are available for processing. ui are typically obtained through
+Global Navigation Satellite System (GNSS) in which the accu-
+racy is limited. They can be modeled as
+ui = uo
+i + Δui,
+i = 1, 2, · · · , M,
+(3)
+and Δui is the position error of sensor i. We shall model Δui
+as a zero-mean Gaussian with a known covariance matrix Qui.
+The sensors are not synchronized among themselves and with
+the target, which results in bias bo
+ri in the range observations,
+as shown in Fig. 1. Thus, the range and azimuth measurements
+at time k are
+mri(k) = mo
+ri(k) + Δrik = ro
+i (k) + bo
+ri + Δrik,
+(4a)
+mθi(k) = θo
+i (k) + Δθik,
+(4b)
+where Δrik and Δθik are additive noise. Collecting N samples
+of them from M sensors gives the measurement matrices
+Mr =
+⎡
+⎢⎣
+mr1(0)
+· · ·
+mrM(0)
+...
+...
+...
+mr1(N −1)
+· · ·
+mrM(N −1)
+⎤
+⎥⎦,
+(5a)
+Mθ =
+⎡
+⎢⎣
+mθ1(0)
+· · ·
+mθM(0)
+...
+...
+...
+mθ1(N −1)
+· · ·
+mθM(N −1)
+⎤
+⎥⎦.
+(5b)
+In vector form,
+mr = vec(Mr) = ro + br ⊗1N + Δr,
+(6a)
+mθ = vec(Mθ) = θo + Δθ.
+(6b)
+ro
+and
+θo
+contain
+the
+true
+values
+ro
+i (k)
+and
+θo
+i (k)
+from
+(1a)
+and
+(1b),
+and
+br = [br1, · · · , brM]T .
+The
+noise
+term
+Δr = [Δr10, Δr11, · · · , ΔrM(N−1)]T
+is
+modeled
+by
+zero-mean
+Gaussian
+random
+vectors
+with
+known
+covariance
+matrix
+Qr.
+The
+angle
+noise
+vector
+Δθ = [Δθ10, Δθ11, · · · , ΔθM(N−1)]T is expected to have the
+Von Mises distribution. When the AOA noise variance is not
+large, it is reasonable to approximate the von Mises distribution
+by the Gaussian distribution [41], [42], having zero-mean and
+covariance matrix Qθ. We assume the sensor position errors,
+range noise, and azimuth noise are uncorrelated with one
+another as in the case of radar [2], [43], [44].
+The scenario we address is 2-D, such as for 2-D radar. It can
+be applied to 3-D applications when the elevation/height in-
+formation in the third dimension is determined separately by
+a separate height ﬁnder radar [6], [45], which is common in
+air surveillance applications. The objective is to estimate the
+location to
+0 and the constant velocity vo of the target together
+with the range offset br, and update the sensor location ui,
+i = 1, 2, · · · , M from the measurements mr and mθ.
+III. PERFORMANCE BOUNDS AND ANALYSIS
+We would like to evaluate the effects of the sensor position
+errors and the range offsets on the localization performance, and
+the possibility for the self-calibration of the sensors.
+A. CRLB
+We collect all measurements as m = [mT
+r , mT
+θ ]T = mo +
+Δm. The unknown parameters are αo = [ωoT , uoT ]T , where
+ωo = [toT
+0 , voT , boT
+r ]T contains the target location parameters
+and sensor range offsets and uo = [uoT
+1 , · · · , uoT
+M ]T is the vec-
+tor of sensor positions. We are interested in the CRLB for ωo
+and uo.
+Let us ﬁrst derive the CRLB for αo. Under the assumption
+that the measurement vector m and the sensor position vector
+u are Gaussian distributed and uncorrelated, the log-likelihood
+of the probability density function of m and u is
+ln f(m, u; αo) = p −1
+2(m −mo)T Q−1
+m (m −mo)
+−1
+2(u −uo)T Q−1
+u (u −uo),
+(7)
+where
+mo
+is
+in
+a
+parametric
+form
+of
+αo,
+p =
+−1/2 ln((2π)2M(N+1)|Qm∥Qu|) is a constant independent
+of αo and Qm = blkdiag(Qr, Qθ). To simplify further,
+it is reasonable to assume the measurement noise and
+position errors of different sensors are independent such
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+343
+that Qr = blkdiag(Qr1, · · · , QrM), Qθ = blkdiag(Qθ1, · · · ,
+QθM), and Qu = blkdiag(Qu1, · · · , QuM).
+The CRLB of αo is
+CRLB(αo) = FIM(αo)−1,
+(8)
+and FIM(αo) is the Fisher Information Matrix equal to [46]
+FIM(αo) = E
+
+∂ln f(m, u; αo)
+∂αo
+∂ln f(m, u; αo)
+∂αoT
+
+.
+(9)
+For notation simplicity, after dropping the measurement depen-
+dency of the function ln f(m, u; αo), we have
+∂ln f(m, u; αo)
+∂αoT
+=
+
+∂ln f
+∂ωoT , ∂ln f
+∂uoT
+
+,
+(10)
+where
+∂ln f
+∂ωoT = (m −mo)T Q−1
+m
+∂mo
+∂ωoT ,
+∂ln f
+∂uoT = (m −mo)T Q−1
+m
+∂mo
+∂uoT + (u −uo)T Q−1
+u ,
+and
+∂mo
+∂ωoT =
+
+∂mo
+∂toT
+0 , ∂mo
+∂voT , ∂mo
+∂boT
+r
+
+and
+∂mo
+∂uoT are evaluated in
+Appendix A. Using them in (9) and taking expectation give
+FIM(αo) =
+
+ X
+Y
+YT
+Z + Q−1
+u
+
+,
+(11)
+where
+X = ∂moT
+∂ωo Q−1
+m
+∂mo
+∂ωoT ,
+Y = ∂moT
+∂ωo Q−1
+m
+∂mo
+∂uoT ,
+Z = ∂moT
+∂uo Q−1
+m
+∂mo
+∂uoT .
+(12)
+Using (11) in (8) and applying the partitioned matrix inversion
+formula [12] yield the CRLB for ωo and uo as
+CRLB(ωo) =
+
+X −Y(Z + Q−1
+u )−1YT −1 ,
+(13a)
+CRLB(uo) =
+
+Z + Q−1
+u
+−YT X−1Y
+−1 .
+(13b)
+We can reach an interesting proposition from (11)-(13).
+Proposition 1: When there is only one sensor (M = 1) at a
+noisy position for the localization of a linear motion constant
+velocity target, the CRLB for the true sensor position uo (or uo
+1)
+is equal to the original sensor position covariance matrix Qu,
+and the bound does not change with the measurements and the
+number of time samples.
+Proof: Inserting (12) in Z −YT X−1Y gives
+∂moT
+∂uo
+
+Q−1
+m −Q−1
+m
+∂mo
+∂ωoT X−1 ∂moT
+∂ωo Q−1
+m
+ ∂mo
+∂uoT .
+The matrix Q−1
+m is positive deﬁnite and it can be expressed
+as Q−1
+m =
+
+Q−1
+m
+
+Q−1
+m , where √• denotes the matrix square
+root. Let
+P =
+
+Q−1
+m ∂mo
+∂ωoT , Π⊥
+P = I −P(PT P)−1PT ,
+then
+Z −YT X−1Y = ∂moT
+∂uo
+
+Q−1
+m Π⊥
+P
+
+Q−1
+m ∂mo
+∂uoT .
+(14)
+When we have only one sensor,
+∂mo
+∂uoT = ∂mo
+∂uoT
+1
+= −∂mo
+∂toT
+0
+∈R
+ ∂mo
+∂ωoT
+
+.
+Hence,
+
+Q−1
+m ∂moT
+∂uo
+= −
+
+Q−1
+m ∂mo
+∂toT
+0
+∈R(P).
+Using the property of range space, we have
+Π⊥
+P
+
+Q−1
+m ∂mo
+∂uoT = O.
+(15)
+Applying (15) to (14) gives Z −YT X−1Y = O. Thus,
+CRLB(uo) = Qu.
+(16)
+Proposition 1 implies that the sensor position cannot be up-
+dated to be more accurate with only one sensor. The conclusion
+can be naturally extended to the case with multiple targets.
+When there is only one sensor, the CRLB for uo equals the
+original matrix Qu even with the range and angle measurements
+from multiple targets at many instants. Therefore, the sensor
+position calibration is possible only when the number of sen-
+sors satisﬁes M ≥2 where Z −YT X−1Y in (13b) is positive
+semideﬁnite.
+The intuitive explanation is that the localization system needs
+a reference coordinate point for the measurements to specify
+the estimated target track/location, and it has to be the sensor
+position as it is the only coordinates available. If there are more
+than one sensor, there can be inconsistency of having each
+sensor as the reference position to specify the common target
+track, which can be exploited to update the sensor positions for
+better accuracy.
+IV. CLOSED-FORM SOLUTION
+In this section, the joint estimation problem will be tackled
+sequentially in two separate steps. The ﬁrst step only estimates
+to
+0 and vo from the biased range and the angle measurements
+using the noisy sensor positions. The second step estimates
+the range bias br and updates the sensor position u using the
+solution from the ﬁrst step.
+A. First Step: Target Localization
+Let us start with the true range mo
+ri(k). To remove the un-
+known offset bo
+ri, we utilize the range difference do
+ik = ro
+i (k) −
+ro
+i (0), k = 1, 2, · · · , N −1 for estimation. After using (1a), it
+is related to the unknowns by
+do
+ik = ∥uo
+i −to
+k∥−∥uo
+i −to
+0∥
+= ∥uo
+i −to
+0 −kTvo∥−∥uo
+i −to
+0∥,
+(17)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+344
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+where (2) has been used. Moving ro
+i (0) = ∥uo
+i −to
+0∥to the left
+side of (17), squaring both sides and rearranging lead to
+do2
+ik + 2do
+ikro
+i (0) + 2kT(uo
+i −to
+0)T vo −(kT)2∥vo∥2 = 0.
+(18)
+do
+ik and ro
+i (0) are related to the noisy observations by
+do
+ik = mri(k) −mri(0) −Δrik + Δri0 .= dik −Δdik,
+ro
+i (0) ≃∥ui −to
+0∥−ρT
+ui−to
+0Δui .= ˜ro
+i0 −ρT
+ui−to
+0Δui, (19)
+in which ρa = a/∥a∥is the unit length vector of a.
+We handle the inaccuracy of sensor positions in this step
+by reﬂecting the sensor position errors as an additive noise
+equivalence [12]. Putting ui = uo
+i + Δui and (19) in (18) gives
+2kTuT
+i vo −2kTtoT
+0 vo −(kT)2∥vo∥2 + 2dik˜ro
+i0
++ d2
+ik ≃2ro
+i (k)Δdik + 2(kTvo + dikρui−to
+0)T Δui,
+(20)
+where the second-order error terms are assumed small enough
+to be neglected. The right side of (20) is the equation error,
+where the ﬁrst component is due to the range measurement
+noise and the second comes from the sensor position errors.
+For the angle measurements, (1b) is identical to
+aoT
+ik (uo
+i −to
+k) = 0,
+(21a)
+ao
+ik = [−sin(θo
+i (k)), cos(θo
+i (k))]T .
+(21b)
+By using the ﬁrst-order Taylor-series expansion, ao
+ik is approx-
+imated by the angle measurement,
+ao
+ik ≃aik −˙aikΔθik,
+(22a)
+˙aik = [−cos(mθi(k)), −sin(mθi(k))]T ,
+(22b)
+where aik is ao
+ik given by (21b) with θo
+i (k) replaced by mθi(k).
+Applying (22a) and ui = uo
+i + Δui in (21a) yield
+aT
+ikui −aT
+ikto
+0 −kTaT
+ikvo ≃aoT
+ik Δui + ˙aT
+ik(ui −to
+k)Δθik.
+(23)
+We consider the unknowns in (20) and (23) to be
+ϕo
+1 = [toT
+0 , voT , toT
+0 vo, ∥vo∥2, ˜ro
+10, · · · , ˜ro
+M0]T .
+(24)
+In ϕo
+1, the ﬁrst four elements are independent variables while
+the rest are nuisance variables related to them.
+Over all time samples and receivers, (20) can be written in a
+matrix form in terms of ϕo
+1,
+B1rΔd + CruΔu ≃h1r −A1rϕo
+1.
+(25)
+On the left side, Δd and Δu are, respectively, the collections of
+the errors Δdik and Δui, B1r is a diagonal matrix of elements
+2ro
+i (k) and Cru has the rows 2(kTvo + dikρui−to
+0)T . On the
+right side, h1r comes from d2
+ik and each row of A1r corresponds
+to the coefﬁcients multiplied with the the unknowns in ϕo
+1.
+The detailed expressions of these matrices and vectors are given
+in (79) appeared in Appendix B. Similarly, the matrix form of
+(23) is
+B1θΔθ + CθuΔu ≃h1θ −A1θϕo
+1,
+(26)
+where Δθ is deﬁned below (6) and the detailed expressions of
+B1θ, Cθu, h1θ and A1θ are listed in (80) of Appendix B.
+Stacking (25) and (26) together gives
+B1Δ ¯m + CuΔu ≃h1 −A1ϕo
+1,
+(27)
+B1 =
+
+B1r
+O
+O
+B1θ
+
+, Δ ¯m =
+
+Δd
+Δθ
+
+Cu =
+
+Cru
+Cθu
+
+,
+(28a)
+A1 =
+
+A1r
+A1θ
+
+, h1 =
+
+h1r
+h1θ
+
+.
+(28b)
+The WLS solution to (27) for the estimation of ϕo
+1 is
+ϕ1 = (AT
+1 W1A1)−1AT
+1 W1h1.
+(29)
+Using Δd = P1Δr from (79b) with P1 deﬁned in (79c),
+W1 = (B1 ¯QmBT
+1 + CuQuCT
+u )−1,
+(30a)
+¯Qm = blkdiag(P1QrPT
+1 , Qθ).
+(30b)
+When the measurement noise and the sensor position errors
+are small enough so that their presence in A1 and W1 are
+negligible, it is direct to validate that
+E[ϕ1] ≃(AT
+1 W1A1)−1AT
+1 W1E[h1] ≃ϕo
+1,
+(31a)
+cov(ϕ1) ≃(AT
+1 W1A1)−1.
+(31b)
+Although ϕ1 provides a solution for to
+0 and vo, the estimation
+accuracy cannot reach the CRLB. The other unknown variables
+are nuisance and related to them. The relationships can be
+exploited to reﬁne the solution.
+Let Δϕ1 = ϕ1 −ϕo
+1 be the estimation error of the WLS so-
+lution (29). Based on the deﬁnition of ϕo
+1 in (24), the following
+relations can be constructed,
+Δϕ1(1 : 4) = ϕ1(1 : 4) −[toT
+0 , voT ]T ,
+(32a)
+Δϕ1(5) = ϕ1(5) −toT
+0 vo,
+= ϕ1(5) −voT (ϕ1(1 : 2) −Δϕ1(1 : 2)), (32b)
+Δϕ1(6) = ϕ1(6) −∥vo∥2,
+= ϕ1(6) −voT (ϕ1(3 : 4) −Δϕ1(3 : 4)), (32c)
+Δϕ1(6 + i) = ϕ1(6 + i) −˜ro
+i0 ≃−∥ui −ϕ1(1 : 2)∥
+−ρT
+ui−ϕ1(1:2)(ϕ1(1 : 2) −to
+0) + ϕ1(6 + i),
+(32d)
+where the approximation in (32d) comes from the ﬁrst-
+order Taylor expansion of ˜ro
+i0 = ∥ui −to
+0∥at ϕ1(1 : 2) = to
+0 +
+Δϕ1(1 : 2). (32) is a set of linear equations in the unknown
+ϕo
+2 = [toT
+0 , voT ]T . Collecting the error terms in the left side,
+we have the matrix form
+B2Δϕ1 ≃h2 −A2ϕo
+2,
+(33)
+where the expressions of B2, h2 and A2 are shown in (81) of
+Appendix B.
+The WLS solution to (33) is
+ϕ2 = (AT
+2 W2A2)−1AT
+2 W2h2,
+(34)
+where the weighting matrix W2 is deﬁned by the covariance
+matrix of the equation error on the left side of (33),
+W2 = (B2cov(ϕ1)BT
+2 )−1.
+(35)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+345
+When the noise is small so that the ﬁrst-order errors domi-
+nate, we have
+E[ϕ2] ≃(AT
+2 W2A2)−1AT
+2 W2E[h2] ≃ϕo
+2,
+(36a)
+cov(ϕ2) ≃(AT
+2 W2A2)−1.
+(36b)
+B. Second Step: Sensor Self-Calibration
+We shall estimate the range bias vector bo
+r and update the
+sensor position u by using the object location solution ϕ2 =
+[tT
+0 , vT ]T . The true range at time k is
+mo
+ri(k) = ro
+i (k) + bo
+ri.
+Moving bo
+ri to the left, squaring on both sides and using (1a),
+mo2
+ri (k) −2bo
+rimo
+ri(k) + bo2
+ri = uoT
+i uo
+i −2toT
+k uo
+i + toT
+k to
+k.
+In terms of the noisy range by using mo
+ri(k) = mri(k) −Δrik
+and neglecting Δr2
+ik,
+m2
+ri(k) −toT
+k to
+k −2mri(k)bo
+ri + bo2
+ri + 2toT
+k uo
+i
+−uoT
+i uo
+i ≃2∥uo
+i −to
+k∥Δrik.
+(37)
+For angle measurements, applying (22a) in (21a) yields
+aT
+ikto
+k −aT
+ikuo
+i ≃˙aT
+ik(to
+k −uo
+i )Δθik.
+(38)
+In (37) and (38), we interpret the unknowns are uo
+i and
+bo
+ri. Moreover, under the noise models below (7), the errors
+from different sensors are independent. We can construct the
+equations to obtain bo
+ri and uo
+i for each sensor separately, and
+the processing can be parallel. The unknown vector in this
+step is
+ϕo
+3i = [uoT
+i , bo
+ri, ∥uo
+i ∥2 −bo2
+ri ]T ,
+(39)
+where the last element is a nuisance parameter. Stacking (37)
+and (38) for over k together with Δui = ui −uo
+i , we have the
+pseudo-linear matrix equation for the i-th sensor,
+B3iΔγi ≃h3i −A3iϕo
+3i,
+(40)
+where Δγi includes the errors Δrik, Δθik and Δui. The ex-
+pressions of the matrices and vectors in (40) is listed in (82) of
+Appendix B.
+The WLS solution to (40) is
+ϕ3i = (AT
+3iW3iA3i)−1AT
+3iW3ih3i,
+where
+W3i = (B3iQmiBT
+3i)−1
+,
+Qmi = blkdiag(Qri, Qθi, Qui).
+(41)
+Since the true value of the target position to
+k is not known, we
+shall replace it with the estimated value tk .= t0 + kTv formed
+from the object location solution ϕ2 in (34), giving ˆA3i, ˆh3i and
+ˆ
+W3i. We indeed obtain the solution by
+ˆϕ3i = ( ˆAT
+3i ˆ
+W3i ˆA3i)−1 ˆAT
+3i ˆ
+W3iˆh3i.
+(42)
+In Appendix B, we show by ﬁrst-order approximation,
+E[ ˆϕ3i] ≃ϕo
+3i,
+(43a)
+cov( ˆϕ3i) ≃(ˆAT
+3i ˆ
+W3i ˆA3i)−1 + P9iC3icov(ϕ2)CT
+3iPT
+9i,
+(43b)
+where P9i = ( ˆAT
+3i ˆ
+W3i ˆA3i)−1 ˆAT
+3i ˆ
+W3i and C3i is given by
+(86). Note that the second term of cov( ˆϕ3i) comes from replac-
+ing the true value to
+k with the value obtained from the Step 1
+solution ϕ2.
+The third element in ϕo
+3i is a nuisance variable that is related
+to the ﬁrst two. We adopt a similar technique in (33) to exploit
+the relationship among the elements of ϕo
+3i to reﬁne the so-
+lution. Let Δϕ3i = ˆϕ3i −ϕo
+3i be the estimation error. We can
+construct the following equations according to (39),
+Δϕ3i(1 : 3) = ˆϕ3i(1 : 3) −[uoT
+i , bo
+ri]T ,
+(44a)
+Δϕ3i(4) = ˆϕ3i(4) −∥uo
+i ∥2 + bo2
+ri
+= ˆϕ3i(4)−[uoT
+i , −bo
+ri]( ˆϕ3i(1 : 3) −Δϕ3i(1 : 3)).
+(44b)
+The set of equations above can be converted to a matrix form
+in terms of the unknown
+ϕo
+4i = [uoT
+i , bo
+ri]T ,
+(45)
+as
+B4iΔϕ3i = h4i −A4iϕo
+4i,
+(46)
+where B4i, h4i and A4i are shown in (87).
+The WLS solution to (46) is
+ϕ4i = (AT
+4iW4iA4i)−1AT
+4iW4ih4i,
+(47)
+and the weighting matrix W4i is set to be
+W4i = (B4i( ˆAT
+3i ˆ
+W3i ˆA3i)−1BT
+4i)−1.
+(48)
+In the solution (47), the weighting matrix W4i is not con-
+structed from the equation error of (46) that comes from
+cov( ˆϕ3i), which is different from the typical approach to form
+the weighting matrix.
+Expressing (46) by h4i = B4iΔϕ3i + A4iϕo
+4i and substitut-
+ing it in (47) give
+ϕ4i = ϕo
+4i + (AT
+4iW4iA4i)−1AT
+4iW4iB4iΔϕ3i.
+(49)
+Over the small error region where the linear error terms domi-
+nate performance, the expectation and the covariance matrix of
+ϕ4i are
+E[ϕ4i] ≃ϕo
+4i,
+(50a)
+cov(ϕ4i) ≃P10iB4icov( ˆϕ3i)BT
+4iPT
+10i,
+(50b)
+where P10i = (AT
+4iW4iA4i)−1AT
+4iW4i.
+We would like to clarify that the estimated target position is
+applied in Step 2 for the estimation of the sensor positions and
+range biases. Even though we did so, the resulting estimates
+for the sensor positions and range biases are able to reach the
+optimum estimation accuracy deﬁned by the CRLB evaluated at
+the true values. The ﬁrst-order analysis shown in Section VI-B
+provides the proof.
+The closed-form solution for target localization and sensor
+self-calibration of position and synchronization are summarized
+in Algorithm 1.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+346
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+Algorithm 1 Closed-form solution for target localization and
+sensor self-calibration of position and synchronization
+Input: A set of measurements m with the associated covari-
+ance matrix Qm, the available sensor position ui and their
+covariance matrices Qui
+Output: An estimate ϕ2 of the target location and velocity, an
+estimate ϕ4i of the sensor position and the range bias
+1: Form h1 and A1 from m using the expressions in (28b)
+2: Initialize W1 given in (30a) by computing ϕ1 using (29)
+with W1 set to identity
+3: Obtain ϕ1 by (29)
+4: Form A2 and B2 from (81) and W2 from (31b) and (35)
+5: Compute ϕ2 by (34)
+6: Form ˆh3i and ˆA3i from m and ϕ2 using (82g) by setting
+to
+k to tk .= t0 + kTv
+7: Initialize ˆ
+W3i given in (41) by computing ˆϕ3i using (42)
+with ˆ
+W3i set to identity
+8: Obtain ˆϕ3i by (42)
+9: Compute ϕ4i by (47)
+10: return result
+V. SDP SOLUTION
+The solution in Section IV solves the joint estimation prob-
+lem sequentially and it is computationally efﬁcient. In this
+section, the joint estimation problem will be solved directly by
+convex optimization after transforming the original maximum
+likelihood estimation problem into a convex problem. This
+convex optimization method has a higher complexity than the
+closed-form solution. However, it has a higher noise tolerance
+for maintaining the optimum performance.
+The cost function corresponding to the likelihood (7) is
+J = J1 + J2 + J3,
+(51a)
+J1 =
+M
+
+i=1
+(Mr(i, :) −¯ri −¯bri1)T Q−1
+ri (Mr(i, :) −¯ri −¯bri1),
+(51b)
+J2 =
+M
+
+i=1
+(Mθ(i, :) −¯θi)T Q−1
+θi (Mθ(i, :) −¯θi),
+(51c)
+J3 =
+M
+
+i=1
+(ui −¯ui)T Q−1
+ui (ui −¯ui),
+(51d)
+where a true value ⋆o is replaced by ¯⋆to signify it is now a
+variable in the log-likelihood cost function. In (51), Mr and
+Mθ are deﬁned in (5). ¯ri = [¯ri(0), · · · , ¯ri(N −1)]T and ¯θi =
+[ ¯θi(0), · · · , ¯θi(N −1)]T , and they are expressed in parametric
+forms of the object location and the sensor positions. J is
+quadratic in ¯bri. Taking partial derivative of J with respect to
+¯bri and setting it to zero give the ML solution for ¯bri in closed-
+form,
+¯bri = 1T Q−1
+ri (Mr(i, :) −¯ri)
+1T Q−1
+ri 1
+(52)
+Inserting (52) into J1 of (51) and rearranging yield
+J1 =
+M
+
+i=1
+(Mr(i, :) −¯ri)T Gi(Mr(i, :) −¯ri),
+(53)
+where
+Gi =
+
+I −11T Q−1
+ri
+1T Q−1
+ri 1
+T
+Q−1
+ri
+
+I −11T Q−1
+ri
+1T Q−1
+ri 1
+
+.
+Hence, we can solve for ¯ui, ¯t0 and ¯v by minimizing J and
+obtain ¯bri from (52) afterward. The ML problem (51) with (53)
+is nonlinear and nonconvex due to the model expressions of
+¯ri(k) and ¯θi(k) shown in (1).
+We
+group
+all
+unknowns
+together
+as
+¯ψ =
+[¯tT
+0 , ¯vT , ¯uT
+1 , · · · , ¯uT
+M]T .
+Using
+the
+linear
+transformation
+for the angle measurements given by (21) and (22) in
+Section IV, J2 can be approximated by
+J2 ≃¯ψT AT
+5θW5A5θ ¯ψ,
+(54)
+where W5 = (B5QθBT
+5 )−1,
+B5 = −blkdiag(B3θ1, · · · , B3θM),
+A5θ =
+⎡
+⎢⎣
+−P71
+P61
+...
+...
+−P7M
+P6M
+⎤
+⎥⎦.
+(55)
+P6i and P7i are given in (80) and B3θi is shown in (82e).
+Let ¯Ψ = ¯ψ ¯ψT and ¯Ri = ¯ri¯rT
+i . J1 in (53) is then
+J1 =
+M
+
+i=1
+[tr(Gi ¯Ri) −2¯rT
+i GiMr(i, :)],
+(56)
+where the constant term has been dropped. The diagonal ele-
+ments of ¯Ri can be expressed in terms of ¯Ψ by
+¯Ri(k, k) = tr( ¯Ui + ¯T0 −2 ¯Ψ2i+3:2i+4,1:2)
++ (kT)2tr( ¯V) + 2kTtr( ¯Ψ1:2,3:4)
+−2kTtr( ¯Ψ2i+3:2i+4,3:4),
+(57)
+¯Ui .= ¯Ψ2i+3:2i+4,2i+3:2i+4,
+¯T0 .= ¯Ψ1:2,1:2, ¯V .= ¯Ψ3:4,3:4.
+In terms of ¯Ψ, J2 in (54) is
+J2 ≃tr(AT
+5θW5A5θ ¯Ψ).
+(58)
+J3 in (51d) without the constant term is
+J3 =
+M
+
+i=1
+[tr(Q−1
+ui ¯Ui) −2uT
+i Q−1
+ui ¯ψ(2i + 3 : 2i + 4)].
+(59)
+The minimization of (51) is converted to the following for-
+mulation with J2 replaced by (58):
+min
+¯Ψ, ¯
+ψ, ¯Ri,¯ri
+(56) + (58) + (59)
+(60a)
+s.t.
+(1a), (57), ¯Ψ = ¯ψ ¯ψT , ¯Ri = ¯ri¯rT
+i .
+(60b)
+(60) is a non-convex optimization problem due to the last two
+constraints in (60b).
+We next relax (60) to a convex optimization problem as
+follows. Performing SDR on the last two constraints of (60b) by
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+347
+dropping the rank-one requirement yields the following convex
+inequalities
+
+ ¯Ψ
+¯ψ
+¯ψT
+1
+
+⪰0,
+
+ ¯Ri
+¯ri
+¯rT
+i
+1
+
+⪰0.
+(61)
+In addition, we relax the equality in (1a) by the inequality
+¯ri(k) ≥∥¯ψ(2i + 3 : 2i + 4) −¯ψ(1 : 2) −kT ¯ψ(3 : 4)∥. (62)
+To improve the tightness of the resulting SDP in the relax-
+ation process, we introduce a series of triangular inequalities
+from the sensor-target geometries and the motion model (2),
+|¯ri(k) −¯ri(k −1)| ≤T∥¯ψ(3 : 4)∥, i = 1, 2, · · · , M.
+These constraints in such forms are not convex. However, they
+become convex after squaring both sides and expressing in
+terms of ¯Ri and ¯Ψ,
+¯Ri(k, k)+ ¯Ri(k−1, k−1)−2 ¯Ri(k, k−1) ≤T 2tr( ¯Ψ3:4,3:4).
+(63)
+Note that the absolute sign is removed because the semideﬁnite
+constraint of ¯Ri implies that the left side in (63) is not less
+than zero. After relaxation and adding (63), problem (60) is
+approximated as the convex optimization problem
+min
+¯Ψ, ¯
+ψ, ¯Ri,¯ri
+(56) + (58) + (59),
+(64a)
+s.t.
+(57), (61), (62), (63).
+(64b)
+(64) can be readily solved using a convex optimization package
+such as the CVX toolbox [47].
+Unlike the closed-form solution where the constraints among
+the variables are ignored ﬁrst and then utilized subsequently
+to improve the estimation, the SDP solution imposes the con-
+straints on the variables directly during optimization and solves
+all variables simultaneously. As a result, it often offers a higher
+noise tolerance (lower noise sensitivity) than the closed-form
+solution before the performance deviates from the optimum.
+VI. PERFORMANCE ANALYSIS
+We shall evaluate the performance of the proposed closed-
+form solution by comparing with the CRLB. The analysis con-
+siders the ﬁrst step and second step solutions separately.
+A. First Step Solution
+The CRLB derived in Section III comes from the measure-
+ment mri(k) and mθi(k), k = 0, · · · , N −1. The proposed
+method in this step removes the unknown range offset in mri(k)
+by forming the range difference dik = mri(k) −mri(0), k =
+1, · · · , N −1 as shown in (17). After doing so, the unknown
+vector is ψo = [toT
+0 , voT , uoT ]T . The modiﬁed measurement is
+¯m = [mT
+d , mT
+θ ]T = ¯mo + Δ ¯m, where ¯mo = [doT , θoT ]T and
+Δ ¯m = [ΔdT , ΔθT ]T . The FIM of ψo from ¯m is
+FIM ¯m(ψo) = ∂¯moT
+∂ψo ¯Q−1
+m
+∂¯mo
+∂ψoT + Λ,
+(65)
+where Λ = blkdiag(O4, Q−1
+u ). The inverse of FIM ¯m(ψo)
+gives CRLB ¯m(ψo). After using ¯Qm in (30) and
+∂¯
+moT
+∂ψo =
+
+∂doT
+∂ψo , ∂θoT
+∂ψo
+
+, (65) becomes
+FIM ¯m(ψo) = ∂doT
+∂ψo (P1QrPT
+1 )−1 ∂do
+∂ψoT + Xθ + Λ,
+(66)
+where
+∂do
+∂ψoT = P1
+∂mo
+r
+∂ψoT , Xθ = ∂θoT
+∂ψo Q−1
+θ
+∂θo
+∂ψoT .
+The following proposition relates the CRLBs for ψo from (11)
+and (66).
+Proposition 2: The CRLB for ψo obtained from (65) using
+¯m is identical to the CRLB obtained from (11) using m.
+Proof: See Appendix C.
+Next, we show that the covariance matrix of the ﬁrst step
+solution cov(ϕ2) can reach the CRLB accuracy for Gaussian
+noise under the following conditions.
+(C1) :
+Δdik ≪dik or Δrik ≃0,
+(C2) :
+Δθik ≪mθi(k) or Δθik ≃0,
+(C3) :
+Δui ≪∥uo
+i −to
+0∥.
+When we use the expressions of W2 from (35) and then
+cov(ϕ1) from (31b) in (36b), cov(ϕ2) becomes
+cov(ϕ2)−1 = AT
+2 B−T
+2
+AT
+1 W1A1B−1
+2 A2.
+(67)
+The matrix W1 from (30a) can be expressed as
+W1 = B−T
+1
+( ¯Qm + B−1
+1 CuQuCT
+u B−T
+1
+)−1B−1
+1 .
+Using it in (67) and invoking the Woodbury matrix identity, we
+reach
+cov(ϕ2)−1 = D1 ¯Q−1
+m DT
+1
+−D1 ¯Q−1
+m DT
+2
+
+D2 ¯Q−1
+m DT
+2 + Q−1
+u
+−1 D2 ¯Q−1
+m DT
+1 , (68)
+where D1 = AT
+2 B−T
+2
+AT
+1 B−T
+1
+and DT
+2 = B−1
+1 Cu.
+On the other hand, the FIM FIM ¯m(ψo) in (65) can be parti-
+tioned as
+FIM ¯m(ψo) =
+
+X1
+Y1
+YT
+1
+Z1 + Q−1
+u
+
+,
+(69)
+where
+X1 = ∂¯moT
+∂ϕo
+2
+¯Q−1
+m
+∂¯mo
+∂ϕoT
+2
+,
+Y1 = ∂¯moT
+∂ϕo
+2
+¯Q−1
+m
+∂¯mo
+∂uoT ,
+Z1 = ∂¯moT
+∂uo
+¯Q−1
+m
+∂¯mo
+∂uoT .
+Applying the block matrix inverse formula [12] to (69), the
+CRLB for ϕo
+2 is
+CRLB ¯m(ϕo
+2)−1 = X1 −Y1(Z1 + Q−1
+u )−1YT
+1 .
+(70)
+We realize from (68) and (70) that cov(ϕ2) and CRLB ¯m(ϕo
+2)
+have the same structural form. If the noise is small enough so
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+348
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+that (C1)-(C3) are satisﬁed, it can be veriﬁed through algebraic
+manipulations that
+D1 ≃∂¯moT
+∂ϕo
+2
+, D2 ≃−∂¯moT
+∂uo .
+(71)
+Therefore, under the small noise assumption, we conclude from
+(68)–(71) and Proposition 2 that
+cov(ϕ2) ≃CRLB ¯m(ϕo
+2) = CRLB(ϕo
+2).
+(72)
+B. Second Step Solution
+Let us ﬁrst introduce a proposition.
+Proposition
+3:
+By
+deﬁning
+γo
+i = [moT
+ri , moT
+θi , uoT
+i ]T
+where
+mo
+ri = [mo
+ri(0), · · · , mo
+ri(N −1)]T
+and
+mo
+θi = [θo
+i (0), · · · , θo
+i (N −1)]T , the CRLB for ϕo
+4i based on
+(11) is given by
+CRLB(ϕo
+4i) = ˜Z−1
+i
++ ˜Z−1
+i
+˜YT
+i CRLB(ϕo
+2) ˜Yi ˜Z−1
+i ,
+(73)
+where
+˜Zi = ∂γoT
+i
+∂ϕo
+4i
+Q−1
+mi
+∂γo
+i
+∂ϕoT
+4i
+,
+˜Yi = ∂γoT
+i
+∂ϕo
+2
+Q−1
+mi
+∂γo
+i
+∂ϕoT
+4i
+,
+and Q−1
+mi is shown in (41).
+Proof: See Appendix D.
+After applying the expressions of W4i in (48), cov( ˆϕ3i) in
+(43b) and W3i in (41) to (50), cov(ϕ4i) becomes
+cov(ϕ4i) ≃(D3iQ−1
+miDT
+3i)−1 + (D3iQ−1
+miDT
+3i)−1
+× D3iQ−1
+miDT
+4icov(ϕ2)D4iQ−1
+miDT
+3i(D3iQ−1
+miDT
+3i)−1,
+(74)
+where D3i = AT
+4iB−T
+4i ˆAT
+3i ˆB−T
+3i
+and DT
+4i = ˆB−1
+3i C3i. We real-
+ize the structure of the expression in (74) is similar to that of
+(73). It can be veriﬁed through algebraic manipulations that
+under (C1)-(C3),
+D3i ≃∂γoT
+i
+∂ϕo
+4i
+, D4i ≃−∂γoT
+i
+∂ϕo
+2
+.
+(75)
+We have shown that cov(ϕ2) ≃CRLB(ϕo
+2). Comparing (73)
+and (74) with (75) yields the accuracy for the step 2 solution,
+cov(ϕ4i) ≃CRLB(ϕo
+4i).
+(76)
+VII. SIMULATION
+This section presents two sets of simulations to examine the
+performance of the proposed methods including the closed-
+form solution and the SDP solution. The ﬁrst set evaluates
+the estimation accuracy when increasing the observation time.
+The second set examines the algorithm behaviors when varying
+the measurement noise levels of range and azimuth. The estima-
+tion performance is assessed in terms of the root mean square
+error (RMSE) obtained through ensemble runs by
+RMSE(αp) =
+
+
+
+ 1
+L
+
+L
+
+l=1
+∥α(l)
+p −αop∥2
+2
+
+,
+(77)
+where αo
+p represents an unknown parameter in αo which could
+be the target position to
+0, velocity vo, range bias bo
+r or sensor
+position uo, and α(l)
+p
+is the corresponding estimation result in
+the l-th trial. The number of ensemble runs L is 3,000 unless
+stated otherwise. The SDP solution is obtained by the CVX
+toolbox [47].
+Two sensors are used in the simulation and their loca-
+tions are uo
+1 = [0, 4]T km and uo
+2 = [4, 0]T km. The range bi-
+ases are bo
+r1 = 15 m and bo
+r2 = 20 m, corresponding to 0.05
+μs and 0.067 μs in radar. The range noise covariance ma-
+trix is Qr = σ2
+rdiag(0.8, 1.2) ⊗IK and that of angle is Qθ =
+σ2
+θdiag(0.8, 1.2) ⊗IK. The position covariance matrix for each
+sensor is Qu = diag(σ2
+u1, σ2
+u2) ⊗I2 with σu1 = 5 m and σu2 =
+3 m. The target initial position is to
+0 = [−4, 3]T km and the
+velocity is vo = [200, −140]T m/s. The measurement time step
+T is normalized to 1 sec. and its actual value can be absorbed
+to vo so that vo is the actual target velocity times T.
+The MLE that maximizes the log-likelihood function (7) with
+respect to all the unknowns α is used as the benchmark for
+performance reference as the MLE can reach the CRLB asymp-
+totically [46]. The MLE is implemented by the Gauss-Newton
+iteration [16], [17] initialized with the true value (denoted by
+“Gauss-Newton MLE”). To illustrate the effects of range biases
+and sensor position errors on the localization performance, we
+also include the results obtained from the two methods in [40]
+(denoted by “Optimization” and “LS”) when both of them are
+ignored, but they are actually present. For the case of ignoring
+sensor position errors (denoted by “MLE when pretending u
+accurate”), we remove the third term on the right of (7) and
+maximize it with respect to the target position and velocity (t0,
+v) and range biases br only, with uo
+i in the true range data
+model (1a) replaced by the inaccurate value ui. In addition, we
+also include the results of the proposed closed-form solution
+with inaccurate weighting matrices by injecting 25% and 50%
+errors to each element of the covariance matrices Qm and Qu,
+where the errors can be positive or negative, randomly set with
+equal probability and changing for each ensemble run (denoted
+by “25% covariance matrix error” and “50% covariance matrix
+error”).
+A. Effect of Observation Period
+Figs. 2 and 3 show the target localization performance as the
+total observation time increases, where the noise levels are kept
+at σr = 5 m and σθ = 1 deg. The proposed closed-form solution
+needs a little more than 20 time samples to reach the CRLB
+performance, whereas the proposed SDP solution takes 3 time
+samples. Both follow the CRLB well as the observation time
+increases. When pretending u is accurate, the resulting RMSE
+is large although the position accuracy improves a little with the
+observation time at the beginning but worsens afterward. It is
+apparent that the Optimization and LS methods from [40] are
+sensitive to the range biases and sensor position errors and do
+not perform satisfactorily. There is a wide gap with the CRLB
+and the gap does not reduce much with the observation time.
+Figs. 4 and 5 illustrate the sensor position and range bias
+estimation performance. The sensor positions can be updated to
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 10 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+349
+Fig. 2.
+Target position estimation RMSE when increasing the observation
+time.
+Fig. 3.
+Target velocity estimation RMSE when increasing the observation
+time.
+Fig. 4.
+Sensor position update RMSE when increasing the observation time.
+be more accurate compared to the original. The two proposed
+methods reach the CRLBs for both estimations. It validates the
+feasibility and optimal accuracy of the proposed second-step
+Fig. 5.
+Range bias estimation RMSE when increasing the observation time.
+Fig. 6.
+Target position estimation RMSE when increasing the noise level.
+solution that updates the sensor position and estimates the range
+bias using the solution from the ﬁrst step. When we pretend the
+original sensor positions are accurate, as shown in Fig. 5, the
+RMSE of range bias estimation is getting closer to the CRLB
+as the observation time increases.
+It appears that the proposed closed-form solution is not sensi-
+tive to the errors in the covariance matrices. The performance is
+nearly identical to perfect knowledge of the covariance matrices
+when the error is 25%. Even with a 50% error, the degradation
+is not substantial except for the sensor position estimation.
+B. Effect of Noise Level
+This subsection evaluates the estimation performance under
+different noise levels where N = 80. Figs. 6 and 7 give the
+estimation results for the target location and velocity. When the
+noise is not large, the performance of the proposed solutions can
+reach the CRLB, and the solution when ignoring the system
+error is greater than the CRLB. However, when the noise level
+becomes large, the proposed solutions are gradually moving
+away from the CRLB, while the Optimization method (solution
+when ignoring the system error) is lower than the CRLB due
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 11 =====
+350
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+TABLE I
+NUMBER OF RANK-1 SOLUTIONS (5000 MC RUNS AT EACH NOISE LEVEL)
+(σr (m), σθ (◦))
+(1, 0.5)
+(5, 1)
+(10, 1.2)
+(20, 1.5)
+(90, 5)
+(120, 8)
+TH = 10−5
+5000
+5000
+5000
+5000
+5000
+5000
+TH = 10−6
+5000
+5000
+5000
+5000
+5000
+4999
+TH = 10−8
+5000
+5000
+5000
+5000
+5000
+4999
+TH = 5 × 10−9
+5000
+5000
+5000
+5000
+5000
+4956
+TH = 2 × 10−9
+5000
+5000
+5000
+4765
+4712
+4210
+Fig. 7.
+Target velocity estimation RMSE when increasing the noise level.
+to its considerable amount of bias in the solution. Although
+the computational complexity of the SDP solution is high, it
+can stay with the CRLB further compared with the closed-form
+solution. It appears the results when pretending u is accurate
+are also close to the CRLB for large noise, because the sensor
+position error is relatively small and the observation time is
+quite long (X and Z in (13a) are large enough so that X
+dominates CRLB(ωo) and CRLB(ωo) ≃X−1). It should be
+noted that the two MLEs are divergent when the noise level
+is (90 m, 1.8◦).
+Figs. 8 and 9 show the sensor location and range bias estima-
+tion performance. The proposed closed-form and SDP solutions
+achieve the CRLB for sensor position in Fig. 8. However, as the
+noise level increases, the improvement of the sensor position
+accuracy reduces, unless we increase the number of time sample
+measurements. For the range bias estimation in Fig. 9, the two
+proposed solutions can attain the CRLB when the noise is not
+large, and the accuracy of the closed-form solution deviates
+from the CRLB earlier than the SDP solution that can tolerate
+larger noise. The simulation results in Figs. 6–9 are consistent
+with ﬁndings from the literature [17], [48] that the SDP solution
+is more robust to the reﬂection/ﬂip ambiguity problem and also
+to the noise power than the WLS solution. Indeed, the WLS
+solution supposes the noise power is low in order to neglect the
+second-order noise in deriving the solution. Hence, it is not a
+surprise that it does not perform as well as SDP when the noise
+is large.
+Fig. 8.
+Sensor position update RMSE when increasing the noise level.
+Fig. 9.
+Range bias estimation RMSE when increasing the noise level.
+Table I tabulates the number of rank-1 SDP solutions at dif-
+ferent measurement noise levels, for 5000 ensemble runs, where
+the observation time period in each run is 20 s. We interpret
+the solution is rank-1 when the ratio of the second largest to
+the largest eigenvalues of ¯Ψ and those of ¯Ri are less than
+a certain value TH [49], [50], where ¯Ψ and ¯Ri deﬁned in
+(60b) have ranks of exactly one before relaxation. All the SDP
+solutions in the cases tested are rank-1 when TH is at 10−5,
+At the high noise level of (σr, σθ) = (120 m, 8◦), only 1 out of
+5000 solutions is not rank-1 with TH = 10−6. Reducing TH
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 12 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+351
+TABLE II
+AVERAGE COMPUTATION TIMES FOR DIFFERENT
+OBSERVATION TIMES
+NT (s)
+20
+50
+80
+Closed-form (ms)
+1.0
+2.4
+4.6
+SDP (ms)
+0.8 × 103
+2.2 × 103
+4.5 × 103
+further makes more non-rank-1 solutions appearing at lower
+noise levels. Even if we decrease TH to 2 × 10−9, we only
+have 4.7% non-rank-1 solutions at (σr, σθ) = (20 m, 1.5◦) and
+15.8% at (σr, σθ) = (120 m, 8◦). Although we apply relaxation
+to convert the non-convex ML problem to a convex SDP for
+obtaining the solution, the resulting relaxation error seems in-
+signiﬁcant, supporting the good performance of the proposed
+SDP solution.
+The average computation times of the proposed solutions are
+tabulated in Table II. The SDP solution comes with a price
+that it has a computational complexity nearly one thousand
+times higher than the closed-form solution. In addition, the
+computation times for both solutions increase about linearly
+with the total observation time NT.
+VIII. CONCLUSION
+The paper investigates the localization of a moving target
+using a sequence of range and azimuth measurements in the
+presence of synchronization offsets and inaccurate sensor posi-
+tions. The CRLB analysis reveals that the sensor position can
+be updated to be more accurate only when there are at least
+two sensors. A sequential closed-form solution is proposed that
+estimates the target position and velocity ﬁrst, and then the
+position and range bias of each sensor. The analysis shows that
+the closed-form solution in performing estimation sequentially
+can reach the CRLB accuracy for all parameter estimates under
+small Gaussian noise. An SDP solution for simultaneous joint
+synchronization and localization is also formulated based on the
+MLE and it can handle the problem better when the noise level
+is high.
+This work models the measurement bias explicitly for the
+purpose of reaching an unbiased estimator, which will be useful
+in target motion analysis or tracking where successive samples
+can reduce the estimation variance but not the bias, resulting in
+better estimate and avoiding the drift of a target track. In some
+applications, the inherent bias in the measurements, such as
+the case of RSS, may yield a bias estimate that has a mean-
+square error lower than the CRLB. Whether it is better to model
+the bias explicitly, one should consider the actual problem and
+scenario, and the extent of bias in the measurements.
+This work considered the 2-D scenario for ease of illustration.
+The theoretical results of the three propositions are directly
+applicable to 3-D, and the algorithms can be immediately ex-
+tended to 3-D by including the pseudo-linear equations from
+the elevation measurements [51] (eq. (5b)). The two proposed
+solutions are batch estimators. It would be interesting and useful
+to extend the methods for sequential real-time processing as a
+new set of measurements from the next time step arrives.
+APPENDIX A
+PARTIAL DERIVATIVE FOR THE CRLB
+∂mo
+∂αoT =
+
+∂mo
+r/∂toT
+0
+∂mo
+r/∂voT
+F1
+∂mo
+r/∂uoT
+∂θo/∂toT
+0
+∂θo/∂voT
+0
+∂θo/∂uoT
+
+.
+(78)
+The elements are
+F1 = ∂mo
+r/∂boT
+r
+= IM ⊗1N,
+∂mo
+r/∂toT
+0
+= [· · · , ∂mo
+ri(k)/∂to
+0, · · · ]T ,
+∂mo
+r/∂voT = [· · · , ∂mo
+ri(k)/∂vo, · · · ]T ,
+∂mo
+r/∂uoT = [· · · , ∂mo
+ri(k)/∂uo, · · · ]T ,
+∂θo/∂toT
+0
+= [· · · , ∂θo
+i (k)/∂to
+0, · · · ]T ,
+∂θo/∂voT = [· · · , ∂θo
+i (k)/∂vo, · · · ]T ,
+∂θo/∂uoT = [· · · , ∂θo
+i (k)/∂uo, · · · ]T ,
+where
+∂mo
+ri(k)/∂to
+0 = ρto
+k−uo
+i ,
+∂mo
+ri(k)/∂vo = kTρto
+k−uo
+i ,
+∂mo
+ri(k)/∂uo =
+
+∂mo
+ri(k)/∂uoT
+1 , · · · , ∂mo
+ri(k)/∂uoT
+M
+T ,
+∂mo
+ri(k)/∂uoT
+j
+= 0T (i̸ = j),
+∂mo
+ri(k)/∂uoT
+i
+= ρT
+uo
+i −to
+k,
+∂θo
+i (k)/∂to
+0 = [uo
+iy −to
+ky, to
+kx −uo
+ix]T /∥uo
+i −to
+k∥2,
+∂θo
+i (k)/∂vo = kT[uo
+iy −to
+ky, to
+kx −uo
+ix]T /∥uo
+i −to
+k∥2,
+∂θo
+i (k)/∂uo =
+
+∂θo
+i (k)/∂uoT
+1 , · · · , ∂θo
+i (k)/∂uoT
+M
+T ,
+∂θo
+i (k)/∂uo
+j = 0(i̸ = j),
+∂θo
+i (k)/∂uo
+i = [to
+ky −uo
+iy, uo
+ix −to
+kx]T /∥uo
+i −to
+k∥2.
+APPENDIX B
+EXPRESSIONS FOR THE MATRICES AND VECTORS OF THE
+CLOSED-FORM SOLUTION
+B1r = 2diag([ro
+1(0), · · · , ro
+1(k), ro
+2(0), · · · , ro
+M(N −1)]T ),
+(79a)
+Δd = [Δd10, · · · , Δd1k, Δd20, · · · , ΔdM(N−1)]T = P1Δr,
+(79b)
+P1 = IM ⊗[−1, IN−1], Cru = 2blkdiag(P21, · · · , P2M),
+(79c)
+P2i =
+⎡
+⎢⎣
+(0)TvoT + di0ρT
+ui−to
+0
+...
+(N −1)TvoT + di(N−1)ρT
+ui−to
+0
+⎤
+⎥⎦, Δu =
+⎡
+⎢⎣
+Δu1
+...
+ΔuM
+⎤
+⎥⎦,
+(79d)
+h1r = [d2
+11, · · · , d2
+1k, · · · , d2
+Mk, · · · , d2
+M(N−1)]T ,
+(79e)
+A1r =
+⎡
+⎢⎣
+P31
+P41
+· · ·
+O
+...
+...
+...
+...
+P3M
+O
+· · ·
+P4M
+⎤
+⎥⎦, P4i = −2
+⎡
+⎢⎣
+di1
+...
+di(N−1)
+⎤
+⎥⎦,
+(79f)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 13 =====
+352
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+P3i=
+⎡
+⎢⎣
+0T
+−2(0)TuT
+i
+2(0)T
+((0)T)2
+...
+...
+...
+...
+0T
+−2(N −1)TuT
+i
+2(N −1)T
+((N −1)T)2
+⎤
+⎥⎦.
+(79g)
+B1θ = blkdiag(P51, · · · , P5M),
+(80a)
+P5i = diag([˙aT
+i0(ui −to
+0), · · · , ˙aT
+i(N−1)(ui −to
+N−1)]),
+(80b)
+Cθu = blkdiag(P61, · · · , P6M),
+(80c)
+P6i =
+⎡
+⎢⎣
+aT
+i0
+...
+aT
+i(N−1)
+⎤
+⎥⎦, A1θ =
+⎡
+⎢⎣
+P71
+O
+...
+...
+P7M
+O
+⎤
+⎥⎦,
+(80d)
+h1θ = [· · · , aT
+1ku1, · · · , · · · aT
+MkuM, · · · ]T ,
+(80e)
+P7i =
+⎡
+⎢⎣
+aT
+i0
+0T
+...
+...
+aT
+i(N−1)
+(N −1)TaT
+i(N−1)
+⎤
+⎥⎦.
+(80f)
+h2(1 : 6) = ϕ1(1 : 6),
+h2(6 + i) = ϕ1(6 + i)
+−∥ui −ϕ1(1 : 2)∥−ρT
+ui−ϕ1(1:2)ϕ1(1 : 2),
+(81a)
+B2 =
+⎡
+⎢⎢⎢⎢⎣
+I2
+O2
+0
+0
+O
+O2
+I2
+0
+0
+O
+voT
+0T
+2
+1
+0
+0T
+M
+0T
+2
+voT
+0
+1
+0T
+M
+O
+O
+0
+0
+IM
+⎤
+⎥⎥⎥⎥⎦
+,
+(81b)
+A2 =
+⎡
+⎢⎢⎢⎢⎣
+I2
+O2
+O2
+I2
+0T
+ϕ1(1 : 2)T
+0T
+ϕ1(3 : 4)T
+P8
+O
+⎤
+⎥⎥⎥⎥⎦
+, P8 =
+⎡
+⎢⎣
+−ρT
+u1−ϕ1(1:2)
+...
+−ρT
+uM−ϕ1(1:2)
+⎤
+⎥⎦.
+(81c)
+B3i = blkdiag(B3ri, B3θi, I2), Δγi = [ΔmT
+i , ΔuT
+i ]T ,
+(82a)
+Δmi = [Δri0, · · · , Δri(N−1), Δθi0, · · · , Δθi(N−1)]T ,
+(82b)
+h3i =
+
+hT
+3ri, hT
+3θi, uT
+i
+T, A3i =
+
+AT
+3ri, AT
+3θi, AT
+3u
+T,
+(82c)
+B3ri = 2diag(∥uo
+i −to
+0∥, · · · , ∥uo
+i −to
+N−1∥),
+(82d)
+B3θi = diag(˙aT
+i0(to
+0 −uo
+i ), · · · , ˙aT
+i(N−1)(to
+N−1 −uo
+i )),
+(82e)
+h3ri = [m2
+ri(0) −∥to
+0∥2, · · · , m2
+ri(N −1) −∥to
+N−1∥2]T ,
+(82f)
+h3θi =
+⎡
+⎢⎣
+aT
+i0to
+0
+...
+aT
+i(N−1)to
+N−1
+⎤
+⎥⎦, A3θi =
+⎡
+⎢⎣
+aT
+i0
+0T
+...
+...
+aT
+i(N−1)
+0T
+⎤
+⎥⎦,
+(82g)
+A3ri =
+⎡
+⎢⎣
+−2toT
+0
+2mri(0)
+1
+...
+...
+...
+−2toT
+N−1
+2mri(N −1)
+1
+⎤
+⎥⎦, A3u = [I2, O2].
+(82h)
+Using the ﬁrst-order Taylor expansion at to
+k,
+ˆh3i ≃h3i + Δh3i,
+(83a)
+ˆA3i ≃A3i + ΔA3i,
+(83b)
+ˆB3i ≃B3i + ΔB3i,
+(83c)
+where
+Δh3i =
+
+· · ·
+−2to
+k
+· · · · · ·
+ao
+ik
+· · · O
+· · · −2kTto
+k · · · · · · kTao
+ik · · · O
+T
+Δϕ2, (84a)
+ΔA3i =
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+...
+...
+−2(ΔϕT
+2 (1 : 2) + kTΔϕT
+2 (3 : 4))
+0T
+...
+...
+...
+...
+0T
+0T
+...
+...
+O
+O
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+. (84b)
+Using (83) to eliminate h3i, A3i and B3i in (40), ignoring
+the second-order noise term ΔB3iΔγi and rearranging,
+ˆh3i ≃ˆA3iϕo
+3i + ˆB3iΔγi + C3iΔϕ2,
+(85)
+where C3iΔϕ2 = Δh3i −ΔA3iϕo
+3i. Using the expressions of
+Δh3i and ΔA3i in (84), C3i is
+C3i =
+
+· · ·
+2(uo
+i −to
+k)
+· · · · · ·
+aik
+· · ·
+O
+· · ·
+2kT(uo
+i −to
+k)
+· · · · · ·
+kTaik
+· · ·
+O
+T
+.
+(86)
+After putting (85) in (42), we reach (43).
+h4i = ˆϕ3i,
+B4i =
+⎡
+⎣
+I2
+0
+0
+0T
+1
+0
+−uoT
+i
+bo
+ri
+1
+⎤
+⎦,
+(87a)
+A4i =
+⎡
+⎣
+I2
+0
+0
+1
+ϕT
+3i(1 : 2)
+−ϕ3i(3)
+⎤
+⎦.
+(87b)
+APPENDIX C
+PROOF OF PROPOSITION 2
+By partitioning the unknown vector αo in Section III as ¯αo =
+[ψoT , boT
+r ]T , the CRLB of ψo can be expressed as
+CRLB(ψo) =
+ ¯X −¯Y¯Z−1 ¯YT + Λ
+−1 ,
+(88)
+where
+¯X = ∂moT
+∂ψo Q−1
+m
+∂mo
+∂ψoT = ∂moT
+r
+∂ψo Q−1
+r
+∂mo
+r
+∂ψoT + Xθ,
+¯Y = ∂moT
+∂ψo Q−1
+m
+∂mo
+∂boT
+r
+= ∂moT
+r
+∂ψo Q−1
+r F1,
+¯Z = ∂moT
+∂bor
+Q−1
+m
+∂mo
+∂boT
+r
+= FT
+1 Q−1
+r F1,
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 14 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+353
+and
+F1 = ∂mo
+r/∂boT
+r
+= IM ⊗1N.
+Comparing
+the
+CRLB(ψo)−1 expressed by (88) with the FIM in (66), the
+distinction comes from the difference between the following
+two terms,
+Δ ¯m = ∂moT
+r
+∂ψo PT
+1 (P1QrPT
+1 )−1P1
+∂mo
+r
+∂ψoT ,
+Δm = ∂moT
+r
+∂ψo (Q−1
+r
+−Q−1
+r F1 ¯Z−1FT
+1 Q−1
+r ) ∂mo
+r
+∂ψoT .
+Let us deﬁne ˆP1 = √QrPT
+1 ∈RMN×M(N−1) and ˆF1 =
+
+Q−1
+r F1 ∈RMN×M. The matrices for projection onto their
+column spaces are
+Π ˆP1 = ˆP1(ˆPT
+1 ˆP1)−1 ˆPT
+1 ,
+ΠˆF1 = ˆF1(ˆFT
+1 ˆF1)−1 ˆFT
+1 .
+It can be veriﬁed that ˆPT
+1 ˆF1 = P1F1 = 0, which implies the
+columns of ˆF1 are orthogonal to the column space of ˆP1.
+The two projection matrices span orthogonal subspaces and
+they together compose the entire. Therefore,
+Π ˆP1 + ΠˆF1 = IMN.
+Moving ΠˆF1 to right, pre- and post-multiplying by
+
+Q−1
+r
+and
+expressing the equation by P1 and F1 produce
+PT
+1 (P1QrPT
+1 )−1P1 = Q−1
+r
+−Q−1
+r F1 ¯Z−1FT
+1 Q−1
+r .
+(89)
+Hence, Δ ¯m = Δm. As a result,
+CRLB(ψo) = FIM ¯m(ψo)−1 = CRLB ¯m(ψo).
+(90)
+APPENDIX D
+PROOF OF PROPOSITION 3
+For ease of illustration, we rearrange the elements of the
+unknown vector αo in Section III to ˜αo = [ϕoT
+2 , ϕoT
+4 ]T where
+ϕo
+4 = [ϕoT
+41 , · · · , ϕoT
+4M]T . Let us also call the total measurement
+vector as γ = γo + Δγ, where γo = [γoT
+1 , γoT
+2 , · · · , γoT
+M ]T
+and γoT
+i
+is deﬁned in Proposition 3. The corresponding covari-
+ance matrix of γ is ˜Qm = ˜P blkdiag(Qr, Qθ, Qu) ˜PT , where
+˜P is a permutation matrix such that γ = ˜P[mT
+r , mT
+θ , uT ]T .
+The CRLB in Section III can be expressed as an equivalent
+form in terms of γo and ˜αo by
+CRLB( ˜αo) =
+
+∂γoT
+∂˜αo ˜Q−1
+m
+∂γo
+∂˜αoT
+−1
+=
+
+ ˜X
+˜Y
+˜YT
+˜Z
+−1
+, (91)
+where
+˜X = ∂γoT
+∂ϕo
+2
+˜Q−1
+m
+∂γo
+∂ϕoT
+2
+, ˜Y = ∂γoT
+∂ϕo
+2
+˜Q−1
+m
+∂γo
+∂ϕoT
+4
+,
+˜Z = ∂γoT
+∂ϕo
+4
+˜Q−1
+m
+∂γo
+∂ϕoT
+4
+.
+The CRLB for ϕo
+4 is obtained by using the block matrix inverse
+formula [12] to (91),
+CRLB(ϕo
+4) = ˜Z−1 + ˜Z−1 ˜YT CRLB(ϕo
+2) ˜Y˜Z−1,
+(92)
+where CRLB(ϕo
+2) = ( ˜X −˜Y˜Z−1 ˜YT )−1. After inserting γo,
+˜Qm and ϕo
+4 in ˜Y and ˜Z, it is straightforward to verify that
+˜Y = [ ˜Y1, · · · , ˜YM], ˜Z = blkdiag(˜Z1, · · · , ˜ZM).
+(93)
+Putting (93) in (92) yields the CRLB for ϕo
+4 in terms of ˜Yi and
+˜Zi. The i-th diagonal block in CRLB(ϕo
+4) is the CRLB of ϕo
+4i
+and it has the expression of CRLB(ϕo
+4i) in (73).
+REFERENCES
+[1] T. Liu, G. Li, L. Lu, S. Li, and S. Tian, “Robust hybrid cooperative
+positioning via a modiﬁed distributed projection-based method,” IEEE
+Trans. Wireless Commun., vol. 19, no. 5, pp. 3003–3018, May 2020.
+[2] X. Lin and Y. Bar-Shalom, “Multisensor target tracking performance
+with bias compensation,” IEEE Trans. Aerosp. Electron. Syst., vol. 42,
+no. 3, pp. 1139–1149, Jul. 2006.
+[3] B. Etzlinger, F. Meyer, F. Hlawatsch, A. Springer, and H. Wymeersch,
+“Cooperative simultaneous localization and synchronization in mobile
+agent networks,” IEEE Trans. Signal Process., vol. 65, no. 14, pp. 3587–
+3602, Apr. 2017.
+[4] J. Liu and G. Guo, “Pseudolinear Kalman ﬁlters for target tracking
+using hybrid measurements,” Signal Process., vol. 188, Nov. 2021,
+Art. no. 108206.
+[5] S. Tomic, M. Beko, R. Dinis, M. Tuba, and N. Bacanin, “Bayesian
+methodology for target tracking using combined RSS and AoA mea-
+surements,” Phys. Commun., vol. 25, pp. 158–166, Nov. 2017.
+[6] S. Tomic, M. Beko, and M. Tuba, “A linear estimator for network
+localization using integrated RSS and AOA measurements,” IEEE Signal
+Process. Lett., vol. 26, no. 3, pp. 405–409, Mar. 2019.
+[7] M. W. Khan, N. Salman, A. H. Kemp, and L. Mihaylova, “Localisation
+of sensor nodes with hybrid measurements in wireless sensor networks,”
+Sensors, vol. 16, no. 7, 2016, Art. no. 1143.
+[8] Y. T. Chan and K. C. Ho, “A simple and efﬁcient estimator for hyperbolic
+location,” IEEE Trans. Signal Process., vol. 42, no. 8, pp. 1905–1915,
+Aug. 1994.
+[9] K. Do˘gançay, “3D pseudolinear target motion analysis from angle
+measurements,” IEEE Trans. Signal Process., vol. 63, no. 6, pp. 1570–
+1580, Mar. 2015.
+[10] M. Ahmed, K. C. Ho, and G. Wang, “Localization of a moving source
+by frequency measurements,” IEEE Trans. Signal Process., vol. 68,
+pp. 4839–4854, 2020.
+[11] M. Laaraiedh, L. Yu, S. Avrillon, and B. Uguen, “Comparison of hybrid
+localization schemes using RSSI, TOA, and TDOA,” in Proc. Sustain.
+Wireless Technol., Vienna: VDE, Apr. 2011, pp. 1–5.
+[12] K. C. Ho, X. Lu, and L. Kovavisaruch, “Source localization using TDOA
+and FDOA measurements in the presence of receiver location errors:
+Analysis and solution,” IEEE Trans. Signal Process., vol. 55, no. 2,
+pp. 684–696, Feb. 2007.
+[13] K. W. K. Lui, W. K. Ma, H. C. So, and F. K. W. Chan, “Semi-
+deﬁnite programming algorithms for sensor network node localization
+with uncertainties in anchor positions and/or propagation speed,” IEEE
+Trans. Signal Process., vol. 57, no. 2, pp. 752–763, Feb. 2009.
+[14] T. Jia, K. C. Ho, H. Wang, and X. Shen, “Accurate localization of AUV
+in motion by explicit solution using time delays,” in Proc. IEEE Int.
+Conf. Acoust., Speech, Signal Process., Barcelona, Jun. 2020, pp. 4871–
+4875.
+[15] L. Rui and K. C. Ho, “Efﬁcient closed-form estimators for multistatic
+sonar localization,” IEEE Trans. Aerosp. Electron. Syst., vol. 51, no. 1,
+pp. 600–614, Jan. 2015.
+[16] B. Hao, K. C. Ho, and Z. Li, “Range-based rigid body localization with
+a calibration emitter for mitigating anchor position uncertainties,” IEEE
+Trans. Wireless Commun., vol. 18, no. 12, pp. 5734–5748, Dec. 2019.
+[17] T. Jia, K. C. Ho, H. Wang, and X. Shen, “Localization of a moving
+object with sensors in motion by time delays and Doppler shifts,” IEEE
+Trans. Signal Process., vol. 68, pp. 5824–5841, Oct. 2020.
+[18] S. Wang, B. R. Jackson, and R. Inkol, “Hybrid RSS/AOA emitter
+location estimation based on least squares and maximum likelihood
+criteria,” in Proc. Biennial Symp. Commun., Kingston, ON, Canada.
+Piscataway, NJ, USA: IEEE Press, May 2012, pp. 24–29.
+[19] F. Pang, K. Do˘gançay, N. H. Nguyen, and Q. Zhang, “AOA pseudolinear
+target motion analysis in the presence of sensor location errors,” IEEE
+Trans. Signal Process., vol. 68, pp. 3385–3399, Jun. 2020.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 15 =====
+354
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 73, 2025
+[20] N. H. Nguyen and K. Do˘gançay, “Closed-form algebraic solutions for
+angle-of-arrival source localization with Bayesian priors,” IEEE Trans.
+Wireless Commun., vol. 18, no. 8, pp. 3827–3842, Aug. 2019.
+[21] L. Yang and K. C. Ho, “An approximately efﬁcient TDOA localization
+algorithm in closed-form for locating multiple disjoint sources with
+erroneous sensor positions,” IEEE Trans. Signal Process., vol. 57, no. 12,
+pp. 4598–4615, Dec. 2009.
+[22] J. Yin, Q. Wan, S. Yang, and K. C. Ho, “A simple and accurate TDOA-
+AOA localization method using two stations,” IEEE Signal Process.
+Lett., vol. 23, no. 1, pp. 144–148, Jan. 2016.
+[23] S. Tomic, M. Beko, R. Dinis, and P. Montezuma, “A closed-form
+solution for RSS/AoA target localization by spherical coordinates con-
+version,” IEEE Wireless Commun. Lett., vol. 5, no. 6, pp. 680–683,
+Dec. 2016.
+[24] Y. Zou, H. Liu, and Q. Wan, “Joint synchronization and localization
+in wireless sensor networks using semideﬁnite programming,” IEEE
+Internet Things J., vol. 5, no. 1, pp. 199–205, Feb. 2018.
+[25] G. Wang, Y. Li, and N. Ansari, “A semideﬁnite relaxation method for
+source localization using TDOA and FDOA measurements,” IEEE Trans.
+Veh. Technol., vol. 62, no. 2, pp. 853–862, Feb. 2013.
+[26] P. Biswas, H. Aghajan, and Y. Ye, “Semideﬁnite programming algo-
+rithms for sensor network localization using angle information,” in
+Proc. Asilomar Conf. Signals, Syst. Comput., Paciﬁc Grove, CA, USA.
+Piscataway, NJ, USA: IEEE Press, Oct. 2005, pp. 220–224.
+[27] K. C. Ho and W. Xu, “An accurate algebraic solution for moving source
+location using TDOA and FDOA measurements,” IEEE Trans. Signal
+Process., vol. 52, no. 9, pp. 2453–2463, Sep. 2004.
+[28] Y. Wang and K. C. Ho, “TDOA positioning irrespective of source range,”
+IEEE Trans. Signal Process., vol. 65, no. 6, pp. 1447–1460, Mar. 2017.
+[29] K. C. Ho, “Localization through transceivers in unknown constant
+velocity trajectories,” IEEE Trans. Signal Process., vol. 70, pp. 3011–
+3028, 2022.
+[30] Y. Zou and H. Liu, “Semideﬁnite programming methods for alleviating
+clock synchronization bias and sensor position errors in TDOA local-
+ization,” IEEE Signal Process. Lett., vol. 27, pp. 241–245, Jan. 2020.
+[31] M. Ahmed, K. C. Ho, and G. Wang, “3-D target localization and motion
+analysis based on Doppler shifted frequencies,” IEEE Trans. Aerosp.
+Electron. Syst., vol. 58, no. 2, pp. 815–833, 2020.
+[32] N. H. Nguyen and K. Do˘gançay, “Optimal geometry analysis for
+multistatic TOA localization,” IEEE Trans. Signal Process., vol. 64,
+no. 16, pp. 4180–4193, Aug. 2016.
+[33] S. Zhao, X.-P. Zhang, X. Cui, and M. Lu, “Semideﬁnite programming
+two-way TOA localization for user devices with motion and clock drift,”
+IEEE Signal Process. Lett., vol. 28, pp. 578–582, Mar. 2021.
+[34] T. Jia, H. Liu, P. Wang, R. Wang, and C. Gao, “Sensor error calibration
+and optimal geometry analysis of calibrators,” Signal Process., vol. 214,
+Jan. 2024, Art. no. 109249.
+[35] R. M. Vagheﬁand R. M. Buehrer, “Cooperative joint synchronization
+and localization in wireless sensor networks,” IEEE Trans. Signal
+Process., vol. 63, no. 14, pp. 3615–3627, Jul. 2015.
+[36] A. J. Weiss and J. S. Picard, “Network localization with biased range
+measurements,” IEEE Trans. Wireless Commun., vol. 7, no. 1, pp. 298–
+304, Jan. 2008.
+[37] J. Zheng and Y.-C. Wu, “Joint time synchronization and localization
+of an unknown node in wireless sensor networks,” IEEE Trans. Signal
+Process., vol. 58, no. 3, pp. 1309–1320, Mar. 2010.
+[38] N. Guo, S. Zhao, X.-P. Zhang, Z. Yao, X. Cui, and M. Lu, “New closed-
+form joint localization and synchronization using sequential one-way
+TOAs,” IEEE Trans. Signal Process., vol. 70, pp. 2078–2092, 2022.
+[39] Y. Wang and K. C. Ho, “TDOA source localization in the presence
+of synchronization clock bias and sensor position errors,” IEEE Trans.
+Signal Process., vol. 61, no. 18, pp. 4532–4544, Sep. 2013.
+[40] K. Yu, “3-D localization error analysis in wireless networks,” IEEE
+Trans. Wireless Commun., vol. 6, no. 10, pp. 3472–3481, Oct. 2007.
+[41] T.-K. Le and K. C. Ho, “Joint source and sensor localization by
+angles of arrival,” IEEE Trans. Signal Process., vol. 68, pp. 6521–6534,
+Nov. 2020.
+[42] K. V. Mardia and P. E. Jupp, Directional Statistics. Hoboken, NJ, USA:
+Wiley, 2000.
+[43] J. Yan, W. Pu, S. Zhou, H. Liu, and M. S. Greco, “Optimal resource
+allocation for asynchronous multiple targets tracking in heterogeneous
+radar networks,” IEEE Trans. Signal Process., vol. 68, pp. 4055–4068,
+Jul. 2020.
+[44] B. Ristic, D. E. Clark, and N. Gordon, “Calibration of multi-target
+tracking algorithms using non-cooperative targets,” IEEE J. Sel. Topics
+Signal Process., vol. 7, no. 3, pp. 390–398, Jun. 2013.
+[45] “Radar height-ﬁnder developed to detect high-ﬂying aircraft,” Electr.
+Eng., vol. 73, no. 12, pp. 1137–1137, Dec. 1954.
+[46] S. M. Kay, Fundamentals of Statistical Signal Processing: Estimation
+Theory. Englewood Cliffs, NJ, USA: Prentice-Hall, 1993.
+[47] M. Grant and S. Boyd, “The CVX users’ guide, release 2.2,” CVX
+Research. Accessed: Jan. 2020. [Online]. Available: http://cvxr.com/cvx/
+doc/CVX.pdf
+[48] S. Severi, G. Abreu, G. Destino, and D. Dardari, “Understanding
+and solving ﬂip-ambiguity in network localization via semideﬁnite
+programming,” in Proc. Global Telecommun. Conf., Honolulu, HI, USA.
+Piscataway, NJ, USA: IEEE Press, Dec. 2009, pp. 1–6.
+[49] G. Wang, K. C. Ho, and X. Chen, “Bias reduced semideﬁnite relaxation
+method for 3-D rigid body localization using AOA,” IEEE Trans. Signal
+Process., vol. 69, pp. 3415–3430, 2021.
+[50] Z.-Q. Luo, W.-K. Ma, A. M.-C. So, Y. Ye, and S. Zhang, “Semideﬁnite
+relaxation of quadratic optimization problems,” IEEE Signal Process.
+Mag., vol. 27, no. 3, pp. 20–34, May 2010.
+[51] G. Wang, P. Xiang, and K. Ho, “Bias reduced semideﬁnite relaxation
+method for 3-D moving object localization using AOA,” IEEE Trans.
+Wireless Commun., vol. 22, no. 11, pp. 7377–7392, Nov. 2023.
+Tianyi Jia (Member, IEEE) received the B.S. de-
+gree in information and computing science and the
+Ph.D. degree in information and communication
+engineering from the Northwestern Polytechnical
+University (NWPU), Xi’an, China, in 2014 and
+2021, respectively. From 2017 to 2019, he was a
+Visiting Student with the Department of Electrical
+Engineering and Computer Science, University of
+Missouri, Columbia, MO, USA. Since 2021, he has
+been with Xidian University, Xi’an, China, where he
+is currently an Associate Professor with the National
+Key Laboratory of Radar Signal Processing. His current research interests
+include object localization and sensor array processing.
+Xiaochuan Ke received the B.S. degree in elec-
+tronic information engineering from Guangzhou
+University, China, in 2018, and the M.S. degree in
+information and communication engineering from
+Shenzhen University, China, in 2021. He is currently
+working toward the Ph.D. degree with the Depart-
+ment of Electrical Engineering and Computer Sci-
+ence, University of Missouri, Columbia, MO, USA.
+His research interests include source localization,
+rigid body localization, and model order selection.
+Hongwei Liu (Senior Member, IEEE) received the
+B.E. degree in electronic engineering from Dalian
+University of Technology, Dalian, China, in 1992,
+and the M.S. degree in circuit and system and the
+Ph.D. degree in signal and information processing
+from Xidian University, Xi’an, China, in 1995 and
+1999, respectively. From 2001 to 2002, he was
+a Visiting Scholar with Duke University, Durham,
+NC, USA. Currently, he is a Full Professor with
+the National Laboratory of Radar Signal Processing,
+Xidian University. His research interests include
+radar target recognition, cognitive detection, networked cooperative detection,
+and radar intelligence.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 16 =====
+JIA et al.: TARGET LOCALIZATION AND SENSOR SELF-CALIBRATION OF POSITION AND SYNCHRONIZATION
+355
+K. C. Ho (Fellow, IEEE) received the B.Sc. (with
+ﬁrst class honors) degree in electronics and the
+Ph.D. degree in electronic engineering from The
+Chinese University of Hong Kong, Hong Kong.
+From 1991 to 1994, he was a Research Associate
+with Royal Military College of Canada. In 1995, he
+joined as a member of Scientiﬁc Staff with Bell-
+Northern Research, Montreal, QC, Canada. From
+1996 to 1997, he was a Faculty Member with the
+Department of Electrical Engineering, University of
+Saskatchewan, Saskatoon, SK, Canada. Since 1997,
+he has been with the University of Missouri, Columbia, MO, USA, where
+he is currently a Professor with the Electrical Engineering and Computer
+Science Department. His research interests include sensor array processing,
+source localization, subsurface object detection, wireless communications, and
+adaptive processing. He is an Inventor of 44 patents on geolocation and signal
+processing for wireless communications. He was active in the development
+of the ITU-T Standard Recommendations from 1995 to 2012. He was the
+Rapporteur of ITU-T Q15/SG16: Voice Gateway Signal Processing Functions
+and Circuit Multiplication Equipment/Systems (from 2009 to 2012), and the
+Associate Rapporteur of ITU-T Q16/SG16: Speech Enhancement Functions
+in Signal Processing Network Equipment (2012). He was the Editor for the
+ITU-T Recommendations G.160: Voice Enhancement Devices (from 2006 to
+2012), G.168: Digital Network Echo Cancellers (from 2000 to 2012), and
+G.799.2: Mechanism for Dynamic Coordination of Signal Processing Network
+Equipment (from 2004 to 2009). He was the Technical Co-Chair for the IEEE
+International Conference on Acoustics, Speech and Signal Processing 2016.
+He was the Past Chair (2015), the Chair (from 2013 to 2014), and the Vice-
+Chair (from 2011 to 2012) of the Sensor Array and Multichannel Technical
+Committee of the IEEE Signal Processing Society, and a member of the
+Signal Processing Theory and Methods Technical Committee. He was in the
+organizing committees of several IEEE sponsored conferences and workshops,
+including the VCIP2020, APSIPA2015, CAMSAP2011 and SAM2008. He
+was an Associate Editor for IEEE TRANSACTIONS ON SIGNAL PROCESSING
+(from 2003 to 2006 and 2009 to 2013) and IEEE SIGNAL PROCESSING
+LETTERS (from 2004 to 2008). He has received the Senior Faculty Research
+Award, the Junior Faculty Research Award, and the Teaching Award from
+the College of Engineering, University of Missouri. He is a recipient of the
+Sustained Impact Paper Award by the IEEE Signal Processing Society. He is
+a fellow of the Asia–Paciﬁc Artiﬁcial Intelligence Association (AAIA).
+Hongtao Su received the B.S., M.S., and Ph.D.
+degrees in electronics engineering from Xidian Uni-
+versity, Xi’an, China, in 1997, 2000, and 2005,
+respectively. Currently, he is a Professor with the
+National Key Laboratory of Radar Signal Process-
+ing, Xidian University. His research interests in-
+clude high-frequency over-the-horizon radar signal
+processing, adaptive array signal processing, and
+statistical signal processing.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:12:01 UTC from IEEE Xplore.  Restrictions apply. 

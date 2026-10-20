@@ -1,0 +1,916 @@
+
+===== PDF PAGE 1 =====
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 69, NO. 11, NOVEMBER 2020
+14025
+Impact of UAV Wobbling on the Air-to-Ground
+Wireless Channel
+Morteza Banagar
+, Graduate Student Member, IEEE,
+Harpreet S. Dhillon
+, Senior Member, IEEE,
+and Andreas F. Molisch
+, Fellow, IEEE
+Abstract—This paper studies the impact of unmanned aerial vehicle
+(UAV) wobbling on the coherence time of the wireless channel between
+UAVs and a ground user equipment (UE), using a Rician multi-path channel
+model. We consider two different scenarios for the number of UAVs: (i)
+single UAV scenario (SUS), and (ii) multiple UAV scenario (MUS). For each
+scenario, we model UAV wobbling by two random processes, i.e., the Wiener
+and sinusoidal processes, and characterize the channel autocorrelation
+function (ACF) which is then used to derive the coherence time of the
+channel. For the MUS, we further show that the UAV-UE channels for
+different UAVs are uncorrelated from each other. A key observation in this
+paper is that even for small UAV wobbling, the coherence time of the channel
+may degrade quickly, which may make it difﬁcult to track the channel and
+establish a reliable communication link.
+Index Terms—Unmanned aerial vehicle, autocorrelation function,
+coherence time, random wobbling, wireless channel.
+I. INTRODUCTION
+Unmanned aerial vehicles (UAVs) have recently gained signiﬁcant
+attention in wireless communications due to their fast and cost-efﬁcient
+deployment, mobility, and high probability of line-of-sight (LoS) [1].
+UAVs can be deployed as a set of user equipment (UE) to perform
+various tasks, such as package delivery, monitoring, and surveillance,
+or as wireless relays or even base stations to complement the coverage
+and capacity of terrestrial cellular networks [2]. Although the fast and
+easy deployment of UAVs is quite appealing for many applications, a
+signiﬁcantly different operational regime motivates many fundamental
+questions. For instance, due to the lack of ﬁxed and stable infrastructure
+and various environmental issues, such as bad weather conditions or
+wind gusts, UAVs may experience random wobbling (also termed
+ﬂuctuations [3] and jittering [4]–[6] in the relevant literature) while
+hovering at a speciﬁc location [7]. Although this wobbling is typically
+small (less than 10◦[8]), it could severely affect the quality of the
+wireless channel because of the large values of the carrier frequencies
+(any frequency of the order of or above 1 GHz can be considered “large”
+in the context of UAV wobbling). Quite remarkably, the impact of UAV
+wobbling on the properties of the air-to-ground wireless channel, such
+as its coherence time, has not been quantiﬁed yet in the literature, and
+is the main focus of this paper.
+Prior Art: There has been a lot of recent interest in the analysis and
+design of UAV-assisted communication networks [9]–[15]. However,
+Manuscript received April 6, 2020; revised August 11, 2020; accepted
+September 10, 2020. Date of publication September 25, 2020; date of current
+version November 12, 2020. This work was supported by the U.S. NSF under
+Grants CNS-1923807 and CNS-1923601. The review of this article was coordi-
+nated by Dr. Arafat J Al-Dweik. (Corresponding author: Harpreet S. Dhillon.)
+Morteza Banagar and Harpreet S. Dhillon are with the Wireless@VT, Bradley
+Department of Electrical and Computer Engineering, Virginia Tech, Blacksburg
+24061, USA (e-mail: mbanagar@vt.edu; hdhillon@vt.edu).
+Andreas F. Molisch is with the Wireless Devices and Systems Group, Ming
+Hsieh Department of Electrical and Computer Engineering, University of South-
+ern California, Los Angeles 90089, USA (e-mail: molisch@usc.edu).
+Digital Object Identiﬁer 10.1109/TVT.2020.3026975
+only a handful of them considered the impact of random wobbling of
+UAVs on the performance of the UEs. In [3], the authors studied the
+transmitter-receiver antenna mismatch caused by the random wobbling
+of hovering UAVs in millimeter wave (mmWave) wireless communi-
+cations. The problem of resource allocation in a drone cellular network
+when the UAVs are equipped with uniform linear antenna arrays and
+are also wobbling is studied in [4] and further extended to planar
+antenna arrays in [5]. In these works, the authors designed algorithms
+to minimize total power consumption in a multiple-input single-output
+(MISO) system by jointly optimizing the UAV trajectory and transmit
+beamforming vector. Taking UAV wobbling into account, the authors
+in [6] investigated a wiretap aerial system where the problem of secure
+and energy-efﬁcient communication between a UAV and a ground UE is
+analyzed. In [16], the authors proposed a novel aerial network design of
+coordinated multipoint (CoMP) which beneﬁts from both interference
+mitigation and UAV mobility [11]–[14]. Speciﬁcally, they considered
+a Rician fading channel model where the LoS path has a random phase
+component due to the random UAV wobbling. Although these works
+address important problems related to UAV wobbling, its impact on the
+wireless communication channel still remains an open problem, which
+is the main focus of this paper.
+Contributions: In this paper, we assume a Rician multi-path channel
+model and consider two scenarios for the number of UAVs: (i) single
+UAV scenario (SUS), where a single UAV communicates with the
+UE, and (ii) multiple UAV scenario (MUS), where multiple UAVs
+form a distributed multiple-input multiple-output (MIMO) transceiver
+to communicate with the ground UE. We then model the wobbling
+behavior of the UAVs by two random processes, i.e., the Wiener and
+sinusoidal processes. For the SUS, we rigorously characterize the
+channel autocorrelation function (ACF) for both random processes
+and determine the coherence time of the channel. We further derive
+the channel autocorrelation matrix in the MUS and demonstrate that
+the channels of different UAVs to the UE are uncorrelated from each
+other and the coherence time of these channels is the same as that of
+the SUS. Our analysis demonstrates that the choice of any realistic
+random process that captures the oscillatory nature of wobbling will
+result in a non-stationary received signal because of which the notion
+of channel coherence time needs to be deﬁned carefully for this setting.
+A key design insight obtained from our analysis is that the coherence
+time of the channel is highly sensitive to UAV wobbling. Speciﬁcally,
+even for small wobbling of the UAV (w.r.t. the signal wavelength), we
+observe that the coherence time is not very large, which in turn makes
+the channel tracking and symbol detection difﬁcult. To the best of our
+knowledge, this is the ﬁrst work that characterizes the impact of UAV
+wobbling on the coherence time of the channel.
+II. SYSTEM MODEL
+We use the Cartesian coordinate system to represent the locations of
+the UAVs, the UE, and scatterers. For the number of UAVs, we consider
+two different scenarios: (i) SUS, where a single UAV is deployed at
+some arbitrary location to communicate with the UE, and (ii) MUS,
+where multiple UAVs are deployed at arbitrary locations to jointly
+communicate with the UE in a distributed-MIMO fashion. To isolate
+the effect of the UAV wobbling, the UE is assumed to be static. The
+UAVs are assumed to be rotary-winged drones that are hovering at
+their locations. As shown in Fig. 1 for the SUS, the UAV is equipped
+with a single antenna (transceiver) which is located under the UAV
+platform with an offset of aD meters from its centroid. We assume
+0018-9545 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+14026
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 69, NO. 11, NOVEMBER 2020
+Fig. 1.
+An illustration of the system model. The green solid lines represent
+the LoS links from the UAV transceiver to the UE at times 0 and t and the red
+dotted lines represent the MPCs from the scatterers.
+that the ground is aligned with the xy-plane while the UAV platform
+is located in the yz-plane and is initially parallel to the xy-plane at
+height h = zD. The initial location of the transceiver is assumed to be
+PD(0) = (0, 0, zD) and the locations of the UE and the n-th scatterer
+are denoted by PU = (xU, yU, 0) and PSn = (xSn, ySn, zSn), respec-
+tively (with the convention that PS0 ≡PU). We represent the UAV-UE,
+UAV-scatterer, and scatterer-UE distances at time t by d0(t), dn(t),
+and dSn,U, respectively. The angle-of-departure (AoD) from the UAV
+to the UE and from the UAV to the n-th scatterer (measured w.r.t. the
+z-axis) are denoted by ϕ0 and ϕn, respectively. Furthermore, the angle
+between the x-axis and the line connecting the origin to the projection
+of PSn onto the ground is denoted by ωn.
+We assume that the UAV may experience wobbling due to the lack
+of robust and ﬁxed infrastructure, wind gusts, and the high vibration
+frequency of its propellers and rotors [7], thus making it wobble. We
+model this wobbling by random processes and study their impact on the
+received signal at the UE. Note that because of this wobbling, the UAV
+platform may rotate in any of its three dimensions: roll, pitch, and yaw.
+In this paper, however, we only consider the pitch angle for simplicity
+as in [4], [5]. This pitch angle is denoted by θ(t) at time t.
+In this paper, we assume a multi-path channel model where there
+is one LoS link between the UAV and the UE (the green solid lines
+in Fig. 1) and N multi-path components (MPCs) from scatterers (the
+red dotted lines for the n-th MPC in Fig. 1). In the SUS, we represent
+the received signal r(t) at time t in the baseband (using the convention
+dS0,U = 0) as [17]
+r(t) =
+N
+
+n=0
+αne−j 2π
+λ (dn(t)+dSn,U),
+(1)
+where λ =
+c
+fc is the wavelength of the received signal, c is the speed of
+light, fc is the carrier frequency, and α0 and αn are the amplitudes of
+the LoS link and the n-th MPC, respectively. Note that αn and dn(t)
+may not be independent from each other in general. Similarly in the
+MUS, the received signal from the i-th UAV can be written as
+ri(t) =
+N
+
+n=0
+αi,ne−j 2π
+λ (di,n(t)+dSn,U),
+(2)
+where αi,n and di,n(t) are the amplitude and distance from the i-th
+UAV to the n-th scatterer. The AoD from the i-th UAV to the n-th
+scatterer is denoted by ϕi,n.
+Remark 1: For notational ease, we assume that the antenna gain is
+constant within the range of interest for the angles of the MPCs. For
+a reasonably smooth amplitude antenna pattern G(ϕ) and assuming
+small pitch angle, a nonuniform antenna pattern would only require
+multiplication of αn with G(ϕn).
+Remark 2: Due to the high carrier frequency of the received signal
+(fc = 1 ∼6 GHz), the wavelength will be in the order of centimeters
+(λ = 5 ∼30 cm). Hence, a small variation in the UAV-UE distance may
+cause a large phase offset. Note that this effect is even more pronounced
+at mmWave frequencies.
+We now introduce the coherence time (TC) of the channel as the
+main metric of interest in this paper. Coherence time is deﬁned as
+the time duration over which the impulse response of the channel is
+almost constant. Writing the channel ACF for the stationary received
+signal r(t) as R(τ) = E[r(t)r∗(t + τ)], a common way to deﬁne the
+channel coherence time is the ﬁrst time instant when the normalized
+ACF (R(τ)/ max R(τ)) drops below a certain threshold γ [18], i.e.,
+TC = min
+
+τ :
+R(τ)
+max R(τ) ≤γ
+
+.
+(3)
+Remark 3: When the received signal is non-stationary, the channel
+ACF becomes a function of both t and τ and will be denoted as R(t, t +
+τ). We can deﬁne the coherence time in this case by ﬁrst obtaining
+TC(t) from (3) using R(t, t + τ) instead of R(τ) for all t and then
+determining TC = mint TC(t).
+III. CHANNEL AUTOCORRELATION FUNCTION
+In this section, we present a comprehensive analysis of the channel
+ACF for both the SUS and the MUS. We begin our analysis by deriving
+the relation between the pitch angles at time instants t and t + τ and the
+difference between the UAV-scatterer (or UAV-UE) distances at these
+times in the following lemma.
+Lemma 1: For a wobbling UAV, reasonably assuming aD ≪dn(t)
+and θ(t) ≪1 rad, we have
+dD,n(t, t + τ) := dn(t + τ) −dn(t)
+≈aD cos(ϕn)[θ(t + τ) −θ(t)].
+(4)
+Proof: As shown in Fig. 1, when the UAV wobbles, the loca-
+tion of the transceiver changes from PD(0) = (0, 0, zD) to PD(t) =
+(0, aD(1 −cos(θ(t))), zD + aD sin(θ(t))). We now write the equa-
+tions for dn(0) and dn(t) as follows:
+dn(0) =
+
+x2
+Sn + y2
+Sn + (zSn −zD)2,
+dn(t) =
+
+x2
+Sn+[ySn−aD(1−cos θ(t))]2+[zSn−zD−aDsin θ(t)]2
+(a)
+≈
+
+x2
+Sn+y2
+Sn+(zSn−zD)2−2aD[ySn(1−cos θ(t))+(zSn−zD) sin θ(t)]
+(b)
+≈dn(0) −aD[ySn(1 −cos θ(t)) + (zSn −zD) sin θ(t)]
+dn(0)
+,
+where in (a) we used aD ≪ySn and in (b) we used the approximation
+√1 −β ≈1 −β
+2 for small β. Using dn(0) = (zD −zSn)/ cos(ϕn),
+we have dn(t) −dn(0)
+≈aD cos(ϕn)
+zD −zSn
+[(zD −zSn) sin θ(t) −ySn(1 −cos θ(t))]
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 69, NO. 11, NOVEMBER 2020
+14027
+(a)
+= aD cos(ϕn) sin θ(t) −aD sin(ωn) sin(ϕn)(1 −cos θ(t))
+≈aD cos(ϕn)θ(t) −aD sin(ωn) sin(ϕn)θ2(t)
+2
+≈aD cos(ϕn)θ(t),
+(5)
+where in (a) we used ySn/(zD −zSn) = tan(ϕn) sin(ωn) and the
+last two steps result from the small-angle approximation of the pitch
+angle (θ(t) ≪1 rad). The same approximation is also true for time
+instant t + τ, i.e., dn(t + τ) −dn(0) ≈aD cos(ϕn)θ(t + τ). Using
+this result and that in (5), the lemma is proved.
+■
+Corollary 1: Assuming θ(t) to be a random process with stationary
+increments, i.e., θ(t + τ) −θ(t) has the same distribution as θ(τ), the
+result of Lemma 1 can be simpliﬁed as dD,n(τ) := dD,n(t, t + τ) ≈
+aD cos(ϕn)θ(τ).
+A. ACF Analysis in the SUS
+We present the main result of this paper in the following theorem.
+Theorem 1: The channel ACF for a wobbling UAV in a multi-path
+channel is given as
+R(t, t + τ) =
+N
+
+n=0
+E
+
+|αn|2ej 2π
+λ aD cos(ϕn)[θ(t+τ)−θ(t)]
+,
+(6)
+which is a function of both t and τ (non-stationary ACF). However, if
+θ(t) has stationary increments, then the channel ACF becomes only a
+function of τ (stationary ACF):
+R(τ) =
+N
+
+n=0
+E
+
+|αn|2ej 2π
+λ aD cos(ϕn)θ(τ)
+.
+(7)
+Proof: We can write the channel ACF using (1) as
+R(t, t + τ) = E[r(t)r∗(t + τ)]
+= E
+ N
+
+m=0
+N
+
+n=0
+αmα∗
+nej 2π
+λ (dn(t+τ)−dm(t))ej 2π
+λ (dSn,U−dSm,U)
+	
+=
+N
+
+m=0
+N
+
+n=0
+n̸=m
+E
+
+αmα∗
+nej 2π
+λ (dn(t+τ)−dm(t))
+E
+
+ej 2π
+λ (dSn,U−dSm,U)
++
+N
+
+n=0
+E
+
+|αn|2ej 2π
+λ dD,n(t,t+τ)
+,
+(8)
+where the double summation in the last equality is zero since the random
+variable [
+dSn,U−dSm,U
+λ
+mod 1] is uniformly distributed from 0 to 1 [19,
+Lemma 4]. Hence, using Lemma 1 and Corollary 1, we obtain (6) and
+(7), respectively.
+■
+One can compute (6) and (7) by ﬁrst conditioning on ϕn, evaluating
+the resulting expectation, and then deconditioning for a given distribu-
+tion of ϕn. While the result in (6) holds for any angular power spectrum
+model, it would be instructive to simplify it for a speciﬁc model to
+obtain further insights. For that, we will use the well-accepted Laplacian
+model for the power of the n-th MPC [17], [20], which is given as
+|αn|2 =
+1
+2σ e−|ϕn−ϕ0|
+σ
+, 1 ≤n ≤N, where σ is the scale parameter of
+the Laplacian model. In this paper, we use the Rician multi-path fading
+model with factor K to capture the higher probability of LoS in aerial
+networks. The following corollary simpliﬁes the result of Theorem 1
+when θ(t) is a random process with stationary increments (so that ACF
+is stationary) and |αn|2 follows a Laplacian model.
+Corollary 2: Assuming the Laplacian angular power spectrum with
+|α0|2 = K 
+N
+n=1 |αn|2 = K 
+N
+n=1
+1
+2σ e−|ϕn−ϕ0|
+σ
+and that θ(t) has sta-
+tionary increments, the channel ACF can be simpliﬁed as
+R(t, t + τ) = R(τ) = E
+
+|α0|2ej 2π
+λ aD cos(ϕ0)θ(τ)
++
+N
+
+n=1
+E
+ 1
+2σ e−|ϕn−ϕ0|
+σ
+ej 2π
+λ aD cos(ϕn)θ(τ)
+
+.
+(9)
+As mentioned in the previous section, due to the UAV wobbling, we
+model the variations in the pitch angle by random processes. Assuming
+the wobbling of the pitch angle has stationary increments, i.e., the
+resulting ACF is a function of the time difference τ only, this wob-
+bling imposes an effective Doppler shift of fD = aD cos(ϕ0)θ(τ)
+λτ
+on the
+wireless channel. In this paper, we use two different random processes
+for this purpose: (i) the Wiener process, and (ii) the sinusoidal process.
+Note that one can also consider more complex random processes, such
+as the periodic Brownian bridge or constrained Wiener processes to
+analyze the coherence time of the channel, however, the coherence
+time analysis may not even be tractable in the resulting non-stationary
+settings for these processes.
+Remark 4: (No wobbling). In an ideal setting where the UAV plat-
+formis“completely”stablewithoutanywobblingorangulardeviations,
+we have θ(t) = 0 which results in a constant value for R(t, t + τ) for
+all t and τ. As expected, the coherence time will be inﬁnity in this ideal
+case.
+1) Wiener Process: The fundamental properties of a Wiener pro-
+cess W(t) can be summarized as follows: (i) W(0) = 0, (ii) W(t)
+has independent, stationary, and Gaussian increments, (iii) W(t) is
+continuous in t. Assuming θ(t) to be a Wiener process, one can
+show that it is scale-invariant and its probability density function (pdf)
+follows a Gaussian distribution with mean zero and variance bt, where
+b rad2/s is a proportionality constant which can also be used as a tuning
+parameter. Hence, following Theorem 1, we have
+R(t, t + τ) = R(τ) =
+N
+
+n=0
+E
+
+|αn|2E
+
+ej 2π
+λ aD cos(ϕn)W (τ)
+=
+N
+
+n=0
+E
+
+|αn|2e
+−
+2π2
+λ2 a2
+D cos2(ϕn)
+bτ
+,
+(10)
+where the last equality results from the characteristic function (cf) of
+a Gaussian random variable. Note that since the Wiener process has
+stationary increments, we were able to use (7) in Theorem 1 and the
+ACF is only a function of the time difference τ. This result shows
+that the channel ACF becomes an exponentially decaying function of
+τ when the pitch angle is modeled as a Wiener process, which severely
+affects the coherence time of the channel.
+2) Sinusoidal Process: In this case, we assume that the pitch
+angle is given by θ(t) = A sin(2πFt), where A and F are indepen-
+dent random variables representing the amplitude and the frequency
+of the pitch angle variations, respectively. In this paper, we assume
+A ∼U[−θm, θm) and F ∼pF (f), where θm is the maximum pitch
+angle and pF (.) is some given pdf. Note that the sinusoidal random
+process does not have the stationary increment property. Hence, we
+obtain the channel ACF using Theorem 1 as
+R(t, t + τ) =
+N
+
+n=0
+E
+
+|αn|2ej 2π
+λ aD cos(ϕn)A[sin(2πF (t+τ))−sin(2πF t)]
+=
+N
+
+n=0
+E
+
+|αn|2
+ ∞
+−∞
+sinc
+ 2
+λaD cos(ϕn)θm
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+14028
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 69, NO. 11, NOVEMBER 2020
+× [sin(2πF(t + τ)) −sin(2πFt)]
+
+pF (f)df
+
+,
+(11)
+where sinc(x) = sin(πx)
+πx
+and in the last equality, we used the cf of the
+uniform random variable and then took the expectation w.r.t. F. As
+we will see in Section IV, the special case of t = 0 gives the lowest
+coherence time among different values of t. The channel ACF for t = 0
+is further simpliﬁed as R(0, τ) =
+N
+
+n=0
+E
+
+|αn|2
+ ∞
+−∞
+sinc
+2
+λaD cos(ϕn)θm sin(2πfτ)
+
+pF (f)df
+
+.
+(12)
+Note that the channel ACF is not a periodic function of τ due to the
+random frequency of the pitch angle. However, if we assume a constant
+F, then the channel ACF will be periodic in τ even with a random pitch
+angle amplitude A.
+Using (3), (10), and (11), one can now derive the coherence time of
+the channel for each random process. Explicitly for the Wiener process
+in an LoS channel (N = 0) with an arbitrary non-random AoD, the
+channel ACF is given as
+R(τ) = E
+
+|α0|2e
+−
+2π2
+λ2 a2
+D cos2(ϕ0)
+bτ
+= |α0|2e
+−
+2π2
+λ2 a2
+D cos2(ϕ0)
+bτ.
+(13)
+Now since (13) is a monotonically decreasing function of τ with its
+peak at τ = 0, solving
+R(τ)
+max R(τ) = γ gives the coherence time of the
+channel in closed-form as
+TC =
+λ2
+2bπ2a2
+D cos2(ϕ0) log
+ 1
+γ
+
+.
+(14)
+For the sinusoidal process, on the other hand, the closed-form solution
+is not available and we need to numerically solve (12) to obtain the
+coherence time of the channel.
+Remark 5: (Impact of the Rician K-factor). Using the assumptions
+and result of Corollary 2, we can write the channel ACF as a function
+of K as
+R(τ; K) = K
+N
+
+n=1
+E
+ 1
+2σ e−|ϕn−ϕ0|
+σ
+ej 2π
+λ aD cos(ϕ0)θ(τ)
+
++
+N
+
+n=1
+E
+ 1
+2σ e−|ϕn−ϕ0|
+σ
+ej 2π
+λ aD cos(ϕn)θ(τ)
+
+.
+Assuming θ(τ) follows the Wiener process, we have
+R(τ; K)
+R(0; K) =
+K
+K + 1e
+−
+2π2
+λ2 a2
+D cos2(ϕ0)
+bτ
++
+
+N
+n=1 E
+
+e−|ϕn−ϕ0|
+σ
+e
+−
+2π2
+λ2 a2
+D cos2(ϕn)
+bτ
+
+(K + 1) 
+N
+n=1 E
+
+e−|ϕn−ϕ0|
+σ
+
+.
+(15)
+Taking the derivative of (15) w.r.t. K, we end up with an expression
+which could be either negative or positive depending on the value of
+ϕ0. Hence, the coherence time of the channel is a function of both K
+and ϕ0, which is neither increasing nor decreasing w.r.t. K.
+B. ACF Analysis in the MUS
+In this model, we assume that M UAVs form a distributed MIMO
+transceiver to jointly communicate with the UE. The channel autocor-
+relation matrix can be written as
+R(t, t + τ) = [Rik(t, t + τ)]1≤i,k≤M = E [r(t)r∗(t + τ)] ,
+where r(t) = [r1(t), r2(t), . . . , rM(t)]T is the received signal vector,
+and Rik(t, t + τ) is the (i, k)-th element of R(t, t + τ).
+Theorem 2: The channel autocorrelation matrix for M wobbling
+UAVs that form a distributed MIMO transceiver in an environment
+with one LoS link for each UAV and N MPCs can be written as
+R(t, t + τ) = diag
+ N
+
+n=0
+E
+
+|αi,n|2ej 2π
+λ aD cos(ϕi,n)[θ(t+τ)−θ(t)]
+.
+(16)
+Proof: For the diagonal elements of R(t, t + τ), Theorem 1 is
+directly applied and we have
+Rii(t, t + τ) = E [ri(t)r∗
+i(t + τ)]
+=
+N
+
+n=0
+E
+
+|αi,n|2ej 2π
+λ aD cos(ϕi,n)[θ(t+τ)−θ(t)]
+.
+On the other hand, for the off-diagonal elements, we can write
+Rik(t, t + τ) = E [ri(t)r∗
+k(t + τ)]
+= E
+ N
+
+m=0
+N
+
+n=0
+αi,mα∗
+k,nej2π
+λ (dk,n(t+τ)−di,m(t))ej2π
+λ (dSn,U−dSm,U)
+	
+=
+N
+
+n=0
+E
+
+αi,nα∗
+k,nej2π
+λ (dk,n(t+τ)−dk,n(t))
+E
+
+ej2π
+λ (dk,n(t)−di,n(t))
++
+N
+
+m=0
+N
+
+n=0
+n̸=m
+E
+
+αi,mα∗
+k,nej2π
+λ (dk,n(t+τ)−di,m(t))
+E
+
+ej2π
+λ (dSn,U−dSm,U)
+,
+where in the ﬁrst summation of the last equality we used the fact that
+the pitch angle wobbling in the location of UAVs is independent of the
+distances between the UAVs and the scatterers (or the UE). Hence, since
+the random variable [
+dk,n(t)−di,n(t)
+λ
+mod 1] is uniformly distributed
+from 0 to 1 [19, Lemma 4], we conclude that this summation is zero.
+The second summation is also zero using a similar reasoning as in the
+proof of Theorem 1.
+■
+Corollary 3: Assuming the Laplacian angular power spectrum with
+Rician fading model, and that θ(t) has stationary increments, the
+channel autocorrelation matrix is simpliﬁed as
+R(t, t+τ) = R(τ)=diag
+
+E
+
+|αi,0|2ej 2π
+λ aD cos(ϕi,0)θ(τ)
++
+N
+
+n=1
+diag
+
+E
+ 1
+2σ e−
+|ϕi,n−ϕi,0|
+σ
+ej 2π
+λ aD cos(ϕi,n)θ(τ)
+
+.
+(17)
+Similar to the SUS, one can model the random process θ(t) using
+the Wiener or sinusoidal processes to obtain the channel autocorrelation
+matrix. The fundamental observation in the MUS is that when multiple
+UAVs are hovering at some locations to communicate with the UE in a
+distributed-MIMO fashion, then the channels will be uncorrelated from
+each other. Using (3), (6), and (16), we conclude that the coherence time
+of the channel in the MUS is the same as that of the SUS.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 69, NO. 11, NOVEMBER 2020
+14029
+Fig. 2.
+The channel ACF for different random processes. The parameters are
+fc = 6 GHz and θm = 5◦.
+IV. SIMULATION RESULTS
+In this section, we present numerical results to demonstrate the
+impact of UAV pitch wobbling on the coherence time of the channel.
+We assume that a single rotary-winged UAV hovers at some arbitrary
+location and wobbles based on either the Wiener or sinusoidal pro-
+cesses. For the number of scatterers, we assume N = 20 and N = 10 in
+the sub-6 GHz and mmWave frequencies, respectively [17]. Following
+Corollary 2, we assume a Laplacian angular power spectrum with
+K = 11.5 [21, Table 1], ϕ0 = 20◦and σ = 1. For the Wiener process,
+weassumetheproportionalityconstantisb = 1 rad2/sandforthesinu-
+soidal process, we assume that the amplitude and frequency of the pitch
+angle both follow the uniform distribution, i.e., A ∼U[−θm, θm) and
+F ∼U[5, 25) Hz. Other parameters are aD = 40 cm, θm = {5, 7, 10}◦
+(the maximum pitch angle of 10◦is selected based on [8]), and
+fc = {2.4, 6, 30} GHz (equivalently, λ = {12.5, 5, 1} cm). Note that
+the derived values for the channel coherence time should be treated
+as useful ballpark ﬁgures, since they are dependent on the physical
+characteristics of the UAVs and may vary from one UAV to another.
+In Fig. 2, we show the impact of UAV pitch angle wobbling on
+the channel ACF for both random processes where fc = 6 GHz and
+θm = 5◦. Note that since the channel ACF is non-stationary in the sinu-
+soidal process, we plotted the ACF at different values of t to understand
+its behavior. As seen in this ﬁgure, the sinusoidal process represents its
+lowest coherence time at t = 0 s. Thus, in the remainder of this section,
+weusethistimeinstanttocalculatethecoherencetimeofthechannelfor
+the sinusoidal process. Assuming a normalized threshold of γ = 0.5,
+the coherence time of the channel is 642 μs and 5.18 ms for the Wiener
+and sinusoidal processes, respectively. Note that the observed behavior
+for the Wiener process is intuitive since the variations in the pitch rota-
+tion angle can grow without bounds, and thus, the channel decorrelates
+with itself rapidly, yielding a very low coherence time. Nevertheless, it
+is interesting to note that the coherence time for the sinusoidal model
+is not too high either. Hence, channel tracking and phase estimation for
+the proper symbol detection become very difﬁcult in both models [22].
+Comparing these two random processes, we observe that the Wiener
+process is tractable and has stationary increments, but suffers from
+unbounded and non-smooth angular variations. On the other hand, the
+sinusoidal process is reasonably realistic and has bounded and smoother
+angular variations at the cost of being relatively less tractable and not
+Fig. 3.
+The channel ACF when θ(t) follows the sinusoidal process with
+varying carrier frequencies and θm = 5◦.
+Fig. 4.
+The channel ACF when θ(t) follows the sinusoidal process with
+varying maximum pitch angles and fc = 2.4 GHz.
+having stationary increments. In fact, any reasonably realistic model
+that captures the oscillatory behavior of the wobbling motion of UAVs
+is unlikely to possess stationary increments.
+In Figs. 3 and 4, we examine the sinusoidal model more carefully
+and demonstrate the impact of the carrier frequency and the maximum
+pitch angle on the channel ACF and the coherence time. From a physical
+standpoint, since the impulse response of the channel depends on the
+ratioofthetransmitter-receiverdistancedandthesignalwavelengthλ,a
+higher d/λ translates to a higher channel variation, which in turn results
+in a lower coherence time. Thus, increasing θm (higher d) or increasing
+fc (lower λ), gives a lower channel coherence time. Note that increasing
+the UAV antenna offset aD would have the same impact on the coher-
+ence time of the channel. Furthermore, increasing the range of the UAV
+pitch wobbling frequency F makes the channel to decorrelate with itself
+more rapidly, which also yields a lower coherence time. Note that the
+limiting value of the stationary ACF (R(τ) as τ →∞) also decreases
+with increasing θm or fc. Assuming a normalized threshold of γ = 0.5
+and θm = 5◦, we observe from Fig. 3 that TC = {∞, 5.18, 0.97} ms
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+14030
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY, VOL. 69, NO. 11, NOVEMBER 2020
+for fc = {2.4, 6, 30} GHz, respectively. As it can be seen in this ﬁgure,
+with the physical parameters [8], [21] mentioned in the beginning of
+this section, the coherence time of the channel will be in the order of
+microseconds for mmWave frequencies. Hence, channel tracking and,
+in turn, communication is very challenging at the mmWave frequencies.
+From Fig. 4, we have TC = {∞, 12.26, 6.74} ms for θm = {5, 7, 10}◦,
+respectively, when fc = 2.4 GHz. Consequently, when working in
+higher frequencies or in inclement weather, we require UAVs with
+robuster stabilizers that guarantee very low angular deviations.
+V. CONCLUSION
+In this paper, we provided a rigorous mathematical analysis for the
+coherence time of the channel when UAVs experience random pitch
+wobbling. Assuming a Rician multi-path channel model, we considered
+two different scenarios for the number of UAVs communicating with
+the UE, i.e., SUS and MUS, and modeled the UAV pitch wobbling
+by random processes. For both the SUS and MUS, we formulated
+the channel ACF and derived the coherence time of the channel.
+Speciﬁcally in the MUS, we showed that the channels between the
+UAVs and the UE are uncorrelated from each other and the channel
+autocorrelation matrix is only determined by its diagonal elements.
+Our analysis demonstrated that even for small UAV pitch wobbling,
+the coherence time of the channel could be severely affected, thus
+making channel tracking and symbol detection difﬁcult. A meaningful
+extension of this work is to study the impact of UAV wobbling on the
+fundamental characteristics of the channel when the UAVs are mobile.
+Another direction for future work is to derive the coherence time of the
+channel in a centralized MIMO scenario, i.e., having an antenna array
+instead of a single antenna in the UAV structure [4], [5].
+REFERENCES
+[1] Y. Zeng, R. Zhang, and T. J. Lim, “Wireless communications with un-
+manned aerial vehicles: Opportunities and challenges,” IEEE Commun.
+Mag., vol. 54, no. 5, pp. 36–42, May 2016.
+[2] M. Mozaffari, W. Saad, M. Bennis, Y. Nam, and M. Debbah, “A tuto-
+rial on UAVs for wireless networks: Applications, challenges, and open
+problems,” IEEE Commun. Surveys Tuts., vol. 21, no. 3, pp. 2334–2360,
+2019.
+[3] M. T. Dabiri, H. Saﬁ, S. Parsaeefard, and W. Saad, “Analytical channel
+models for millimeter wave UAV networks under hovering ﬂuctuations,”
+IEEE Trans. Wireless Commun., vol. 19, no. 4, pp. 2868–2883, Apr. 2020.
+[4] D. Xu, Y. Sun, D. W. K. Ng, and R. Schober, “Robust resource allocation
+for UAV systems with UAV jittering and user location uncertainty,” in
+Proc. IEEE Global Commun. Conf. Workshops, Dec. 2018.
+[5] D. Xu, Y. Sun, D. W. K. Ng, and R. Schober, “Multiuser MISO UAV
+communications in uncertain environments with no-ﬂy zones: Robust
+trajectory and resource allocation design,” IEEE Trans. Commun., vol. 68,
+no. 5, pp. 3153–3172, May 2020.
+[6] H. Wu et al., “Energy-efﬁcient and secure air-to-ground communica-
+tion with jittering UAV,” IEEE Trans. Veh. Technol., vol. 69, no. 4,
+pp. 3954–3967, Apr. 2020.
+[7] Z. Li et al., “Development and design methodology of an anti-vibration
+system on micro-UAVs,” in Proc. Int. Micro Air Veh. Conf. Flight Com-
+petition, Sep. 2017, pp. 223–228.
+[8] B. Ahmed, H. R. Pota, and M. Garratt, “Flight control of a rotary wing UAV
+using adaptive backstepping,” Int. J. Robust Nonlinear Control, vol. 20,
+no. 6, pp. 639–658, Apr. 2010.
+[9] M. Simunek, F. P. Fontan, and P. Pechac, “The UAV low elevation propaga-
+tion channel in urban areas: Statistical analysis and time-series generator,”
+IEEE Trans. Antennas Propag., vol. 61, no. 7, pp. 3850–3858, Jul. 2013.
+[10] V. V. Chetlur and H. S. Dhillon, “Downlink coverage analysis for a ﬁnite 3-
+D wireless network of unmanned aerial vehicles,” IEEE Trans. Commun.,
+vol. 65, no. 10, pp. 4543–4558, Oct. 2017.
+[11] R. Amer, W. Saad, and N. Marchettic, “Mobility in the sky: Performance
+and mobility analysis for cellular-connected UAVs,” IEEE Trans. Com-
+mun., vol. 68, no. 5, pp. 3229–3246, May 2020.
+[12] M. Banagar and H. S. Dhillon, “Performance characterization of canon-
+ical mobility models in drone cellular networks,” IEEE Trans. Wireless
+Commun., vol. 19, no. 7, pp. 4994–5009, Jul. 2020.
+[13] M. Banagar and H. S. Dhillon, “3GPP-inspired stochastic geometry-based
+mobility model for a drone cellular network,” in Proc. IEEE Global
+Commun. Conf., Dec. 2019.
+[14] M. Banagar and H. S. Dhillon, “Fundamentals of drone cellular network
+analysis under random waypoint mobility model,” in Proc. IEEE Global
+Commun. Conf., Dec. 2019.
+[15] M. Banagar, V. V. Chetlur, and H. S. Dhillon, “Handover probability in
+drone cellular networks,” IEEE Wireless Commun. Lett., vol. 9, no. 7,
+pp. 933–937, Jul. 2020.
+[16] L. Liu, S. Zhang, and R. Zhang, “CoMP in the sky: UAV placement
+and movement optimization for multi-user communications,” IEEE Trans.
+Commun., vol. 67, no. 8, pp. 5645–5658, Aug. 2019.
+[17] A. F. Molisch, Wireless Communications. New York: Wiley-IEEE Press,
+2011.
+[18] V.VaandR.W.Heath,“Basicrelationshipbetweenchannelcoherencetime
+and beamwidth in vehicular channels,” in Proc. IEEE 82nd Veh. Technol.
+Conf., Sep. 2015.
+[19] H. S. Dhillon and G. Caire, “Wireless backhaul networks: Capacity bound,
+scalability analysis and design guidelines,” IEEE Trans. Wireless Com-
+mun., vol. 14, no. 11, pp. 6043–6056, Nov. 2015.
+[20] K.I.Pedersen,P.E.Mogensen,andB.H.Fleury,“Powerazimuthspectrum
+in outdoor environments,” Electron. Lett., vol. 33, no. 18, pp. 1583–1584,
+Aug. 1997.
+[21] N. Goddemeier and C. Wietfeld, “Investigation of air-to-air channel char-
+acteristics and a UAV speciﬁc extension to the Rice model,” in Proc. IEEE
+Global Commun. Conf. Workshops, 2015.
+[22] M. Zhu et al., “Tracking and positioning using phase information from
+estimated multi-path components,” in Proc. IEEE Int. Conf. Commun.
+Workshops, Jun. 2015, pp. 712–717.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:59 UTC from IEEE Xplore.  Restrictions apply. 

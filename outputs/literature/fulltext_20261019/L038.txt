@@ -1,0 +1,2905 @@
+
+===== PDF PAGE 1 =====
+Digital Signal Processing 92 (2019) 179–205
+Contents lists available at ScienceDirect
+Digital Signal Processing
+www.elsevier.com/locate/dsp
+Iterative constrained weighted least squares estimator for TDOA and 
+FDOA positioning of multiple disjoint sources in the presence of sensor 
+position and velocity uncertainties
+Ding Wang a,b, Jiexin Yin a,b,∗, Tao Zhang c, Changgui Jia a,b, Fushan Wei d
+a National Digital Switching System Engineering and Technology Research Center, Zhengzhou 450002, PR China
+b Zhengzhou Institute of Information Science and Technology, Zhengzhou, Henan 450002, PR China
+c School of Computer Science and Engineering, Changshu Institute of Technology, Changshu, Jiangsu 215500, PR China
+d State Key Laboratory of Mathematical Engineering and Advanced Computing, Zhengzhou, Henan 450001, PR China
+a r t i c l e 
+i n f o
+a b s t r a c t
+Article history:
+Available online 13 June 2019
+Keywords:
+Source localization
+Time difference of arrival (TDOA)
+Frequency difference of arrival (FDOA)
+Multiple disjoint sources
+Weighted least squares (WLS)
+Convergence analysis
+Sensor position and velocity uncertainties are known to be able to degrade the source localization 
+accuracy signiﬁcantly. This paper focuses on the problem of locating multiple disjoint sources using 
+time differences of arrival (TDOAs) and frequency differences of arrival (FDOAs) in the presence of 
+sensor position and velocity errors. First, the explicit Cramér–Rao bound (CRB) expression for joint 
+estimation of source and sensor positions and velocities is derived under the Gaussian noise assumption. 
+Subsequently, we compare the localization accuracy when multiple-source positions and velocities are 
+determined jointly and individually based on the obtained CRB results. The performance gain resulted 
+from multiple-target cooperative positioning is also quantiﬁed using the orthogonal projection matrix. 
+Next, the paper proposes a new estimator that formulates the localization problem as a quadratic 
+programming with some indeﬁnite quadratic equality constraints. Due to the non-convex nature of the 
+optimization problem, an iterative constrained weighted least squares (ICWLS) method is developed 
+based on matrix Q R decomposition, which can be achieved through some simple and eﬃcient numerical 
+algorithms. The newly proposed iterative method uses a set of linear equality constraints instead 
+of the quadratic constraints to produce a closed-form solution in each iteration. Theoretical analysis 
+demonstrates that the proposed method, if converges, can provide the optimal solution of the formulated 
+non-convex minimization problem. Moreover, its estimation mean-square-error (MSE) is able to reach the 
+corresponding CRB under moderate noise level. Simulations are included to corroborate and support the 
+theoretical development in this paper.
+© 2019 Elsevier Inc. All rights reserved.
+1. Introduction
+The problem of emitter localization has attracted considerable interest during the past several decades. Indeed, it has found numerous 
+applications in many areas including signal processing, wireless communications, sonar, surveillance, navigation, geophysics, passive radar, 
+microphone array processing, and so on [1–6]. Most localization systems require two estimation steps. In the ﬁrst step, some interme-
+diate parameters that are embedded in the received signals are extracted at several stations or different time slots through some signal 
+processing techniques. In the second step, the source location is determined by ﬁnding the coordinate that best ﬁts the lines of position 
+(LOP) associated with the parameters obtained in the ﬁrst step.
+For a stationary emitter, source localization can be based on angle of arrival (AOA) [7–9], time difference of arrival (TDOA) [10–12], 
+time of arrival (TOA) [13–15], received signal strength (RSS) [16–18] measurements, or a combination of them [19]. If there exists relative 
+motion between the sensors and the source, frequency difference of arrival (FDOA) [20–35] metric can also be incorporated to improve 
+the location accuracy. One of the most accurate and common methods for emitter localization is based on TDOA and FDOA. The reason is 
+that combination of TDOA and FDOA measurements can facilitate localization of the source in a wide range of bandwidth. Moreover, they 
+* Corresponding author at: National Digital Switching System Engineering and Technology Research Center, Zhengzhou 450002, PR China.
+E-mail address: Cindyin0807@163.com (J. Yin).
+https://doi.org/10.1016/j.dsp.2019.06.001
+1051-2004/© 2019 Elsevier Inc. All rights reserved.
+
+
+===== PDF PAGE 2 =====
+180
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+can be jointly estimated from the cross-correlation of signals received by several pairs of sensors [36–38]. In this paper, we focus on the 
+TDOA/FDOA-based source localization problem.
+In recent years, a number of localization methods based on TDOA/FDOA measurements become available in the literature. Perhaps the 
+most representative approach is the two-step weighted least squares (TSWLS) algorithm [20], which is able to ﬁnd a closed-form solution 
+for determining the position and velocity of a moving source. Besides, an improved TSWLS algorithm is proposed in [21] to reduce the 
+localization errors at high noise level. Multidimensional scaling (MDS) analysis [22] is an alternative technique to provide the algebraic 
+solution for moving source location using TDOA and FDOA metrics. Compared to the classical TSWLS algorithm, the threshold effect of the 
+MDS analysis algorithm occurs apparently later as the measurement noise increases for a near-ﬁeld target [22]. Certainly, methods with 
+closed-form solution are attractive because they do not have divergence problem and have low computational complexities. However, the 
+algebraic solutions can reach the Cramér–Rao bound (CRB) accuracy only at relatively low noise level. In order to improve the localization 
+accuracy under suﬃciently small signal-to-noise ratio (SNR) condition, the iterative techniques should be employed. Speciﬁcally, the semi-
+deﬁnite relaxation (SDR) method is proposed in [23], which relaxes the non-convex TDOA/FDOA-based localization problem. Although 
+this method does not suffer from local convergence, it generally requires a high computational complexity for reasonable performance. 
+Additionally, an eﬃcient constrained total least squares (CTLS) method for TDOA and FDOA localization is proposed in [24]; a constrained 
+weighted least squares (CWLS) method for moving source location using TDOA/FDOA measurements is developed in [25]. Both of them 
+require Newton iteration, which does not guarantee convergence to the global optimum. Quite recently, an iterative constrained weighted 
+least squares (ICWLS) method is proposed in [26], in which a linearization procedure on the quadratic equality constraints is iteratively 
+accomplished to yield an approximate programming with linear constraints. Moreover, the weighting matrix is updated in each iteration. 
+Both theoretical analysis and simulation studies demonstrate that, compared with the original CWLS method, the ICWLS method has 
+better convergence behavior and higher noise threshold.
+It is worth pointing out that all of the above-mentioned works assume the sensor positions and velocities are known accurately. 
+However, in practical applications the sensor positions and/or velocities available for the positioning task may have errors. For instance, 
+the sensors can be airplanes or unmanned aerial vehicles (UAVs) whose positions and velocities may not be precisely known. In addition, 
+inaccurate sensor position occurs when the receivers are randomly deployed in a ﬁeld whose positions need to be measured or when 
+the sensors drift over a period of time. Unfortunately, regardless of the localization algorithms used, the source location accuracy can be 
+very sensitive to the accurate knowledge of the receiver positions and velocities. As a result, much attention has been paid to the emitter 
+location problem in the presence of sensor position and velocity errors. In [27,28], a theoretical study is performed when an optimum 
+estimator using TDOA/FDOA measurements assumes the sensor positions and velocities are exact but, in fact, they have errors. Generally, 
+there exist two classes of TDOA/FDOA-based localization methods that can mitigate the effects of the uncertainties in sensor position 
+and velocity. The ﬁrst one takes the statistical characteristic of sensor position and velocity uncertainties into the localization procedure 
+to improve estimation accuracy. Speciﬁcally, in [29], a total least squares (TLS) method for TDOA and FDOA positioning is proposed in 
+the presence of sensor position and velocity errors; in [30], a CWLS method for the same localization scenario is developed. The second 
+one performs joint estimation of the unknown source position and velocity as well as the inaccurate sensor positions and velocities. For 
+example, in [31,32], the Taylor-series technique for moving source localization using TDOA/FDOA measurements is presented with sensor 
+position and velocity uncertainties. It should be noted that the methods in the second class can increase the accuracy of sensor position 
+and velocity estimates and tolerate higher noise level before the thresholding effect starts to occur.
+On the other hand, all the localization methods previously discussed only consider the single source case. Recent works [11,16,33–35]
+have developed some algebraic solutions for locating multiple disjoint sources when the sensor positions and velocities are not known 
+accurately. The disjointness could come from time, frequency or both so that their positioning parameters (e.g., TDOA and FDOA) can be 
+obtained separately. Nevertheless, noise correlation could still exist among those localization parameters. An important observation about 
+the multiple disjoint sources is that they exhibit the same sensor position and velocity errors. As a result, the multiple sources should be 
+jointly located based on the measurements that are subject to the same sensor position displacements. This procedure can be viewed as 
+multiple-target cooperative positioning. This paper addresses the problem of locating multiple disjoint moving sources using TDOAs and 
+FDOAs in the presence of erroneous sensor positions and velocities. Indeed, there have been several methods developed for this localization 
+scenario. In [33], an algebraic solution to this problem is proposed and the solution is shown analytically to achieve the Cramér–Rao bound 
+(CRB) performance over small noise region. However, this method cannot provide optimum accuracy for sensor positions and velocities. 
+Following the work of [33], an alternative closed-form solution is presented in [34], which improves the previous method so that both the 
+source and the receiver position and velocity estimates can reach the CRB accuracy. In addition, an algebraic solution for locating multiple 
+disjoint sources with the use of calibration emitters is proposed in [35]. It should be noted that all the proposed estimators in [33–35] are 
+in closed-form and they do not have a large amount of noise tolerance before the performance deviates suddenly from the CRB due to the 
+nonlinear nature of the source localization problem. In order to improve the noise threshold, we need to resort to the iterative technique.
+In this work, aiming at the multiple-target cooperative localization with the use of TDOA/FDOA measurements, we propose an asymp-
+totically eﬃcient estimator that formulates the problem as a quadratic programming with some indeﬁnite quadratic equality constraints. 
+Similar to [26], we also develop an ICWLS method to obtain the approximate solution of the quadratic programming. But, the presented 
+procedure can locate multiple disjoint sources in the presence of sensor position and velocity errors. Moreover, the new method is based 
+on matrix Q R decomposition, which is implemented through some simple and eﬃcient numerical algorithms. The iterative method uses 
+a set of linear equality constraints instead of the quadratic constraints to yield an explicit solution in each iteration. The theoretical per-
+formance of the proposed ICWLS method is also derived. The theoretical study consists of two parts: convergence property and estimation 
+mean-square-error (MSE). The results indicate that the proposed method, if converges, can provide the optimal solution of the formulated 
+minimization problem. Moreover, its estimation MSE is able to achieve the corresponding CRB under moderate noise level. Some numerical 
+experiments are conducted to conﬁrm the effectiveness of the theoretical analysis and demonstrate advantage of the proposed method.
+The main novelty and contribution of this paper are summarized below:
+(1) We prove analytically through the CRB analysis that the cooperative gain is considerable when the multiple disjoint moving sources 
+are located simultaneously based on TDOA/FDOA metrics. This result means that the positions and velocities of the multiple moving 
+sources should be jointly estimated in practical application even if the sources are disjoint.
+
+
+===== PDF PAGE 3 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+181
+Table 1
+Notational conventions.
+Notation
+Explanation
+⊗
+Kronecker product
+In
+n × n identity matrix
+i(m)
+n
+the mth column in matrix In
+On×m
+n × m matrix of zeros
+1n×m
+n × m matrix of ones
+diag[a]
+a diagonal matrix with diagonal entries formed from vector a
+blkdiag[A1 A2 ··· An]
+a block diagonal matrix with matrices {Ak}1≤k≤n on the main diagonal
+rank[A]
+rank of matrix A
+range[A]
+linear subspace spanned by the column vectors of matrix A
+A1/2
+square root of matrix A
+A†
+Moore-Penrose inverse of matrix A
+Π[A]
+orthogonal projection matrix onto range[A]
+Π⊥[A]
+orthogonal projection matrix onto the orthogonal subspace of range[A]
+< a >m
+the mth element in vector a
+Table 2
+Matrix identities.
+Serial number
+Matrix identity
+I
+Π[A] = A(AT A)−1 AT when A is full column rank
+II
+Π⊥[A] = I −A(AT A)−1 AT when A is full column rank
+III
+
+A
+B
+BT
+C
+−1
+=
+
+(A −BC−1 BT)−1
+−(A −BC−1 BT)−1 BC−1
+−C−1 BT(A −BC−1 BT)−1
+(C −BT A−1 B)−1
+
+(A and C are symmetric matrices)
+IV
+(A + BC D)−1 = A−1 −A−1 B(C−1 + D A−1 B)−1 D A−1
+(2) A quadratic programming with some indeﬁnite quadratic equality constraints is formulated for multiple-target cooperative local-
+ization in the presence of sensor position and velocity uncertainties. The presented optimization model can be used for TDOA/FDOA 
+positioning of multiple disjoint sources in practical scenario.
+(3) A new ICWLS method is proposed based on matrix Q R decomposition by replacing the quadratic constraints with a set of linear 
+equality constraints in each iteration. The proposed method can be applied to jointly estimate the source and sensor positions and 
+velocities in real-life localization scenario using TDOA/FDOA measurements.
+(4) The convergence analysis of the proposed iterative method is carried out using the ﬁrst- and second-order conditions for the 
+optimization problem with equality constraints. It can be found that the proposed TDOA/FDOA positioning method, if converges, can 
+provide the optimal solution of the formulated non-convex minimization problem.
+(5) The estimation MSE of the proposed estimator is derived based on the Lagrange multiplier approach. Moreover, the analytical 
+expression for the MSE is proved to equal the CRB by making use of the property of the orthogonal projection matrix. More importantly, 
+our performance analysis is performed in a general mathematical framework, which is not limited to a speciﬁc signal metric. The obtained 
+analytical result reveals that the newly developed TDOA/FDOA localization method is able to provide asymptotically optimal estimation 
+accuracy for both source and sensor positions and velocities in practical situation.
+The rest of this paper is organized as follows. Section 2 lists the notational conventions and matrix identities that will be used 
+throughout the paper. In Section 3, the localization scenario is described and the measurement model is formulated. The CRB analyses are 
+performed in Section 4. Section 5 develops a new ICWLS localization method. The theoretical analysis of the proposed estimator is derived 
+in Section 6. Section 7 provides the simulation results which can corroborate the theoretical analysis as well as the good performance of 
+the new method. Conclusions are drawn in Section 8. Some tedious derivations are shown in the Appendices.
+2. Notational conventions and matrix identities
+In this paper, lowercase and uppercase boldface letters are used to denote vectors and matrices, respectively. The notational conventions 
+that are used throughout this paper are list in Table 1, where the right side describes the deﬁnition of some common mathematical 
+notations shown on the left side.
+Table 2 shows four matrix identities, which are useful for the theoretical development in this paper. It contains two orthogonal projec-
+tion matrix formulas for full-column-rank matrix, the partitioned matrix inversion formula for symmetric matrix, and the matrix inversion 
+Lemma presented in [39].
+3. Measurement model and problem formulation
+This paper considers a three-dimension (3D) localization scenario as depicted in Fig. 1. It describes a multiple-source tracking system, 
+where both sources and sensors are at the state of relative motion. The scenario consists of a total of D moving sources whose positions 
+and velocities are to be determined. Let u(p)
+d
+and u(v)
+d
+be the true position and velocity of the dth emitter, respectively. For notation 
+simplicity, we deﬁne ud = [u(p)T
+d
+u(v)T
+d
+]T as the true location vector of the dth source. Then, the composite source location vector can be 
+written as ¯u = [uT
+1 uT
+2 ··· uT
+D]T, which is estimated through the use of M + 1 moving sensors that measure the emitted signals from the 
+sources. The actual position and velocity of the mth sensor are denoted by s(p)
+m
+and s(v)
+m , respectively. So, the location vector of the mth 
+sensor is represented as sm = [s(p)T
+m
+s(v)T
+m
+]T, and the composite sensor location vector can be written as ¯s = [sT
+0 sT
+1 sT
+2 ··· sT
+M]T. The TDOA 
+and FDOA measurements are exacted from the received signals to locate the multiple sources. Note that this work studies the case where 
+the sources are disjoint so that for each emitting source, a separate set of TDOA and FDOA measurements can be obtained. As discussed 
+
+
+===== PDF PAGE 4 =====
+182
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+Fig. 1. Geometry for multiple source localization.
+in [11,33], this can be achieved by conﬁning the source signals to disjoint frequency bands and/or time intervals when ﬁnding the TDOAs 
+and FDOAs.
+Without loss of generality, let the ﬁrst sensor be the reference. Then, the TDOA measurement between sensor pair m and 0 from the 
+dth source is given by
+ˆt(p)
+d,m = t(p)
+d,m + e(p)
+d,m = 1
+c (||u(p)
+d
+−s(p)
+m ||2 −||u(p)
+d
+−s(p)
+0 ||2) + e(p)
+d,m
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(1)
+where e(p)
+d,m is the TDOA noise; c is the known signal propagation speed; t(p)
+d,m is the true TDOA, which is equal to
+t(p)
+d,m = 1
+c (||u(p)
+d
+−s(p)
+m ||2 −||u(p)
+d
+−s(p)
+0 ||2)
+(2)
+It is noteworthy that TDOA measurement can be easily converted to range difference of arrival (RDOA) measurement given the signal 
+propagation speed. Therefore, TDOA and RDOA are used interchangeably throughout this paper. From (1), the RDOA measurement between 
+sensor pair m and 0 from the dth source can be written as
+ˆr(p)
+d,m = cˆt(p)
+d,m = r(p)
+d,m + ε(p)
+d,m = f (p)
+m (ud, ¯s) + ε(p)
+d,m
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(3)
+where ε(p)
+d,m = ce(p)
+d,m is the RDOA noise; r(p)
+d,m = ct(p)
+d,m is the accurate RDOA; f (p)
+m (ud, ¯s) is a function with respect to ud and ¯s, and it is 
+expressed as
+f (p)
+m (ud, ¯s) = ||u(p)
+d
+−s(p)
+m ||2 −||u(p)
+d
+−s(p)
+0 ||2
+(4)
+The collection of RDOA measurements of source d yields
+ˆr(p)
+d
+= [ˆr(p)
+d,1 ˆr(p)
+d,2 ··· ˆr(p)
+d,M]T = r(p)
+d
++ ε(p)
+d
+= f (p)(ud, ¯s) + ε(p)
+d
+(1 ≤d ≤D)
+(5)
+where
+
+r(p)
+d
+= [r(p)
+d,1 r(p)
+d,2 ··· r(p)
+d,M]T,
+ε(p)
+d
+= [ε(p)
+d,1 ε(p)
+d,2 ··· ε(p)
+d,M]T
+f (p)(ud, ¯s) = r(p)
+d
+= [ f (p)
+1 (ud, ¯s) f (p)
+2 (ud, ¯s) ··· f (p)
+M (ud, ¯s)]T
+(6)
+When the FDOA measurements are available, resulting from the relative motion between the source and sensors, we can get better 
+positioning accuracy and, at the same time, identify the source velocity. Similar to TDOA, range difference rate is used instead of time 
+difference rate. Taking time derivative of (3), the range difference rate of arrival (RDROA) measurement between sensor pair m and 0 from 
+the dth source is written as
+ˆr(v)
+d,m = r(v)
+d,m + ε(v)
+d,m = f (v)
+m (ud, ¯s) + ε(v)
+d,m
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(7)
+where ε(v)
+d,m is the RDROA noise; r(v)
+d,m is the true RDROA; f (v)
+m (ud, ¯s) is a function of both ud and ¯s, given by
+
+
+===== PDF PAGE 5 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+183
+f (v)
+m (ud, ¯s) = (u(p)
+d
+−s(p)
+m )T(u(v)
+d
+−s(v)
+m )
+||u(p)
+d
+−s(p)
+m ||2
+−(u(p)
+d
+−s(p)
+0 )T(u(v)
+d
+−s(v)
+0 )
+||u(p)
+d
+−s(p)
+0 ||2
+(8)
+Combining all the RDROA measurements from source d, we arrive at
+ˆr(v)
+d
+= [ˆr(v)
+d,1 ˆr(v)
+d,2 ··· ˆr(v)
+d,M]T = r(v)
+d
++ ε(v)
+d
+= f (v)(ud, ¯s) + ε(v)
+d
+(1 ≤d ≤D)
+(9)
+where
+
+r(v)
+d
+= [r(v)
+d,1 r(v)
+d,2 ··· r(v)
+d,M]T,
+ε(v)
+d
+= [ε(v)
+d,1 ε(v)
+d,2 ··· ε(v)
+d,M]T
+f (v)(ud, ¯s) = r(v)
+d
+= [ f (v)
+1 (ud, ¯s) f (v)
+2 (ud, ¯s) ··· f (v)
+M (ud, ¯s)]T
+(10)
+Putting the RDOAs and RDROAs of source d together, we have the total measurement vector for source d as follows:
+ˆrd = [ˆr(p)T
+d
+ˆr(v)T
+d
+]T = rd + εd = f (ud, ¯s) + εd
+(1 ≤d ≤D)
+(11)
+where rd = [r(p)T
+d
+r(v)T
+d
+]T; f (ud, ¯s) = rd = [( f (p)(ud, ¯s))T ( f (v)(ud, ¯s))T]T; εd = [ε(p)T
+d
+ε(v)T
+d
+]T is the composite noise vector that follows 
+zero-mean Gaussian distribution with covariance matrix
+P 1,d = E[εdεT
+d] =
+
+P (p)
+1,d
+P (pv)
+1,d
+P (pv)T
+1,d
+P (v)
+1,d
+
+(12)
+in which P (p)
+1,d = E[ε(p)
+d ε(p)T
+d
+], P (v)
+1,d = E[ε(v)
+d ε(v)T
+d
+], and P (pv)
+1,d = E[ε(p)
+d ε(v)T
+d
+]. It should be pointed out that P (pv)
+1,d
+characterizes the cross-
+correlation between the RDOA and RDROA measurements. Collecting the RDOAs and RDROAs from all the disjoint sources gives
+ˆ¯r = [ˆrT
+1 ˆrT
+2 ··· ˆrT
+D]T = ¯r + ¯ε = ¯f ( ¯u, ¯s) + ¯ε
+(13)
+where
+	 ¯r = [rT
+1 rT
+2 ··· rT
+D]T,
+¯ε = [εT
+1 εT
+2 ··· εT
+D]T
+¯f ( ¯u, ¯s) = [( f (u1, ¯s))T ( f (u2, ¯s))T ··· ( f (uD, ¯s))T]T
+(14)
+It is obvious that the high-dimensional error ¯ε obeys the Gaussian distribution with zero mean and covariance matrix
+P 1 = E[¯ε ¯εT] = blkdiag[P 1,1 P 1,2 ··· P 1,D]
+(15)
+In this study, the true sensor location vectors {sm}0≤m≤M are not known and only noisy versions of them, denoted by {ˆsm}0≤m≤M, are 
+available. They can be modeled as
+ˆsm = sm + ξm
+(0 ≤m ≤M)
+(16)
+where ξm is the error in ˆsm. For convenience purpose, let us collect {ˆsm}0≤m≤M to form the 6(M + 1) × 1 sensor location vector as follows:
+ˆ¯s = [ˆsT
+0 ˆsT
+1 ··· ˆsT
+M]T = ¯s + ¯ξ
+(17)
+where ¯ξ = [ξ T
+0 ξ T
+1 ··· ξ T
+M]T is the sensor location error vector, which is zero-mean Gaussian distributed with covariance matrix P 2 =
+E[¯ξ ¯ξ
+T].
+The source localization problem in this work can be stated as follows: Given the RDOA and RDROA measurements and the noisy sensor 
+positions and velocities, simultaneously locate the multiple disjoint sources and reﬁne the erroneous sensor positions and velocities as 
+accurate as possible.
+4. CRB derivation and analysis
+This section is devoted to the derivation of the CRB for jointly locating multiple sources in the presence of noisy sensor positions and 
+velocities. Moreover, we compare the obtained CRB with the one when the source locations are identiﬁed separately. The comparison of 
+these two CRBs can indicate the improvement in localization accuracy resulted from multiple-target cooperative positioning.
+4.1. CRB derivation
+In the localization scenario described in Section 3, the observations consist of ˆ¯r and ˆ¯s, and the unknowns include ¯u and ¯s. Then, we 
+need to deﬁne data vector η = [ˆ¯rT ˆ¯sT]T and parameter vector μ = [ ¯uT¯sT]T. Under Gaussian error model, the logarithm of the probability 
+density function (PDF) of η parameterized on μ is given by
+ln(p(η|μ)) = K −1
+2(ˆ¯r −¯f ( ¯u, ¯s))T P −1
+1 (ˆ¯r −¯f ( ¯u, ¯s)) −1
+2(ˆ¯s −¯s)T P −1
+2 (ˆ¯s −¯s)
+(18)
+where K is a constant independent of μ. It can be obtained from (18) that
+
+
+===== PDF PAGE 6 =====
+184
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+∂ln(p(η|μ))
+∂μ
+=
+
+( ¯F 1( ¯u, ¯s))T P −1
+1 ¯ε
+( ¯F 2( ¯u, ¯s))T P −1
+1 ¯ε + P −1
+2 ¯ξ
+
+(19)
+where
+¯F 1( ¯u, ¯s) = ∂¯f ( ¯u, ¯s)
+∂¯uT
+= blkdiag[F 1(u1, ¯s) F 1(u2, ¯s) ··· F 1(uD, ¯s)]
+(20)
+¯F 2( ¯u, ¯s) = ∂¯f ( ¯u, ¯s)
+∂¯sT
+= [(F 2(u1, ¯s))T (F 2(u2, ¯s))T ··· (F 2(uD, ¯s))T]T
+(21)
+in which F 1(ud, ¯s) = ∂f (ud,¯s)
+∂uT
+d
+and F 2(ud, ¯s) = ∂f (ud,¯s)
+∂¯sT
+(1 ≤d ≤D). Using (19), the CRB matrix for μ is given by
+CRB(μ) =
+
+E
+
+∂ln(p(η|μ))
+∂μ
+∂ln(p(η|μ))
+∂μ
+T−1
+=
+
+( ¯F 1( ¯u, ¯s))T P −1
+1
+¯F 1( ¯u, ¯s)
+( ¯F 1( ¯u, ¯s))T P −1
+1
+¯F 2( ¯u, ¯s)
+( ¯F 2( ¯u, ¯s))T P −1
+1
+¯F 1( ¯u, ¯s)
+( ¯F 2( ¯u, ¯s))T P −1
+1
+¯F 2( ¯u, ¯s) + P −1
+2
+−1
+(22)
+Then, applying matrix identities (II)–(IV) in Table 2 leads to
+CRB( ¯u) = (( ¯F 1( ¯u, ¯s))T(P 1 + ¯F 2( ¯u, ¯s)P 2( ¯F 2( ¯u, ¯s))T)−1 ¯F 1( ¯u, ¯s))−1
+(23)
+CRB(¯s) = (P −1
+2
++ ( ¯F 2( ¯u, ¯s))T P −1/2
+1
+Π⊥[P −1/2
+1
+¯F 1( ¯u, ¯s)]P −1/2
+1
+¯F 2( ¯u, ¯s))−1
+(24)
+Before proceeding, three remarks are in order.
+Remark 1. If the accurate sensor positions and velocities are available, the CRB matrix for ¯u
+reduces to CRB(o)( ¯u) =
+(( ¯F 1( ¯u, ¯s))T P −1
+1
+¯F 1( ¯u, ¯s))−1. The superscript “o” is used to indicate that this CRB corresponds to the case of no sensor position and 
+velocity errors. Using the matrix identities (II)–(IV) in Table 2 leads to
+CRB( ¯u) = CRB(o)( ¯u) + CRB(o)( ¯u)( ¯F 1( ¯u, ¯s))T P −1
+1
+¯F 2( ¯u, ¯s)
+× (P −1
+2
++ ( ¯F 2( ¯u, ¯s))T P −1/2
+1
+Π⊥[P −1/2
+1
+¯F 1( ¯u, ¯s)]P −1/2
+1
+¯F 2( ¯u, ¯s))−1( ¯F 2( ¯u, ¯s))T P −1
+1
+¯F 1( ¯u, ¯s)CRB(o)( ¯u)
+(25)
+The term on the right side of (25) can be used to represent the performance loss resulted from the uncertainties in sensor position and 
+velocity. It is clear that if P 2 →O 6(M+1)×6(M+1), then CRB( ¯u) →CRB(o)( ¯u), which means that there is no loss in the localization accuracy. 
+This is not unexpected because P 2 →O 6(M+1)×6(M+1) implies that the sensor position and velocity are accurately known.
+Remark 2. Using (23), it can be seen that the CRB for the estimate of each emitter location is given by
+CRB(ud) = (i(d)T
+D
+⊗I6)(( ¯F 1( ¯u, ¯s))T(P 1 + ¯F 2( ¯u, ¯s)P 2( ¯F 2( ¯u, ¯s))T)−1 ¯F 1( ¯u, ¯s))−1(i(d)
+D ⊗I6)
+(1 ≤d ≤D)
+(26)
+Remark 3. Due to the positive semi-deﬁniteness of orthogonal projection matrix Π⊥[P −1/2
+1
+¯F 1( ¯u, ¯s)], it can be proved from (24) that 
+CRB(¯s) ≤P 2. This matrix inequality implies that the available sensor positions and velocities can be further reﬁned by exploiting the 
+measurements from the emitters.
+4.2. Comparison of CRB
+The aim of this subsection is to compare the CRB for cooperative positioning with the one when the sources are located independently. 
+To this end, the CRB for the latter case should be presented. Considering the non-cooperative localization scenario, when the dth emitter 
+is located, the CRB matrices for ud and ¯s are, respectively, given by [27]
+CRB(i)
+d (ud) = ((F 1(ud, ¯s))T(P 1,d + F 2(ud, ¯s)P 2(F 2(ud, ¯s))T)−1 F 1(ud, ¯s))−1
+(1 ≤d ≤D)
+(27)
+CRB(i)
+d (¯s) = (P −1
+2
++ (F 2(ud, ¯s))T P −1/2
+1,d Π⊥[P −1/2
+1,d
+F 1(ud, ¯s)]P −1/2
+1,d
+F 2(ud, ¯s))−1
+(1 ≤d ≤D)
+(28)
+Note that the superscript “i” is used to indicate that these CRB matrices correspond to the case of non-cooperative localization.
+The main results of our analysis are summarized in the following two propositions.
+Proposition 1. For 1 ≤d ≤D, we have CRB(ud) ≤CRB(i)
+d (ud).
+Proof. This proof is performed by induction on D. For the case of D = 2, deﬁne the matrix
+X = P 1 + ¯F 2( ¯u, ¯s)P 2( ¯F 2( ¯u, ¯s))T =
+
+X1
+X2
+XT
+2
+X3
+
+(29)
+where X1 = P 1,1 + F 2(u1, ¯s)P 2(F 2(u1, ¯s))T, X2 = F 2(u1, ¯s)P 2(F 2(u2, ¯s))T, X3 = P 1,2 + F 2(u2, ¯s)P 2(F 2(u2, ¯s))T. Then, it can be veriﬁed 
+from (20), (23) and (29) that
+
+
+===== PDF PAGE 7 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+185
+CRB( ¯u) =
+ (F 1(u1, ¯s))T
+O 6×2M
+O 6×2M
+(F 1(u2, ¯s))T
+
+Y
+−Y X2 X−1
+3
+−X−1
+3
+XT
+2Y
+Z
+
+F 1(u1, ¯s)
+O 2M×6
+O 2M×6
+F 1(u2, ¯s)
+−1
+=
+
+(F 1(u1, ¯s))TY F 1(u1, ¯s)
+−(F 1(u1, ¯s))TY X2 X−1
+3
+F 1(u2, ¯s)
+−(F 1(u2, ¯s))T X−1
+3
+XT
+2Y F 1(u1, ¯s)
+(F 1(u2, ¯s))T Z F 1(u2, ¯s)
+−1
+(30)
+where
+Y = (X1 −X2 X−1
+3
+XT
+2)−1,
+Z = (X3 −XT
+2 X−1
+1
+X2)−1
+(31)
+The ﬁrst equality in (30) uses matrix identity (III) in Table 2. It can be easily checked from (31) that
+Y X2 X−1
+3
+= X−1
+1
+X2 Z
+(32)
+Combining (30), (32) and matrix identity (III) in Table 2 produces
+⎧
+⎪⎪⎨
+⎪⎪⎩
+(CRB(u1))−1 = (F 1(u1, ¯s))TY F 1(u1, ¯s) −(F 1(u1, ¯s))T X−1
+1
+X2 Z F 1(u2, ¯s)((F 1(u2, ¯s))T Z F 1(u2, ¯s))−1
+×(F 1(u2, ¯s))T Z T XT
+2 X−1
+1
+F 1(u1, ¯s)
+(CRB(u2))−1 = (F 1(u2, ¯s))T Z F 1(u2, ¯s) −(F 1(u2, ¯s))T X−1
+3
+XT
+2Y F 1(u1, ¯s)((F 1(u1, ¯s))TY F 1(u1, ¯s))−1
+×(F 1(u1, ¯s))TY X2 X−1
+3
+F 1(u2, ¯s)
+(33)
+On the other hand, from matrix identity (IV) in Table 2 we get
+	
+Y = (X1 −X2 X−1
+3
+XT
+2)−1 = X−1
+1
++ X−1
+1
+X2 Z XT
+2 X−1
+1
+Z = (X3 −XT
+2 X−1
+1
+X2)−1 = X−1
+3
++ X−1
+3
+XT
+2Y X2 X−1
+3
+(34)
+Inserting (34) back into (33) leads to
+	 (CRB(u1))−1 = (F 1(u1, ¯s))T X−1
+1
+F 1(u1, ¯s) + (F 1(u1, ¯s))T X−1
+1
+X2 Z 0 XT
+2 X−1
+1
+F 1(u1, ¯s)
+(CRB(u2))−1 = (F 1(u2, ¯s))T X−1
+3
+F 1(u2, ¯s) + (F 1(u2, ¯s))T X−1
+3
+XT
+2Y 0 X2 X−1
+3
+F 1(u2, ¯s)
+(35)
+where	
+Y 0 = Y −Y F 1(u1, ¯s)((F 1(u1, ¯s))TY F 1(u1, ¯s))−1(F 1(u1, ¯s))TY
+Z 0 = Z −Z F 1(u2, ¯s)((F 1(u2, ¯s))T Z F 1(u2, ¯s))−1(F 1(u2, ¯s))T Z T
+(36)
+According to the deﬁnition of orthogonal projection matrix, (36) can be rewritten as
+	
+Y 0 = Y 1/2Π⊥[Y 1/2 F 1(u1, ¯s)]Y 1/2 ≥O
+Z 0 = Z 1/2Π⊥[Z 1/2 F 1(u2, ¯s)]Z 1/2 ≥O
+(37)
+which together with (27) and (35) implies that
+
+(CRB(u1))−1 ≥(F 1(u1, ¯s))T X−1
+1
+F 1(u1, ¯s) = (F 1(u1, ¯s))T(P 1,1 + F 2(u1, ¯s)P 2(F 2(u1, ¯s))T)−1 F 1(u1, ¯s) = (CRB(i)
+1 (u1))−1
+(CRB(u2))−1 ≥(F 1(u2, ¯s))T X−1
+3
+F 1(u2, ¯s) = (F 1(u2, ¯s))T(P 1,2 + F 2(u2, ¯s)P 2(F 2(u2, ¯s))T)−1 F 1(u2, ¯s) = (CRB(i)
+2 (u2))−1
+(38)
+It follows immediately from (38) that CRB(u1) ≤CRB(i)
+1 (u1) and CRB(u2) ≤CRB(i)
+2 (u2). Therefore, the relation holds true for D = 2.
+Further, assume that the result is true for D = K , which means CRB(ud) ≤CRB(i)
+d (ud)(1 ≤d ≤K). When D = K + 1, deﬁne two vectors 
+˜u1 and ˜u2 by
+˜u1 = [uT
+1 uT
+2 ··· uT
+K ]T,
+˜u2 = uK+1
+(39)
+Applying the proof for D = 2, we arrive at
+CRB( ˜u2) = CRB(uK+1) ≤((F 1(uK+1, ¯s))T(P 1,K+1 + F 2(uK+1, ¯s)P 2(F 2(uK+1, ¯s))T)−1 F 1(uK+1, ¯s))−1 = CRB(i)
+K+1(uK+1)
+(40)
+which reveals that the result is also true for D = K + 1. Then, the proof by induction is completed.
+2
+Proposition 2. Using the previous deﬁnitions, we have CRB(¯s) ≤min1≤d≤D{CRB(i)
+d (¯s)}.
+Proof. Combining (15), (20) and the deﬁnition of orthogonal projection matrix yields
+Π⊥[P −1/2
+1
+¯F 1( ¯u, ¯s)] = blkdiag[Π⊥[P −1/2
+1,1
+F 1(u1, ¯s)] Π⊥[P −1/2
+1,2
+F 1(u2, ¯s)] ··· Π⊥[P −1/2
+1,D F 1(uD, ¯s)]]
+(41)
+Substituting (41) into (24) and using (15) and (21) produces
+(CRB(¯s))−1 = P −1
+2
++
+D
+
+k=1
+(F 2(uk, ¯s))T P −1/2
+1,k
+Π⊥[P −1/2
+1,k
+F 1(uk, ¯s)]P −1/2
+1,k
+F 2(uk, ¯s)
+≥P −1
+2
++ (F 2(ud, ¯s))T P −1/2
+1,d Π⊥[P −1/2
+1,d
+F 1(ud, ¯s)]P −1/2
+1,d
+F 2(ud, ¯s) = (CRB(i)
+d (¯s))−1
+(1 ≤d ≤D)
+(42)
+which immediately gives CRB(¯s) ≤min1≤d≤D{CRB(i)
+d (¯s)}. So the proof is completed.
+2
+
+
+===== PDF PAGE 8 =====
+186
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+Two remarks are drawn at the end of this subsection.
+Remark 4. The results in Propositions 1 and 2 demonstrate that compared with the non-cooperative positioning, the joint localization of 
+multiple sources can achieve higher estimation accuracy. The reason for this is that the measurements from different sources correspond 
+to the same sensor location displacements. We may be able to exploit this observation in addition to the prior statistical distribution of 
+the sensor position and velocity errors to improve estimation performance.
+Remark 5. We can quantify the improvement in positioning accuracy resulted from cooperative processing through the CRB analysis. To 
+simplify the presentation, the localization of two disjoint sources is considered here. Putting (35), (37) and matrix identity (IV) in Table 2
+together leads to
+CRB(u1) = CRB(i)
+1 (u1) −CRB(i)
+1 (u1)(F 1(u1, ¯s))T X−1
+1
+X2 Z 1/2Π⊥[Z 1/2 F 1(u2, ¯s)]
+×(I2MD + Π⊥[Z 1/2 F 1(u2, ¯s)]Z 1/2 XT
+2 X−1
+1
+F 1(u1, ¯s)CRB(i)
+1 (u1)(F 1(u1, ¯s))T X−1
+1
+X2 Z 1/2Π⊥[Z 1/2 F 1(u2, ¯s)])−1
+×Π⊥[Z 1/2 F 1(u2, ¯s)]Z 1/2 XT
+2 X−1
+1
+F 1(u1, ¯s)CRB(i)
+1 (u1)
+(43)
+CRB(u2) = CRB(i)
+2 (u2) −CRB(i)
+2 (u2)(F 1(u2, ¯s))T X−1
+3
+XT
+2Y 1/2Π⊥[Y 1/2 F 1(u1, ¯s)]
+×(I2MD + Π⊥[Y 1/2 F 1(u1, ¯s)]Y 1/2 X2 X−1
+3
+F 1(u2, ¯s)CRB(i)
+2 (u2)(F 1(u2, ¯s))T X−1
+3
+XT
+2Y 1/2Π⊥[Y 1/2 F 1(u1, ¯s)])−1
+×Π⊥[Y 1/2 F 1(u1, ¯s)]Y 1/2 X2 X−1
+3
+F 1(u2, ¯s)CRB(i)
+2 (u2)
+(44)
+Clearly, the second terms on the right sides of (43) and (44) represent the performance gain resulted from cooperation positioning. It 
+can be observed in the simulation section that the improvement due to joint localization for multiple sources is remarkable under many 
+parameter settings.
+5. Proposed ICWLS estimator
+In this section, a new ICWLS method is presented. We ﬁrst derive the TDOA/FDOA pseudo-linear equations as well as the quadratic 
+equation constraints. Subsequently, a new CWLS estimator is formulated. In order to obtain the optimal solution to the estimator, an 
+eﬃcient iterative algorithm based on Q R decomposition is developed, which can provide a closed-form solution and update the weighting 
+matrix in each iteration.
+5.1. Pseudo-linear equations for TDOA/FDOA measurements
+This subsection is devoted to deducing the pseudo-linear equations for TDOA and FDOA positioning of multiple disjoint sources. The 
+pseudo-linear models lay the foundation of the newly proposed estimator.
+First, the RDOA equations can be transformed into the following
+(r(p)
+d,m + ||u(p)
+d
+−s(p)
+0 ||2)2 = ||u(p)
+d
+−s(p)
+0
++ s(p)
+0
+−s(p)
+m ||2
+2
+⇒2(s(p)
+0
+−s(p)
+m )T(u(p)
+d
+−s(p)
+0 ) −2r(p)
+d,m||u(p)
+d
+−s(p)
+0 ||2 = (r(p)
+d,m)2 −||s(p)
+0
+−s(p)
+m ||2
+2
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(45)
+The vector form of (45) is given by
+(a(p)
+m (rd, ¯s))T
+⎡
+⎣
+ud −J ¯s
+φ1(ud, ¯s)
+φ2(ud, ¯s)
+⎤
+⎦= b(p)
+m (rd, ¯s)
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(46)
+where
+⎧
+⎨
+⎩
+a(p)
+m (rd, ¯s) = [ 2(s(p)
+0
+−s(p)
+m )T
+O 1×3
+−2r(p)
+d,m
+0 ]T,
+b(p)
+m (rd, ¯s) = (r(p)
+d,m)2 −||s(p)
+0
+−s(p)
+m ||2
+2
+φ1(ud, ¯s) = ||u(p)
+d
+−s(p)
+0 ||2,
+φ2(ud, ¯s) =
+(u(p)
+d −s(p)
+0 )T(u(v)
+d −s(v)
+0 )
+||u(p)
+d −s(p)
+0 ||2
+, J = [I6 O 6×6M]
+(47)
+Notice that φ1(ud, ¯s) and φ2(ud, ¯s) should be regarded as instrumental variables, which are useful for ensuing the equations are linear. 
+Next, taking the time derivative of (45) produces
+(u(p)
+d
+−s(p)
+0 )T(s(v)
+0 −s(v)
+m ) + (s(p)
+0
+−s(p)
+m )T(u(v)
+d
+−s(v)
+0 ) −r(v)
+d,m||u(p)
+d
+−s(p)
+0 ||2 −r(p)
+d,m
+(u(p)
+d −s(p)
+0 )T(u(v)
+d −s(v)
+0 )
+||u(p)
+d −s(p)
+0 ||2
+= r(p)
+d,mr(v)
+d,m −(s(p)
+0
+−s(p)
+m )T(s(v)
+0 −s(v)
+m )
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(48)
+Equation (48) can also be rephrased in a vector form as
+(a(v)
+m (rd, ¯s))T
+⎡
+⎣
+ud −J ¯s
+φ1(ud, ¯s)
+φ2(ud, ¯s)
+⎤
+⎦= b(v)
+m (rd, ¯s)
+
+1 ≤m ≤M
+1 ≤d ≤D
+
+(49)
+where
+
+
+===== PDF PAGE 9 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+187
+
+a(v)
+m (rd, ¯s) = [ (s(v)
+0 −s(v)
+m )T
+(s(p)
+0
+−s(p)
+m )T
+−r(v)
+d,m
+−r(p)
+d,m ]T
+b(v)
+m (rd, ¯s) = r(p)
+d,mr(v)
+d,m −(s(p)
+0
+−s(p)
+m )T(s(v)
+0 −s(v)
+m )
+(50)
+For the dth source, gathering (46) and (49) leads to
+
+A(p)(rd, ¯s)
+A(v)(rd, ¯s)
+⎡
+⎣
+ud −J ¯s
+φ1(ud, ¯s)
+φ2(ud, ¯s)
+⎤
+⎦= A(rd, ¯s)
+⎡
+⎣
+ud −J ¯s
+φ1(ud, ¯s)
+φ2(ud, ¯s)
+⎤
+⎦= A(rd, ¯s)h(ud, ¯s) = A(rd, ¯s)td =
+
+b(p)(rd, ¯s)
+b(v)(rd, ¯s)
+
+= b(rd, ¯s)
+(1 ≤d ≤D)
+(51)
+where
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎩
+A(p)(rd, ¯s) =
+⎡
+⎢⎢⎢⎢⎣
+(a(p)
+1 (rd, ¯s))T
+(a(p)
+2 (rd, ¯s))T
+...
+(a(p)
+M (rd, ¯s))T
+⎤
+⎥⎥⎥⎥⎦
+, A(v)(rd, ¯s) =
+⎡
+⎢⎢⎢⎢⎣
+(a(v)
+1 (rd, ¯s))T
+(a(v)
+2 (rd, ¯s))T
+...
+(a(v)
+M (rd, ¯s))T
+⎤
+⎥⎥⎥⎥⎦
+, b(p)(rd, ¯s) =
+⎡
+⎢⎢⎢⎢⎣
+b(p)
+1 (rd, ¯s)
+b(p)
+2 (rd, ¯s)
+...
+b(p)
+M (rd, ¯s)
+⎤
+⎥⎥⎥⎥⎦
+, b(v)(rd, ¯s) =
+⎡
+⎢⎢⎢⎢⎣
+b(v)
+1 (rd, ¯s)
+b(v)
+2 (rd, ¯s)
+...
+b(v)
+M (rd, ¯s)
+⎤
+⎥⎥⎥⎥⎦
+A(rd, ¯s) =
+
+A(p)(rd, ¯s)
+A(v)(rd, ¯s)
+
+,td = h(ud, ¯s) =
+⎡
+⎣
+ud −J ¯s
+φ1(ud, ¯s)
+φ2(ud, ¯s)
+⎤
+⎦
+(52)
+In order to locate the multiple disjoint sources simultaneously, we combine all the D equations in (51) to form a high-dimensional 
+pseudo-linear equation as
+¯A(¯r, ¯s)¯h( ¯u, ¯s) = ¯A(¯r, ¯s)¯t = ¯b(¯r, ¯s)
+(53)
+where
+⎧
+⎨
+⎩
+¯A(¯r, ¯s) = blkdiag[A(r1, ¯s) A(r2, ¯s) ··· A(rD, ¯s)]
+¯t = ¯h( ¯u, ¯s) = [tT
+1 tT
+2 ··· tT
+D]T = [(h(u1, ¯s))T (h(u2, ¯s))T ··· (h(uD, ¯s))T]T
+¯b(¯r, ¯s) = [(b(r1, ¯s))T (b(r2, ¯s))T ··· (b(rD, ¯s))T]T
+(54)
+Before proceeding, two remarks are concluded.
+Remark 6. It is noteworthy that (53) is linear with respect to vector ¯t, rather than vector ¯u. The reason is that ¯t = ¯h( ¯u, ¯s) contains auxiliary 
+variables {φ1(ud, ¯s)}1≤d≤D and {φ2(ud, ¯s)}1≤d≤D, which are nonlinear functions of ¯u. Interestingly, the presence of {φ1(ud, ¯s)}1≤d≤D and 
+{φ2(ud, ¯s)}1≤d≤D makes ¯t subject to some quadratic equation constraints, which are derived in the next subsection.
+Remark 7. Since the size of matrix A(rd, ¯s) is 2M × 8 for arbitrary d, M must satisfy M ≥4 to make A(rd, ¯s) a full-column-rank matrix. 
+Therefore, the proposed method requires at least ﬁve moving receivers to locate multiple sources.
+5.2. Quadratic equation constraints
+In this subsection, a set of quadratic equation constraints on vector ¯t is presented. To this end, we ﬁrst need to deduce the quadratic 
+equations that vectors td = h(ud, ¯s)(1 ≤d ≤D) satisfy. Since td contains two intermediate variables, i.e., φ1(ud, ¯s) and φ2(ud, ¯s), there 
+exist two constraints on td. According to the functional forms of φ1(ud, ¯s) and φ2(ud, ¯s), it can be seen that
+tT
+d
+⎡
+⎢⎢⎣
+I3
+O 3×3
+O 3×1
+O 3×1
+O 3×3
+O 3×3
+O 3×1
+O 3×1
+O 1×3
+O 1×3
+−1
+0
+O 1×3
+O 1×3
+0
+0
+⎤
+⎥⎥⎦td = tT
+d1td = 0
+(1 ≤d ≤D)
+(55)
+tT
+d
+⎡
+⎢⎢⎣
+O 3×3
+I3
+O 3×1
+O 3×1
+I3
+O 3×3
+O 3×1
+O 3×1
+O 1×3
+O 1×3
+0
+−1
+O 1×3
+O 1×3
+−1
+0
+⎤
+⎥⎥⎦td = tT
+d2td = 0
+(1 ≤d ≤D)
+(56)
+Obviously, the element in 1 and 2 is either one or zero. From (55) and (56), we immediately obtain
+¯t
+T((i(d)
+D i(d)T
+D
+) ⊗1)¯t = ¯t
+T ¯1d ¯t = 0
+(1 ≤d ≤D)
+(57)
+¯t
+T((i(d)
+D i(d)T
+D
+) ⊗2)¯t = ¯t
+T ¯2d ¯t = 0
+(1 ≤d ≤D)
+(58)
+where ¯1d = (i(d)
+D i(d)T
+D
+) ⊗1 and ¯2d = (i(d)
+D i(d)T
+D
+) ⊗2.
+Two remarks are concluded at the end of this subsection.
+
+
+===== PDF PAGE 10 =====
+188
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+Remark 8. It is worthy to point out that (57) and (58) are the quadratic equation constraints on ¯t. Clearly, the number of constraints is 
+equal to 2D, which is also the number of nuisance variables in ¯t. The proposed estimator for source localization in the next subsection is 
+based on these constraints.
+Remark 9. Differentiating both sides of (57) with respect to ¯u produces
+( ¯H 1( ¯u, ¯s))T ¯1d ¯t = 0
+(1 ≤d ≤D)
+(59)
+where
+¯H 1( ¯u, ¯s) = ∂¯h( ¯u, ¯s)
+∂¯uT
+= blkdiag
+⎡
+⎣
+⎡
+⎣
+I6
+(ϕ1(u1, ¯s))T
+(ϕ2(u1, ¯s))T
+⎤
+⎦
+⎡
+⎣
+I6
+(ϕ1(u2, ¯s))T
+(ϕ2(u2, ¯s))T
+⎤
+⎦···
+⎡
+⎣
+I6
+(ϕ1(uD, ¯s))T
+(ϕ2(uD, ¯s))T
+⎤
+⎦
+⎤
+⎦
+(60)
+in which ϕ1(ud, ¯s) = ∂φ1(ud,¯s)
+∂ud
+and ϕ2(ud, ¯s) = ∂φ2(ud,¯s)
+∂ud
+. Following an analogous manner, we can obtain from (58) that
+( ¯H 1( ¯u, ¯s))T ¯2d ¯t = 0
+(1 ≤d ≤D)
+(61)
+It should be noted that (59) and (61) are useful for the theoretical performance analysis in Section 6.
+5.3. New CWLS estimator for multiple-target localization
+This subsection presents a novel estimator that can perform joint estimation of the unknown source positions and velocities and the 
+inaccurate sensor positions and velocities together. A constrained minimization problem is formulated using the weighted least squares 
+(WLS) criterion, which is asymptotically eﬃcient under Gaussian noise assumption.
+Notice that the functional forms of ¯A(·, ·) and ¯b(·, ·) in (53) are known, but vectors ¯r and ¯s are not exactly known and only their noisy 
+values (i.e., ˆ¯r and ˆ¯s) are available. To construct the objective function, we introduce an error vector as
+¯δ = ¯b(ˆ¯r, ˆ¯s) −¯A(ˆ¯r, ˆ¯s)¯t
+(62)
+Applying a ﬁrst-order Taylor series expansion of ¯b(ˆ¯r, ˆ¯s) and ¯A(ˆ¯r, ˆ¯s) around ¯r and ¯s gives
+¯b(ˆ¯r, ˆ¯s) ≈¯b(¯r, ¯s) + ¯B1(¯r, ¯s)¯ε + ¯B2(¯r, ¯s)¯ξ
+(63)
+¯A(ˆ¯r, ˆ¯s) ≈¯A(¯r, ¯s) +
+2MD
+
+j=1
+< ¯ε > j ˙¯A1 j(¯r, ¯s) +
+6(M+1)
+
+j=1
+< ¯ξ > j ˙¯A2 j(¯r, ¯s)
+(64)
+where ¯B1(¯r, ¯s) = ∂¯b(¯r,¯s)
+∂¯rT
+, ¯B2(¯r, ¯s) = ∂¯b(¯r,¯s)
+∂¯sT
+, ˙¯A1 j(¯r, ¯s) = ∂¯A(¯r,¯s)
+∂<¯r> j , ˙¯A2 j(¯r, ¯s) = ∂¯A(¯r,¯s)
+∂<¯s> j . Inserting (63) and (64) back into (62) yields
+¯δ = ¯b(ˆ¯r, ˆ¯s) −¯A(ˆ¯r, ˆ¯s)¯t ≈¯C 1(¯t, ¯r, ¯s)¯ε + ¯C 2(¯t, ¯r, ¯s)¯ξ
+(65)
+where
+¯C 1(¯t, ¯r, ¯s) = ¯B1(¯r, ¯s) −[ ˙¯A11(¯r, ¯s)¯t ˙¯A12(¯r, ¯s)¯t ··· ˙¯A1,2MD(¯r, ¯s)¯t]
+(66)
+¯C 2(¯t, ¯r, ¯s) = ¯B2(¯r, ¯s) −[ ˙¯A21(¯r, ¯s)¯t ˙¯A22(¯r, ¯s)¯t ··· ˙¯A2,6(M+1)(¯r, ¯s)¯t]
+(67)
+It follows from (65) that ¯δ is approximately Gaussian distributed with zero mean and the covariance matrix
+ = E[¯δ ¯δ
+T] = ¯C 1(¯t, ¯r, ¯s)P 1( ¯C 1(¯t, ¯r, ¯s))T + ¯C 2(¯t, ¯r, ¯s)P 2( ¯C 2(¯t, ¯r, ¯s))T
+(68)
+Since ¯u and ¯s are to be jointly estimated, we need to introduce an augmented parameter vector as
+˜t = ˜h( ¯u, ¯s) =
+ ¯t
+¯s
+
+=
+ ¯h( ¯u, ¯s)
+¯s
+
+∈R(8D+6(M+1))×1
+(69)
+Then, combining (17), (65) and (68) leads to the following cost function with respect to ˜t
+Jwls(˜t) = ( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s)˜t)TW −1( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s)˜t)
+(70)
+where
+˜b(ˆ¯r, ˆ¯s) =
+
+¯b(ˆ¯r, ˆ¯s)
+ˆ¯s
+
+, ˜A(ˆ¯r, ˆ¯s) =
+
+¯A(ˆ¯r, ˆ¯s)
+O 2MD×6(M+1)
+O 6(M+1)×8D
+I6(M+1)
+
+(71)
+Besides, W −1 is the weighting matrix. According to the WLS criterion, matrix W should be chosen as
+W = E
+
+ ¯δ
+¯ξ
+ ¯δ
+¯ξ
+T
+= ¯C(¯t, ¯r, ¯s)E
+
+ ¯ε
+¯ξ
+ ¯ε
+¯ξ
+T
+( ¯C(¯t, ¯r, ¯s))T =
+⎡
+⎢⎣
+¯C 1(¯t, ¯r, ¯s)P 1( ¯C 1(¯t, ¯r, ¯s))T
++ ¯C 2(¯t, ¯r, ¯s)P 2( ¯C 2(¯t, ¯r, ¯s))T
+¯C 2(¯t, ¯r, ¯s)P 2
+P 2( ¯C 2(¯t, ¯r, ¯s))T
+P 2
+⎤
+⎥⎦
+(72)
+
+
+===== PDF PAGE 11 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+189
+where
+¯C(¯t, ¯r, ¯s) =
+
+¯C 1(¯t, ¯r, ¯s)
+¯C 2(¯t, ¯r, ¯s)
+O 6(M+1)×2MD
+I6(M+1)
+
+(73)
+On the other hand, it can be checked from (57) and (58) that vector ˜t satisﬁes the constraints
+
+˜t
+T ˜1d ˜t = 0
+˜t
+T ˜2d ˜t = 0
+(1 ≤d ≤D)
+(74)
+where ˜1d = blkdiag[ ¯1d O 6(M+1)×6(M+1)] and ˜2d = blkdiag[ ¯2d O 6(M+1)×6(M+1)].
+Putting (70) and (74) together, we can formulate the following constrained minimization problem
+⎧
+⎪⎨
+⎪⎩
+min˜t Jwls(˜t) = min˜t{( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s)˜t)TW −1( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s)˜t)}
+s.t.
+˜t
+T ˜1d ˜t = 0
+(1 ≤d ≤D)
+˜t
+T ˜2d ˜t = 0
+(1 ≤d ≤D)
+(75)
+Clearly, problem (75) is actually a quadratic programming with 2D quadratic indeﬁnite equality constraints. It is noteworthy that 
+the weighting matrix W depends on the unknown parameter ˜t, so strictly speaking, it should be denoted as W (˜t). For the sake of 
+convenience, we denote it by W and recursively update it in the proposed method.
+In the constrained problem (75), ˜A(ˆ¯r, ˆ¯s) has full column rank, which implies that the objective function Jwls(˜t) is convex. However, all 
+the equality constraints are homogeneous, indeﬁnite and non-convex, so the main diﬃculty focuses on the constraints. We would like to 
+make the non-convex constraints become a set of linear equality constraints. As a result, a new convex programming can be obtained as 
+an approximation of (75). A detailed description of the proposed procedure is shown in the next subsection.
+5.4. Proposed iteration algorithm
+In this subsection, an iterative approximation method is developed to solve the constrained minimization problem (75). The new 
+iterative technique follows the idea given in [26].
+For each homogeneous quadratic equality constraint in (75), if one of the variable ˜t is replaced with its last iteration’s estimate, then 
+the non-convex constraints become linear and convex. Speciﬁcally, in the k + 1th iteration we need to solve the following approximate 
+problem
+⎧
+⎪⎨
+⎪⎩
+min˜t Jwls(˜t) = min˜t{( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s)˜t)TW −1( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s)˜t)}
+s.t.
+˜t
+T ˜1dˆ˜t(k) = 0
+(1 ≤d ≤D)
+˜t
+T ˜2dˆ˜t(k) = 0
+(1 ≤d ≤D)
+(76)
+where ˆ˜t(k) is the estimation result in the kth iteration. An important advantage of the approximate problem (76) lies in that its optimal 
+solution can be analytically expressed. Here, we present a closed-form solution by means of matrix Q R decomposition, which can be 
+implemented by computationally eﬃcient algorithm [40]. Please see Proposition 3.
+Proposition 3. Assume that ˆ¯t(k) is the vector composed of the ﬁrst 8D elements of ˆ˜t(k). Deﬁne the matrix
+G(ˆ¯t(k)) = [ ¯11ˆ¯t(k) ¯12ˆ¯t(k) ··· ¯1Dˆ¯t(k)
+¯21ˆ¯t(k) ¯22ˆ¯t(k) ··· ¯2Dˆ¯t(k) ]
+(77)
+Performing Q R decomposition on G(ˆ¯t(k)) results in
+G(ˆ¯t(k)) = Q (k)R(k) = [ Q 1(k) Q 2(k)]
+
+R1(k)
+O 6D×2D
+
+(78)
+where Q (k) = [ Q 1(k) Q 2(k)] is a 8D × 8D orthogonal matrix; R(k) =
+
+R1(k)
+O 6D×2D
+
+and R1(k) is a 2D × 2D nonsingular upper triangular matrix. 
+Further, let us deﬁne ˜Q 2(k) = blkdiag[ Q 2(k) I6(M+1)×6(M+1)]. Then, the optimal solution to (76) is given by
+ˆ˜topt(k + 1) = ˜Q 2(k)(( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) ˜Q 2(k))−1( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(79)
+Proof. Deﬁne a matrix
+˜G(ˆ˜t(k)) = [ ˜11ˆ˜t(k) ˜12ˆ˜t(k) ··· ˜1Dˆ˜t(k)
+˜21ˆ˜t(k) ˜22ˆ˜t(k) ··· ˜2Dˆ˜t(k) ]
+(80)
+It follows from (77) and (80) that
+˜G(ˆ˜t(k)) =
+
+¯11ˆ¯t(k)
+¯12ˆ¯t(k)
+···
+¯1Dˆ¯t(k)
+¯21ˆ¯t(k)
+¯22ˆ¯t(k)
+···
+¯2Dˆ¯t(k)
+O 6(M+1)×1
+O 6(M+1)×1
+···
+O 6(M+1)×1
+O 6(M+1)×1
+O 6(M+1)×1
+···
+O 6(M+1)×1
+
+=
+
+G(ˆ¯t(k))
+O 6(M+1)×2D
+
+(81)
+
+
+===== PDF PAGE 12 =====
+190
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+Using (78) and (81), the Q R decomposition of ˜G(ˆ˜t(k)) can be expressed as
+˜G(ˆ˜t(k)) =
+
+Q 1(k)
+Q 2(k)
+O 8D×6(M+1)
+O 6(M+1)×2D
+O 6(M+1)×6D
+I6(M+1)×6(M+1)
+⎡
+⎣
+R1(k)
+O 6D×2D
+O 6(M+1)×2D
+⎤
+⎦
+(82)
+Assume that ˆ˜tfs(k + 1) is an arbitrary feasible solution for (76). Then, it can be observed from the equality constraints in (76) that 
+ˆ˜tfs(k + 1) must belong to the null space of ( ˜G(ˆ˜t(k)))T. As a consequence, we can express ˆ˜tfs(k + 1) as
+ˆ˜tfs(k + 1) =
+
+Q 2(k)
+O 8D×6(M+1)
+O 6(M+1)×6D
+I6(M+1)×6(M+1)
+
+ˆ˜x(k + 1) = ˜Q 2(k)ˆ˜x(k + 1)
+(83)
+where ˆ˜x(k + 1) is an arbitrary (6(M + 1) + 6D) × 1 vector. Substituting (83) into the cost function in (76), an unconstrained minimization 
+problem is formulated as follows:
+min
+ˆ˜x(k+1)
+{( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s) ˜Q 2(k)ˆ˜x(k + 1))TW −1( ˜b(ˆ¯r, ˆ¯s) −˜A(ˆ¯r, ˆ¯s) ˜Q 2(k)ˆ˜x(k + 1))}
+(84)
+Clearly, the optimal solution of ˆ˜x(k + 1) is given by
+ˆ˜xopt(k + 1) = (( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) ˜Q 2(k))−1( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(85)
+which together with (83) yields (79). At this point, the proof is completed.
+2
+Although the solution to problem (76) is an approximation of the optimal solution of the original problem (75), it incorporates 2D
+approximate linear equality constraints to improve the estimation accuracy. Intuitively, the optimal solution given in (79) can be directly 
+used as the k + 1th iteration’s value. However, this update strategy requires slight modiﬁcation to avoid possible divergence problem. We 
+would like to employ the update procedure adopted in [26], which determines the current iteration’s value using the linear combination 
+of the solution to problem (76) and the estimation result in the last iteration. Additionally, since the weighting matrix W is related to ˜t, 
+it should also be updated at each iteration step.
+The detailed description of the proposed ICWLS method is formally outlined in Fig. 2.
+The following remarks concern the presented algorithm described above.
+Remark 10. If the optimization problem is non-convex, it is very important to ﬁnd a proper starting point for arbitrary iterative algorithm. 
+The reason for this is that the initial guess would affect the convergence speed and estimation accuracy. For the proposed algorithm, we 
+need to choose an appropriate initial estimate for ˜t through the least squares (LS) minimization. It can be determined by ignoring the 
+equality constraints and taking the weighting matrix W as identity matrix. As a consequence, we have
+ˆ˜t(0) = ( ˜A(ˆ¯r, ˆ¯s))† ˜b(ˆ¯r, ˆ¯s) = (( ˜A(ˆ¯r, ˆ¯s))T ˜A(ˆ¯r, ˆ¯s))−1( ˜A(ˆ¯r, ˆ¯s))T ˜b(ˆ¯r, ˆ¯s)
+(86)
+Although this solution is not asymptotically optimal, it is suﬃciently precise as an initial estimate for global convergence. It is worth 
+noting that there is no systematic method of yielding a good starting point so that the algorithm always converges to the global optimum. 
+However, the simulation results in Section 7 demonstrate that using this initial estimate can lead to satisfactory performance.
+Remark 11. It can be observed from Fig. 2 that the updated value in the k + 1th iteration is the linear combination of the solution to 
+problem (76) and the estimation result in the kth iteration. A large number of simulation results demonstrate that as long as w1 is not 
+close to 1, the ﬁnal estimation accuracy is not sensitive to the numerical value of w1. In our simulations, we set w1 = w2 = 0.5.
+Remark 12. Although the weighting matrix W is updated per iteration, its true value cannot be obtained anyway. The reason is that 
+calculating W requires ¯r and ¯s, but they are not available in practice. So we have to update W using ˆ¯r and ˆ¯s, which are subject to noises. 
+Fortunately, the approximation of the weighting matrix has an insigniﬁcant effect on the ﬁnal estimation accuracy. This observation agrees 
+with the ﬁndings in [41–43]. Our simulation results in Section 7 also verify this conclusion.
+Remark 13. Table 3 lists the numerical complexities of the presented method in terms of multiplication operations.
+6. Performance analysis of the proposed ICWLS estimator
+In this section, the theoretical performance analysis of the new estimator is carried out. First, the convergence property of the proposed 
+iterative algorithm is studied. The analysis indicates that if the iterative algorithm converges, then it can provide the optimum solution for 
+the formulated non-convex minimization problem. Subsequently, an explicit expression for the estimation MSE is derived. Moreover, we 
+prove analytically that the proposed solution can reach the corresponding CRB accuracy under mild conditions.
+
+
+===== PDF PAGE 13 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+191
+Fig. 2. Logical ﬂowchart of the proposed ICWLS method.
+Table 3
+Computational complexity of presented method.
+Stage
+Computational unit
+Computational complexity of each unit
+Total computational complexity
+Initialization and preparation stage
+˜b(ˆ¯r, ˆ¯s)
+2MD + 12M
+Kiter
+⎛
+⎜⎜⎜⎜⎜⎜⎜⎜⎜⎜⎜⎜⎜⎜⎝
+16M3D3 + 72(M + 1)2MD
++24(M + 1)M2D2 + 24M2D3
++72(M + 1)MD2 + 32M2D
++(6(M + 1) + 2MD)2
++(6(M + 1) + 6D)2
++96(M + 1)MD + 168MD3
++12MD2 + 12(M + 1)
++48D2 + 16D + O(32D3)
++O((6(M + 1) + 6D)3)
++O((6(M + 1) + 2MD)3)
+⎞
+⎟⎟⎟⎟⎟⎟⎟⎟⎟⎟⎟⎟⎟⎟⎠
++147MD + (6(M + 1) + 8D)2
++18M + O((6(M + 1) + 8D)3)
+(where Kiter denotes the iteration numbers)
+˜A(ˆ¯r, ˆ¯s)
+MD + 6M
+ˆ˜t(0)
+144MD + (6(M + 1) + 8D)2
++O((6(M + 1) + 8D)3)
+Iteration stage
+Q R decomposition on G(ˆ¯t(k))
+O(32D3)
+¯C 1(¯t, ¯r, ¯s) and ¯C 1(¯t, ¯r, ¯s)
+32M2D + 96(M + 1)MD
+W and W −1
+16M3D3 + 72(M + 1)2MD
++24(M + 1)M2D2
++O((6(M + 1) + 2MD)3)
+ˆ˜topt(k + 1)
+24M2D3 + 168MD3 + 72(M + 1)MD2
++12MD2 + 48D2 + (6(M + 1) + 2MD)2
++(6(M + 1) + 6D)2 + O((6(M + 1) + 6D)3)
+ˆ˜t(k + 1)
+12(M + 1) + 16D
+6.1. Convergence analysis of the proposed ICWLS estimator
+This subsection is devoted to the convergence analysis of the presented ICWLS method. It should be stressed that based on existing 
+mathematical tools, we are unable to provide a rigorous proof for whether the iteration procedure converges or not. This is because the 
+optimization problem is non-convex. Consequently, the analysis has to be simpliﬁed to prove that if the iterative algorithm converges, 
+then it must converge to the optimum solution to (75).
+The convergence analysis begins with the second-order suﬃcient condition for the optimal solution to (75). It is formally stated below.
+
+
+===== PDF PAGE 14 =====
+192
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+Lemma 1. Assume that ˆ˜topt, {λ1d}1≤d≤D and {λ2d}1≤d≤D satisfy
+( ˜A(ˆ¯r, ˆ¯s))TW −1( ˜A(ˆ¯r, ˆ¯s)ˆ˜topt −˜b(ˆ¯r, ˆ¯s)) +
+D
+
+d=1
+λ1d
+2
+˜1dˆ˜topt +
+D
+
+d=1
+λ2d
+2
+˜2dˆ˜topt = O (8D+6(M+1))×1
+(87)
+ˆ˜t
+T
+opt ˜1dˆ˜topt = 0, ˆ˜t
+T
+opt ˜2dˆ˜topt = 0
+(1 ≤d ≤D)
+(88)
+Moreover, it follows
+yT
+
+( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) +
+D
+
+d=1
+λ1d
+2
+˜1d +
+D
+
+d=1
+λ2d
+2
+˜2d
+
+y > 0,
+(89)
+for any vector y belonging to the null space of ( ˜G(ˆ˜topt))T. Then, vector ˆ˜topt is the strictly optimal solution to (75).
+The proof of Lemma 1 can be found in [44]. It is worth pointing out that {λ1d}1≤d≤D and {λ2d}1≤d≤D are called Lagrange multipliers. To proceed 
+further, we need to describe the ﬁrst-order necessary condition for the optimum solution to (76).
+Lemma 2. Assuming that the optimal solution to (76) is denoted by ˆ˜topt(k + 1), there exist {λ1d(k + 1)}1≤d≤D and {λ2d(k + 1)}1≤d≤D such that
+( ˜A(ˆ¯r, ˆ¯s))TW −1( ˜A(ˆ¯r, ˆ¯s)ˆ˜topt(k + 1) −˜b(ˆ¯r, ˆ¯s)) +
+D
+
+d=1
+λ1d(k + 1)
+2
+˜1dˆ˜t(k) +
+D
+
+d=1
+λ2d(k + 1)
+2
+˜2dˆ˜t(k) = O (8D+6(M+1))×1
+(90)
+The proof of Lemma 2 is also shown in [44]. Note that {λ1d(k +1)}1≤d≤D and {λ2d(k +1)}1≤d≤D are also termed as Lagrange multipliers. 
+Next, we would like to prove that if the iteration sequence {ˆ˜topt(k + 1)}0≤k≤+∞converges, it will converge to ˆ˜topt, which is the strictly 
+optimal solution to (75). This conclusion can be proved by the following three propositions.
+Proposition 4. Assuming that the sequence {ˆ˜t(k + 1)}0≤k≤+∞converges to ˆ˜tc, the sequence {ˆ˜topt(k + 1)}0≤k≤+∞also converges to ˆ˜tc.
+Proof. It follows from the proposed ICWLS method in Fig. 2 that
+ˆ˜topt(k + 1) =
+1
+w2
+ˆ˜t(k + 1) −w1
+w2
+ˆ˜t(k) ⇒
+lim
+k→+∞
+ˆ˜topt(k + 1) =
+1
+w2
+lim
+k→+∞
+ˆ˜t(k + 1) −w1
+w2
+lim
+k→+∞
+ˆ˜t(k) = 1 −w1
+w2
+ˆ˜tc = ˆ˜tc
+(91)
+Then, the proof is completed.
+2
+Proposition 5. If the sequence {ˆ˜t(k + 1)}0≤k≤+∞converges, then the sequences {λ1d(k + 1)}0≤k≤+∞and {λ2d(k + 1)}0≤k≤+∞also converge for 
+arbitrary 1 ≤d ≤D.
+Proof. From (80) and (90), we have
+ˆ˜topt(k + 1) = (( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s))−1
+
+( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s) −1
+2
+˜G(ˆ˜t(k))λ(k + 1)
+
+(92)
+where λ(k + 1) = [ λ11(k + 1)λ12(k + 1)···λ1D(k + 1)
+λ21(k + 1)λ22(k + 1)···λ2D(k + 1) ]T. Inserting (92) into the equality constraints 
+in (76) and using some simple algebraic manipulations yields
+λ(k + 1) = 2(( ˜G(ˆ˜t(k)))T(( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s))−1 ˜G(ˆ˜t(k)))−1( ˜G(ˆ˜t(k)))T(( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s))−1( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(93)
+It can be readily proved that if {ˆ˜t(k + 1)}0≤k≤+∞converges to ˆ˜tc, then { ˜G(ˆ˜t(k))}1≤k≤+∞will converge to ˜G(ˆ˜tc). As a result, we have
+lim
+k→+∞λ(k + 1) = 2(( ˜G(ˆ˜tc))T(( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s))−1 ˜G(ˆ˜tc))−1( ˜G(ˆ˜tc))T(( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s))−1( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(94)
+which implies that the sequences {λ1d(k + 1)}0≤k≤+∞and {λ2d(k + 1)}0≤k≤+∞converge for arbitrary 1 ≤d ≤D. Consequently, the result 
+is proved.
+2
+Proposition 6. If the sequence {ˆ˜t(k + 1)}0≤k≤+∞converges to ˆ˜tc, then ˆ˜tc = ˆ˜topt is the strictly optimal solution to (75).
+Proof. Since {ˆ˜t(k + 1)}0≤k≤+∞converges, it follows from Proposition 5 that, {λ1d(k + 1)}0≤k≤+∞and {λ2d(k + 1)}0≤k≤+∞also converge for 
+arbitrary 1 ≤d ≤D. Let limk→+∞ˆ˜t(k + 1) = ˆ˜tc, limk→+∞λ1d(k + 1) = λ1d,c and limk→+∞λ2d(k + 1) = λ2d,c. From Proposition 4, we have 
+limk→+∞ˆ˜topt(k + 1) = limk→+∞ˆ˜t(k + 1) = ˆ˜tc. Then, taking the limit on both sides of (90) produces
+
+
+===== PDF PAGE 15 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+193
+( ˜A(ˆ¯r, ˆ¯s))TW −1( ˜A(ˆ¯r, ˆ¯s)ˆ˜tc −˜b(ˆ¯r, ˆ¯s)) +
+D
+
+d=1
+λ1d,c
+2
+˜1dˆ˜tc +
+D
+
+d=1
+λ2d,c
+2
+˜2dˆ˜tc = O (8D+6(M+1))×1
+⇒˜Q
+T
+2,c
+
+( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) +
+D
+
+d=1
+λ1d,c
+2
+˜1d +
+D
+
+d=1
+λ2d,c
+2
+˜2d
+
+ˆ˜tc = ˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(95)
+Besides, it can be veriﬁed from the equality constraints in (76) that
+
+limk→+∞(ˆ˜topt(k + 1))T ˜1dˆ˜t(k) = ˆ˜tT
+c ˜1dˆ˜tc = 0
+(1 ≤d ≤D)
+limk→+∞(ˆ˜topt(k + 1))T ˜2dˆ˜t(k) = ˆ˜tT
+c ˜2dˆ˜tc = 0
+(1 ≤d ≤D)
+(96)
+On the other hand, combining (79) and (85) results in
+( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s) = ( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) ˜Q 2(k)ˆ˜xopt(k + 1) = ( ˜Q 2(k))T( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s)ˆ˜topt(k + 1)
+(97)
+Taking the limit on both sides of (97), we arrive at
+˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s)ˆ˜tc = ˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(98)
+where ˜Q 2,c = limk→+∞˜Q 2(k). Note that ˆ˜tc belongs to the null space of ( ˜G(ˆ˜tc))T. Therefore, ˆ˜tc can be expressed as ˆ˜tc = ˜Q 2,cˆ˜xc, where 
+ˆ˜xc is a (6(M + 1) + 6D) × 1 non-zero vector. Putting this equation into (98) and (95) yields
+˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) ˜Q 2,cˆ˜xc = ˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s)
+(99)
+and
+˜Q
+T
+2,c
+
+( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) +
+D
+
+d=1
+λ1d,c
+2
+˜1d +
+D
+
+d=1
+λ2d,c
+2
+˜2d
+
+˜Q 2,cˆ˜xc = ˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜b(ˆ¯r, ˆ¯s),
+(100)
+respectively. Comparing (99) with (100) and using the fact that ˜Q 2,c has full column rank, we conclude that
+˜Q
+T
+2,c
+
+( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) +
+D
+
+d=1
+λ1d,c
+2
+˜1d +
+D
+
+d=1
+λ2d,c
+2
+˜2d
+
+˜Q 2,c = ˜Q
+T
+2,c( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) ˜Q 2,c > O,
+(101)
+which implies
+yT
+c
+
+( ˜A(ˆ¯r, ˆ¯s))TW −1 ˜A(ˆ¯r, ˆ¯s) +
+D
+
+d=1
+λ1d,c
+2
+˜1d +
+D
+
+d=1
+λ2d,c
+2
+˜2d
+
+yc > 0,
+(102)
+for any vector yc belonging to the null space of ( ˜G(ˆ˜tc))T. Combining (95), (96) and (102) leads to the fact that ˆ˜tc = ˆ˜topt is the strictly 
+optimal solution to (75). Then, the proof is completed.
+2
+Remark 14. Proposition 6 reveals that if the proposed ICWLS method converges, then it will provide the optimal solution for (75). However, 
+there is no guarantee at all that the iterative algorithm will always converge. Fortunately, the simulation results in Section 7 demonstrate 
+that in most cases the convergence can be achieved after a few iterations.
+6.2. Estimation MSE of the proposed ICWLS estimator
+This subsection aims at deducing the analytical expression for the MSE of the proposed ICWLS estimator based on the ﬁrst-order 
+perturbation theory. Moreover, the asymptotic optimum performance of the new method is also proved.
+It is assumed that the iterative algorithm described above converges to ˆ˜tc, which is also the optimal solution of (75). Then, we need to 
+derive the estimation MSE of ˆ˜tc. Let the estimation error of ˆ˜tc be denoted as ˜tc. Applying the ﬁrst-order perturbation analysis, ˜tc can 
+be approximately expressed as a linear function of the measurement noise 
+ ¯ε
+¯ξ
+
+. Indeed, by taking the ﬁrst-order approximation, ˜tc is 
+the optimal solution for the following constrained minimization problem
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+min˜t gwls(˜t) = min˜t
+
+˜A(¯r, ¯s)˜t −¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+T
+W −1
+
+˜A(¯r, ¯s)˜t −¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
+s.t.
+˜t
+T ˜1d ˜t = 0
+(1 ≤d ≤D)
+˜t
+T ˜2d ˜t = 0
+(1 ≤d ≤D)
+(103)
+
+
+===== PDF PAGE 16 =====
+194
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+Applying the Lagrange multiplier method, the optimum solution to (103) is equal to
+˜tc =
+
+I8D+6(M+1) −(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1 ˜G(˜t)
+×(( ˜G(˜t))T(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1 ˜G(˜t))−1( ˜G(˜t))T
+
+(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1( ˜A(¯r, ¯s))TW −1 ¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
+(104)
+where
+˜G(˜t) = [ ˜11 ˜t ˜12 ˜t ··· ˜1D ˜t
+˜21 ˜t ˜22 ˜t ··· ˜2D ˜t ]
+=
+
+¯11 ¯t
+¯12 ¯t
+···
+¯1D ¯t
+¯21 ¯t
+¯22 ¯t
+···
+¯2D ¯t
+O 6(M+1)×1
+O 6(M+1)×1
+···
+O 6(M+1)×1
+O 6(M+1)×1
+O 6(M+1)×1
+···
+O 6(M+1)×1
+
+,
+(105)
+which is of full column rank, i.e., rank[ ˜G(˜t)] = 2D. Appendix A gives the detailed derivation of (104). It can be seen from (104) that ˆ˜tc is 
+an approximately unbiased estimate of ˜t, and moreover, the estimation MSE of ˆ˜tc is given by
+MSE(ˆ˜tc) = E[˜tc(˜tc)T] = ( ˜E(¯r, ¯s))−1/2Π⊥[( ˜E(¯r, ¯s))−1/2 ˜G(˜t)]( ˜E(¯r, ¯s))−1/2
+(106)
+where ˜E(¯r, ¯s) = ( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s).
+Two remarks are drawn in the sequel.
+Remark 15. From (106), we have MSE(ˆ˜tc) ˜G(˜t) = O (8D+6(M+1))×2D, which means that MSE(ˆ˜tc) is a rank-deﬁcient matrix. This property is 
+due to the equation constraints in (75).
+Remark 16. Combining (71) and (72) and applying matrix identities (III) and (IV) yield an alternative expression for ˜E(¯r, ¯s) as follows:
+˜E(¯r, ¯s) =
+
+( ¯A(¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯A(¯r, ¯s)
+−( ¯A(¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+−( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯A(¯r, ¯s)
+P −1
+2
++ ( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+
+(107)
+The derivation of (107) can be found in Appendix B. It is noteworthy that (107) is useful in the proof of Proposition 7 given below.
+Next, we derive the theoretical MSE of the joint estimate 
+
+ˆ¯uc
+ˆ¯sc
+
+. Let 
+  ¯uc
+¯sc
+
+denote its estimation error. Then, it readily follows from 
+the proposed ICWLS method in Fig. 2 that
+  ¯uc
+¯sc
+
+=
+
+I D ⊗[I6 O 6×2]
+1D×1 ⊗J
+O 6(M+1)×8D
+I6(M+1)
+
+˜tc
+(108)
+which immediately gives
+MSE
+
+
+ˆ¯uc
+ˆ¯sc
+
+=
+
+I D ⊗[I6 O 6×2]
+1D×1 ⊗J
+O 6(M+1)×8D
+I6(M+1)
+
+( ˜E(¯r, ¯s))−1/2Π⊥[( ˜E(¯r, ¯s))−1/2 ˜G(˜t)]( ˜E(¯r, ¯s))−1/2
+⎡
+⎢⎣
+I D ⊗
+
+I6
+O 2×6
+
+O 8D×6(M+1)
+11×D ⊗J T
+I6(M+1)
+⎤
+⎥⎦
+(109)
+From (109), the MSEs of the estimates ˆ¯uc and ˆ¯sc can be, respectively, obtained. Proposition 7 shows that the solution 
+
+ˆ¯uc
+ˆ¯sc
+
+is proved 
+to reach the CRB accuracy under moderate noise level.
+Proposition 7. Under the ﬁrst-order approximation, the relation MSE
+
+
+ˆ¯uc
+ˆ¯sc
+
+= CRB
+ ¯u
+¯s
+
+holds.
+The proof of Proposition 7 is tediously long and we describe it in Appendix C. The result in Proposition 7 reveals that the proposed 
+estimator is asymptotically eﬃcient. Note that in contrast to some existing analysis approaches, our theoretical analysis is carried out with 
+an equality constraint and makes use of the property of the orthogonal projection matrix. More importantly, it is performed in a general 
+mathematical framework, which is not limited to a speciﬁc signal metric. In Section 7, some simulations are conducted to support the 
+theoretical development as well as the good performance of the new algorithm.
+7. Numerical experiment and result analysis
+This section presents a set of Monte Carlo simulations to examine the behavior of the proposed ICWLS localization method. The root-
+mean-square-error (RMSE) and radius of circular error probability (CEP) are chosen as performance metrics. All the simulation results are 
+averaged over 5000 independent noise realizations. The performance of the proposed algorithm is compared with the TSWLS algorithms, 
+the CWLS algorithm, the CTLS algorithm and the Taylor-series iterative algorithm. Additionally, the CRBs derived in Section 4 are also 
+used as an important performance benchmark. It is noteworthy that although the proposed algorithm follows the idea in [26], we can not 
+compare our results with those of [26]. The reason is that the algorithm presented in [26] does not take the sensor position and velocity 
+errors into account, and moreover, it considers single-source scenario.
+
+
+===== PDF PAGE 17 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+195
+Table 4
+True positions (in meters) and velocities (in meters/second) of sensors 
+for the ﬁrst set of simulations.
+Sensor no.m
+s(p)
+m
+s(v)
+m
+1
+2000
+1500
+1200
+10
+25
+−15
+2
+1800
+2000
+−2400
+20
+15
+25
+3
+2500
+−1800
+1700
+−20
+−30
+25
+4
+−1900
+2300
+1400
+−10
+15
+−20
+5
+2100
+−1700
+−1100
+−10
+25
+15
+6
+−1600
+−1900
+2200
+20
+−25
+−30
+7
+−2400
+1600
+−2300
+15
+−10
+20
+In the ﬁrst set of simulations, we would like to show that the proposed ICWLS algorithm has good convergence property. Let us 
+consider a 3-D localization scenario consisting of 7 moving sensors whose true positions and velocities are listed in Table 4. The sensors 
+are used to locate 2 disjoint sources positioned at u(p)
+1
+= [5500 7500 4500]T (m) and u(p)
+2
+= [8500 7500 6500]T (m) with velocities 
+u(v)
+1
+= [10 −25 30]T (m/s) and u(v)
+2
+= [−20 15 30]T (m/s). The RDOA and RDROA measurements from the target sources are generated by 
+adding to the true values zero-mean Gaussian noise with covariance matrix P 1,d = σ 2
+1 blkdiag[T 0.012T ](d = 1, 2), where σ1 is ﬁxed at 3 
+and T is an M × M matrix with 1 in the diagonal elements and 0.5 otherwise. The RDOA/RDROA measurements from different sources 
+are independent of each other in the simulation study. On the other hand, the noisy sensor locations are created by adding to the true 
+values zero-mean Gaussian noise with covariance matrix P 2 = σ 2
+2 (I M+1 ⊗blkdiag[I3 0.012I3]), where σ2 is set to 10, which is a typical 
+value in real-life applications [27–35]. Fig. 3 shows the convergence curves of the proposed iterative algorithm. We perform 6 Monte Carlo 
+experiments. The source position estimates versus iteration number in each experiment are plotted in Figs. 3(a)-(f). Moreover, the globally 
+optimal solutions for source positions, which are obtained by ﬁne grid search, are also displayed in these ﬁgures. Furthermore, Fig. 4(a)-(d) 
+depicts the scatter plots of the source location estimates obtained from the proposed algorithm through 2000 independent experiments. 
+The radius of CEP for the new algorithm is also shown in these ﬁgures.
+From Figs. 3 and 4 we can draw the following conclusions:
+(1) From the initial guess given in Remark 10, the proposed estimator can lead to the globally optimum solution in most cases. Moreover, 
+it requires only 10 iterations to achieve convergence. Therefore, the effectiveness of the theoretical derivation carried out in Subsection 6.1
+can be conﬁrmed.
+(2) The optimal solutions from different runs are not the same because of the different measurement errors.
+(3) Comparing Fig. 4(a) with Fig. 4(c) and comparing Fig. 4(b) with Fig. 4(d) reveal that the radius of CEP for the second source is 
+greater than that for the ﬁrst source. This is due to the fact that the localization accuracy decreases when the emitter is far away from 
+the sensors.
+In the second set of simulations, the newly developed algorithm is compared with the TSWLS algorithms in [33,34], the CWLS algorithm 
+in [30], the CTLS algorithm in [45] and the Taylor-series iterative algorithm in terms of estimation RMSE. Note that although the CWLS 
+algorithm in [30] considers the localization of a single source only, it can be extended into multiple-source scenario. In addition, the 
+Taylor-series iterative algorithm requires an initial solution guess. For a comprehensive comparison, this iterative algorithm is initialized 
+in two ways: (1) the initial guess is chosen randomly and (2) the initial solution is equal to the true value. The simulation parameters are 
+the same as those for the previous experiments, except that the covariance matrices P 1,d(d = 1, 2) and P 2 are changed. First, we ﬁx P 2 =
+I M+1 ⊗blkdiag[202I3 0.12I3] and set P 1,d = σ 2
+1 blkdiag[T 0.012T ](d = 1, 2), where σ1 varies from 1 to 10. Figs. 5(a)-(d) plot the RMSEs of 
+position estimation for multiple sources, velocity estimation for multiple sources, sensor position estimation and sensor velocity estimation 
+as a function of σ1, respectively. Next, we choose P 1,d = blkdiag[T 0.012T ](d = 1, 2) and set P 2 = σ 2
+2 (I M+1 ⊗blkdiag[62I3 0.062I3]), 
+where σ2 ranges from 1 to 10. Figs. 6(a)-(d) illustrate the RMSEs of position estimation for multiple sources, velocity estimation for 
+multiple sources, sensor position estimation and sensor velocity estimation with respect to σ2, respectively. It is worthy to point out that 
+the magnitude of sensor position and velocity errors depends on σ2, which varies in real-life applications. Here, σ2 is chosen according to 
+the setting in [27–35] such that its value can match with the most practical scenarios. On the other hand, it should be stressed that all 
+the analytical results and localization method presented in this paper are still valid for any forms of error covariance matrices.
+From Figs. 5 and 6 we can draw the following conclusions:
+(1) The proposed ICWLS solution can achieve the corresponding CRB under a moderate noise level. The reason is that the new estimator 
+is formed based on the WLS criterion, which is able to provide an asymptotically eﬃcient solution under Gaussian noise assumption. In 
+Subsection 6.2 we prove analytically that the presented method can reach the CRB accuracy for Gaussian data model at moderate noise 
+level. Therefore, the simulation results support and corroborate the theoretical development in Subsection 6.2.
+(2) The presented solution has a higher noise threshold than the other methods, because of two reasons. First, the weighting matrix 
+can be updated per iteration in the proposed estimator. As a result, when the noise level becomes large the asymptotic performance can 
+be improved. Second, the proposed method has the advantage that there is no need to select step-size because the optimal solution in 
+closed-form is available for each iteration. Indeed, when the step-size is badly chosen, it will lead to divergence. Fortunately, this problem 
+does not exist in the new method.
+(3) The Taylor-series method also yields asymptotically eﬃcient solutions if it is initialized with the true value. However, when the 
+initial guesses of the Taylor-series method are randomly generated, it departs from the CRB earlier than the other methods, including the 
+TSWLS method. It is in fact diﬃcult to make an initial guess close to the true value for the Taylor-series method because the pseudo-linear 
+vector equation is not available for this method and the number of unknowns is large in the presence of sensor position and velocity 
+uncertainties.
+(4) The estimation performance of the CWLS method in [30] is nearly the same as that of the CTLS method in [45]. This ﬁnding is 
+reasonable since the latter is the extended version of the former in multiple-source localization scenario.
+(5) The TSWLS algorithm breaks away from the CRB earlier than the CWLS method, which is consistent with the observation in [30]. 
+The likely reason for this is that the TSWLS algorithm may generate complex values when ﬁnding the square root in its second stage. 
+However, the TSWLS algorithm is more computationally eﬃcient and does not require initialization and iteration.
+
+
+===== PDF PAGE 18 =====
+196
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+(a) Convergence curve of the x-coordinate for the ﬁrst source.
+(b) Convergence curve of the y-coordinate for the ﬁrst source.
+(c) Convergence curve of the z-coordinate for the ﬁrst source.
+(d) Convergence curve of the x-coordinate for the second source.
+(e) Convergence curve of the y-coordinate for the second source.
+(f) Convergence curve of the z-coordinate for the second source.
+Fig. 3. Convergence curves of the proposed iterative algorithm.
+
+
+===== PDF PAGE 19 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+197
+(a) Position estimation results in the x-y plane for the ﬁrst source.
+(b) Position estimation results in the y-z plane for the ﬁrst source.
+(c) Position estimation results in the x-y plane for the second source.
+(d) Position estimation results in the y-z plane for the second source.
+Fig. 4. Scatter plots of the source location estimates obtained from the proposed algorithm.
+The third set of simulations is conducted to verify that cooperation positioning for multiple disjoint sources can lead to considerable 
+performance gain compared to decoupled localization. It should be pointed out that we can also apply the proposed ICWLS algorithm to 
+independently locate the sources after some slight modiﬁcations. Thus, the improvement in estimation RMSE due to joint localization can 
+be observed based on the new method. In addition, the TSWLS algorithm in [27] and the CWLS algorithm in [25] are also implemented for 
+comparison. Both the two algorithms are developed for single-source situation and, hence, they can be used as benchmarks to show per-
+formance improvement. The simulation scenario has an array of 7 moving sensors and their nominal positions and velocities are tabulated 
+in Table 5. The sensors are used to locate 3 disjoint sources, which are ﬁxed at u(p)
+1
+= [7000 7000 3000]T (m), u(p)
+2
+= [8000 8000 4000]T
+(m) and u(p)
+3
+= [9000 9000 5000]T (m). Their velocities are u(v)
+1
+= [15 −20 25]T (m/s), u(v)
+2
+= [−25 10 25]T (m/s) and u(v)
+3
+= [15 10 −15]T
+(m/s). Likewise, the RDOA and RDROA measurements are produced by adding to the true values zero-mean Gaussian noise with covariance 
+matrix {P 1,d}1≤d≤3. Moreover, the RDOA/RDROA measurements from different sources are independent of each other. The erroneous sensor 
+positions and velocities are generated in a similar way using covariance matrix P 2. First, we choose P 2 = I M+1 ⊗blkdiag[152I3 0.22I3]
+and set P 1,d = σ 2
+1 blkdiag[T 0.012T ](d = 1, 2, 3), where σ1 varies from 1 to 10. Figs. 7(a)-(f) display the RMSEs of location estimation 
+versus σ1 for each source. Next, we ﬁx P 1,d = blkdiag[0.22T 0.0022T ](d = 1, 2, 3) and set P 2 = σ 2
+2 (I M+1 ⊗blkdiag[22I3 0.022I3]), where 
+σ2 ranges from 1 to 10. Figs. 8(a)-(f) plot the RMSEs of location estimation as a function of σ2 for each source.
+From Figs. 7 and 8 we can draw the following conclusions:
+(1) The performance gain due to joint localization is considerable.
+(2) The RMSE gap becomes more and more noticeable when σ1 is small and/or σ2 is large. This is because under these conditions, 
+the sensor position and velocity errors dominate the performance and then the advantage of cooperative positioning over decoupled 
+localization becomes obvious.
+(3) The estimation RMSE increases linearly with the increase of σ2. Hence, the uncertainties in sensor position and velocity should be 
+eliminated as much as possible to improve the localization accuracy.
+
+
+===== PDF PAGE 20 =====
+198
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+(a) RMSE of position estimation for multiple sources versus σ1.
+(b) RMSE of velocity estimation for multiple sources versus σ1.
+(c) RMSE of sensor position estimation versus σ1.
+(d) RMSE of sensor velocity estimation versus σ1.
+Fig. 5. RMSE of source and sensor location estimation versus σ1.
+Table 5
+True positions (in meters) and velocities (in meters/second) of sensors 
+for the third set of simulations.
+Sensor no. m
+s(p)
+m
+s(v)
+m
+1
+2200
+1800
+1400
+15
+20
+−10
+2
+1900
+2100
+−1200
+25
+15
+20
+3
+1500
+−2300
+1900
+−25
+−10
+15
+4
+−1100
+1300
+2400
+−15
+10
+−20
+5
+1800
+−2100
+−1600
+−10
+20
+10
+6
+−1500
+−1200
+1200
+15
+−25
+−20
+7
+−1900
+2300
+−1500
+25
+−15
+15
+8. Conclusion
+This paper concentrates on the problem of locating multiple disjoint sources using TDOAs and FDOAs in the presence of sensor position 
+and velocity uncertainties. The CRB expression for joint estimation of source and sensor positions and velocities is derived under the Gaus-
+sian noise assumption. The performance improvement due to multiple-target cooperative positioning is quantiﬁed based on the obtained 
+CRB. Subsequently, an asymptotically eﬃcient estimator that formulates the problem as a quadratic programming with some indeﬁnite 
+quadratic equality constraints is presented. Similar to [26], we also develop an ICWLS method to obtain the approximate solution of the 
+quadratic programming. But, the proposed procedure can locate multiple disjoint sources in the presence of sensor position and velocity 
+errors. Moreover, the new method is based on matrix Q R decomposition, which can be achieved through some simple and eﬃcient 
+numerical algorithms. Besides, the newly proposed iterative algorithm uses a set of linear equality constraints instead of the quadratic 
+constraints to produce a closed-form solution for each iteration. The theoretical performance of the proposed ICWLS estimator is also de-
+rived. The theoretical study contains two parts: convergence property and estimation MSE. The results indicate that the proposed method, 
+if converges, can provide the optimal solution of the formulated minimization problem. Moreover, its estimation MSE is able to achieve the 
+
+
+===== PDF PAGE 21 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+199
+(a) RMSE of position estimation for multiple sources versus σ2.
+(b) RMSE of velocity estimation for multiple sources versus σ2.
+(c) RMSE of sensor position estimation versus σ2.
+(d) RMSE of sensor velocity estimation versus σ2.
+Fig. 6. RMSE of source and sensor location estimation versus σ2.
+corresponding CRB under moderate noise level. Finally, a set of simulations is included to corroborate the theoretical development in this 
+paper. Simulation results show that the proposed algorithm can yield the globally optimum solution after 10 iterations. The new method 
+has a higher noise threshold than some existing localization methods. Moreover, the performance improvement due to joint localization 
+for multiple sources is remarkable under many parameter settings.
+Declaration of Competing Interest
+The authors declare that there is no conﬂict of interest regarding the publication of this paper.
+Acknowledgments
+The author acknowledges support from National Natural Science Foundation of China (Grant No. 61201381, No. 61401513 and No. 
+61772548), China Postdoctoral Science Foundation (Grant No. 2016M592989), the Self-Topic Foundation of Information Engineering Uni-
+versity (Grant No. 2016600701), and the Outstanding Youth Foundation of Information Engineering University (Grant No. 2016603201).
+Appendix A. Proof of (104)
+Applying the Lagrange multiplier approach, we get the following Lagrangian function
+L(˜t,λ) =
+
+˜A(¯r, ¯s)˜t −¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+T
+W −1
+
+˜A(¯r, ¯s)˜t −¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
++ ˜t
+T ˜G(˜t)λ
+(A.1)
+where λ ∈R2D×1 is Lagrange multiplier to be determined. First-order Necessary conditions for minimizing (A.1) can be obtained by taking 
+the gradient of L(˜t, λ) with respect to ˜t and equating the result to zero. This produces
+
+
+===== PDF PAGE 22 =====
+200
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+(a) RMSE of position estimation for the ﬁrst source versus σ1.
+(b) RMSE of position estimation for the second source versus σ1.
+(c) RMSE of position estimation for the third source versus σ1.
+(d) RMSE of velocity estimation for the ﬁrst source versus σ1.
+(e) RMSE of velocity estimation for the second source versus σ1.
+(f) RMSE of velocity estimation for the third source versus σ1.
+Fig. 7. RMSE of source location estimation versus σ1 for each source.
+
+
+===== PDF PAGE 23 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+201
+(a) RMSE of position estimation for the ﬁrst source versus σ2.
+(b) RMSE of position estimation for the second source versus σ2.
+(c) RMSE of position estimation for the third source versus σ2.
+(d) RMSE of velocity estimation for the ﬁrst source versus σ2.
+(e) RMSE of velocity estimation for the second source versus σ2.
+(f) RMSE of velocity estimation for the third source versus σ2.
+Fig. 8. RMSE of source location estimation versus σ2 for each source.
+
+
+===== PDF PAGE 24 =====
+202
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+∂L(˜t,λ)
+∂˜t
+= 2( ˜A(¯r, ¯s))TW −1
+
+˜A(¯r, ¯s)˜t −¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
++ ˜G(˜t)λ = O (8D+6(M+1))×1
+(A.2)
+Solving for ˜t from (A.2) yields
+tc = (( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1( ˜A(¯r, ¯s))TW −1 ¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
+−1
+2(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1 ˜G(˜t)λc
+(A.3)
+where λc is the optimal solution to the Lagrange multiplier. To ﬁnd λc, we substitute (A.3) into the constraint condition of (103), which 
+gives
+( ˜G(˜t))T(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1( ˜A(¯r, ¯s))TW −1 ¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
+= 1
+2( ˜G(˜t))T(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1 ˜G(˜t)λc
+(A.4)
+It follows from (A.4) that
+λc = 2(( ˜G(˜t))T(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1 ˜G(˜t))−1( ˜G(˜t))T(( ˜A(¯r, ¯s))TW −1 ˜A(¯r, ¯s))−1( ˜A(¯r, ¯s))TW −1 ¯C(¯t, ¯r, ¯s)
+ ¯ε
+¯ξ
+
+(A.5)
+Putting (A.5) into (A.3) leads to (104). Thus, the derivation is completed.
+Appendix B. Proof of (107)
+Combining (72) and matrix identity (III) in Table 2 produces
+W −1 =
+⎡
+⎢⎢⎣
+( ¯C 1(¯t, ¯r, ¯s)P 1( ¯C 1(¯t, ¯r, ¯s))T)−1
+−( ¯C 1(¯t, ¯r, ¯s)P 1( ¯C 1(¯t, ¯r, ¯s))T)−1 ¯C 2(¯t, ¯r, ¯s)
+−( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s)P 1( ¯C 1(¯t, ¯r, ¯s))T)−1
+
+P 2 −P 2( ¯C 2(¯t, ¯r, ¯s))T
+
+¯C 1(¯t, ¯r, ¯s)P 1( ¯C 1(¯t, ¯r, ¯s))T
++ ¯C 2(¯t, ¯r, ¯s)P 2( ¯C 2(¯t, ¯r, ¯s))T
+−1
+¯C 2(¯t, ¯r, ¯s)P 2
+−1
+⎤
+⎥⎥⎦
+=
+⎡
+⎢⎢⎢⎢⎣
+( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1
+−( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+−( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1
+⎛
+⎜⎝P 2 −P 2( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T
+
+P 1 + ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+×P 2( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T
+−1
+×( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)P 2
+⎞
+⎟⎠
+−1
+⎤
+⎥⎥⎥⎥⎦
+(B.1)
+Besides, it can be checked from matrix identity (IV) in Table 2 that
+(P −1
+2
++ ( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s))−1
+= P 2 −P 2( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T
+
+P 1 + ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+×P 2( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T
+−1
+( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)P 2
+(B.2)
+Substituting (B.2) into (B.1) leads to
+W −1 =
+
+( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1
+−( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+−( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1
+P −1
+2
++ ( ¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯C 2(¯t, ¯r, ¯s)
+
+(B.3)
+Putting the second equality in (71) and (B.3) together produces (107), which completes the derivation.
+Appendix C. Proof of Proposition 7
+The proof of Proposition 7 is comprised of two parts. We ﬁrst describe the ﬁrst part. Substituting rd = f (ud, ¯s) into (51) yields
+b( f (ud, ¯s), ¯s) = A( f (ud, ¯s), ¯s)h(ud, ¯s) = A( f (ud, ¯s), ¯s)td
+(1 ≤d ≤D)
+(C.1)
+Differentiating both sides of (C.1) with respect to ud and ¯s produces
+B1(rd, ¯s)F 1(ud, ¯s) = [ ˙A11(rd, ¯s)td ˙A12(rd, ¯s)td ··· ˙A1,2M(rd, ¯s)td]F 1(ud, ¯s) + A(rd, ¯s)H 1(ud, ¯s)
+⇒F 1(ud, ¯s) = (C 1(td, rd, ¯s))−1 A(rd, ¯s)H 1(ud, ¯s)
+(1 ≤d ≤D)
+(C.2)
+B1(rd, ¯s)F 2(ud, ¯s) + B2(rd, ¯s) = [ ˙A11(rd, ¯s)td ˙A12(rd, ¯s)td ··· ˙A1,2M(rd, ¯s)td]F 2(ud, ¯s)
++[ ˙A21(rd, ¯s)td ˙A22(rd, ¯s)td ··· ˙A2,6(M+1)(rd, ¯s)td] + A(rd, ¯s)H 2(ud, ¯s)
+⇒F 2(ud, ¯s) = (C 1(td, rd, ¯s))−1(A(rd, ¯s)H 2(ud, ¯s) −C 2(td, rd, ¯s))
+(1 ≤d ≤D)
+(C.3)
+where
+⎧
+⎪⎨
+⎪⎩
+H 1(ud, ¯s) = ∂h(ud,¯s)
+∂uT
+d
+, H 2(ud, ¯s) = ∂h(ud,¯s)
+∂¯sT
+C 1(td, rd, ¯s) = B1(rd, ¯s) −[ ˙A11(rd, ¯s)td ˙A12(rd, ¯s)td ··· ˙A1,2M(rd, ¯s)td]
+C 2(td, rd, ¯s) = B2(rd, ¯s) −[ ˙A21(rd, ¯s)td ˙A22(rd, ¯s)td ··· ˙A2,6(M+1)(rd, ¯s)td]
+(C.4)
+
+
+===== PDF PAGE 25 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+203
+in which B1(rd, ¯s) = ∂b(rd,¯s)
+∂rT
+d
+, B2(rd, ¯s) = ∂b(rd,¯s)
+∂¯sT
+, ˙A1 j(rd, ¯s) = ∂A(rd,¯s)
+∂<rd> j , ˙A2 j(rd, ¯s) = ∂A(rd,¯s)
+∂<¯s> j . Collecting all the D equations in (C.2) together 
+and writing them in matrix form, we obtain
+¯F 1( ¯u, ¯s) = ( ¯C 1(¯t, ¯r, ¯s))−1 ¯A(¯r, ¯s) ¯H 1( ¯u, ¯s)
+(C.5)
+where ¯H 1( ¯u, ¯s) = ∂¯h( ¯u,¯s)
+∂¯uT
+= blkdiag[H 1(u1, ¯s)H 1(u2, ¯s) ··· H 1(uD, ¯s)]. Similarly, putting all the D equations in (C.3) together leads to
+¯F 2( ¯u, ¯s) = ( ¯C 1(¯t, ¯r, ¯s))−1( ¯A(¯r, ¯s) ¯H 2( ¯u, ¯s) −¯C 2(¯t, ¯r, ¯s))
+(C.6)
+where ¯H 2( ¯u, ¯s) = ∂¯h( ¯u,¯s)
+∂¯sT
+= [(H 2(u1, ¯s))T(H 2(u2, ¯s))T ···(H 2(uD, ¯s))T]T. Using (22), (C.5) and (C.6), CRB
+ ¯u
+¯s
+
+can be rewritten as
+CRB(μ) = CRB
+ ¯u
+¯s
+
+=
+
+N1
+N2
+NT
+2
+N3
+−1
+(C.7)
+where
+⎧
+⎨
+⎩
+N1 = ( ¯H 1( ¯u, ¯s))T( ¯A(¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1 ¯A(¯r, ¯s) ¯H 1( ¯u, ¯s)
+N2 = ( ¯H 1( ¯u, ¯s))T( ¯A(¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1( ¯A(¯r, ¯s) ¯H 2( ¯u, ¯s) −¯C 2(¯t, ¯r, ¯s))
+N3 = ( ¯A(¯r, ¯s) ¯H 2( ¯u, ¯s) −¯C 2(¯t, ¯r, ¯s))T( ¯C 1(¯t, ¯r, ¯s))−T P −1
+1 ( ¯C 1(¯t, ¯r, ¯s))−1( ¯A(¯r, ¯s) ¯H 2( ¯u, ¯s) −¯C 2(¯t, ¯r, ¯s)) + P −1
+2
+(C.8)
+Next, we state the second part. Deﬁning the matrix ˜H 1( ¯u, ¯s) = blkdiag[ ¯H 1( ¯u, ¯s)I6(M+1)] and using (59), (61) and (105) leads to
+( ˜H 1( ¯u, ¯s))T ˜G(˜t)
+=
+
+( ¯H 1( ¯u, ¯s))T ¯11 ¯t
+( ¯H 1( ¯u, ¯s))T ¯12 ¯t
+···
+( ¯H 1( ¯u, ¯s))T ¯1D ¯t
+( ¯H 1( ¯u, ¯s))T ¯21 ¯t
+( ¯H 1( ¯u, ¯s))T ¯22 ¯t
+···
+( ¯H 1( ¯u, ¯s))T ¯2D ¯t
+O 6(M+1)×1
+O 6(M+1)×1
+···
+O 6(M+1)×1
+O 6(M+1)×1
+O 6(M+1)×1
+···
+O 6(M+1)×1
+
+= O (6D+6(M+1))×2D
+(C.9)
+which immediately shows that
+(( ˜E(¯r, ¯s))1/2 ˜H 1( ¯u, ¯s))T(( ˜E(¯r, ¯s))−1/2 ˜G(˜t)) = ( ˜H 1( ¯u, ¯s))T ˜G(˜t) = O (6D+6(M+1))×2D
+(C.10)
+Besides, it can be checked that
+	
+rank[( ˜E(¯r, ¯s))1/2 ˜H 1( ¯u, ¯s)] = rank[ ˜H 1( ¯u, ¯s)] = rank[ ¯H 1( ¯u, ¯s)] + 6(M + 1) = 6D + 6(M + 1)
+rank[( ˜E(¯r, ¯s))−1/2 ˜G(˜t)] = rank[ ˜G(˜t)] = 2D
+(C.11)
+From (C.10) and (C.11), we get
+range[( ˜E(¯r, ¯s))1/2 ˜H 1( ¯u, ¯s)] = (range[( ˜E(¯r, ¯s))−1/2 ˜G(˜t)])⊥
+(C.12)
+which combined with matrix identity (I) in Table 2 results in
+Π⊥[( ˜E(¯r, ¯s))−1/2 ˜G(˜t)] = Π[( ˜E(¯r, ¯s))1/2 ˜H 1( ¯u, ¯s)]
+= ( ˜E(¯r, ¯s))1/2 ˜H 1( ¯u, ¯s)(( ˜H 1( ¯u, ¯s))T ˜E(¯r, ¯s) ˜H 1( ¯u, ¯s))−1( ˜H 1( ¯u, ¯s))T( ˜E(¯r, ¯s))1/2
+(C.13)
+Inserting (C.13) into (109) leads to
+MSE
+
+
+ˆ¯uc
+ˆ¯sc
+
+=
+
+I D ⊗[I6 O 6×2]
+1D×1 ⊗J
+O 6(M+1)×8D
+I6(M+1)
+
+˜H 1( ¯u, ¯s)(( ˜H 1( ¯u, ¯s))T ˜E(¯r, ¯s) ˜H 1( ¯u, ¯s))−1( ˜H 1( ¯u, ¯s))T
+⎡
+⎢⎣
+I D ⊗
+
+I6
+O 2×6
+
+O 8D×6(M+1)
+11×D ⊗J T
+I6(M+1)
+⎤
+⎥⎦
+(C.14)
+On the other hand, using (60) and the deﬁnition of ˜H 1( ¯u, ¯s) gives
+
+I D ⊗[I6 O 6×2]
+1D×1 ⊗J
+O 6(M+1)×8D
+I6(M+1)
+
+˜H 1( ¯u, ¯s) =
+
+I6D
+1D×1 ⊗J
+O 6(M+1)×6D
+I6(M+1)
+
+(C.15)
+Substituting (C.15) into (C.14) yields
+MSE
+
+
+ˆ¯uc
+ˆ¯sc
+
+=
+
+
+I6D
+O 6D×6(M+1)
+−(11×D ⊗J T)
+I6(M+1)
+
+( ˜H 1( ¯u, ¯s))T ˜E(¯r, ¯s) ˜H 1( ¯u, ¯s)
+
+I6D
+−(1D×1 ⊗J)
+O 6(M+1)×6D
+I6(M+1)
+−1
+(C.16)
+
+
+===== PDF PAGE 26 =====
+204
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+After some algebraic manipulation we obtain
+˜H 1( ¯u, ¯s)
+
+I6D
+−(1D×1 ⊗J)
+O 6(M+1)×6D
+I6(M+1)
+
+=
+
+¯H 1( ¯u, ¯s)
+¯H 2( ¯u, ¯s)
+O 6(M+1)×6D
+I6(M+1)
+
+(C.17)
+Putting (C.17) into (C.16) results in
+MSE
+
+
+ˆ¯uc
+ˆ¯sc
+
+=
+ ( ¯H 1( ¯u, ¯s))T
+O 6D×6(M+1)
+( ¯H 2( ¯u, ¯s))T
+I6(M+1)
+
+˜E(¯r, ¯s)
+
+¯H 1( ¯u, ¯s)
+¯H 2( ¯u, ¯s)
+O 6(M+1)×6D
+I6(M+1)
+−1
+(C.18)
+Inserting (107) into (C.18) yields
+MSE
+
+
+ˆ¯uc
+ˆ¯sc
+
+=
+
+N1
+N2
+NT
+2
+N3
+−1
+= CRB
+ ¯u
+¯s
+
+(C.19)
+which proves the result.
+References
+[1] J. Caffery, G. Stuber, Subscriber location in CDMA cellular networks, IEEE Trans. Veh. Technol. 47 (2) (1998) 406–416.
+[2] G.W. Pulford, Analysis of a nonlinear least square procedure used in global positioning systems, IEEE Trans. Signal Process. 58 (9) (2010) 4526–4534.
+[3] Y. Shen, M.Z. Win, Fundamental limits of wideband localization-Part I: a general framework, IEEE Trans. Inf. Theory 56 (10) (2010) 4956–4980.
+[4] S. Gogineni, A. Nehorai, Target estimation using sparse modeling for distributed MIMO radar, IEEE Trans. Signal Process. 59 (11) (2011) 5315–5325.
+[5] S. Li, B.L.F. Daku, Optimal amplitude weighting for near-ﬁeld passive source localization, IEEE Trans. Signal Process. 59 (12) (2011) 6175–6185.
+[6] C. Liu, Y.V. Zakharov, T. Chen, Broadband underwater localization of multiple sources using basis pursuit de-noising, IEEE Trans. Signal Process. 60 (4) (2012) 1708–1717.
+[7] K. Do˘gançay, Bearings-only target localization using total least squares, Signal Process. 85 (9) (2005) 1695–1710.
+[8] K. Do˘gançay, H. Hmam, Optimal angular sensor separation for AOA localization, Signal Process. 88 (5) (2008) 1248–1260.
+[9] Y. Wang, K.C. Ho, An asymptotically eﬃcient estimator in closed-form for 3D AOA localization using a sensor network, IEEE Trans. Wirel. Commun. 14 (12) (2015) 
+6524–6535.
+[10] Y.T. Chan, K.C. Ho, A simple and eﬃcient estimator by hyperbolic location, IEEE Trans. Signal Process. 42 (4) (1994) 1905–1915.
+[11] L. Yang, K.C. Ho, An approximately eﬃcient TDOA localization algorithm in closed-form for locating multiple disjoint sources with erroneous sensor positions, IEEE Trans. 
+Signal Process. 57 (12) (2009) 4598–4615.
+[12] M. Sun, L. Yang, K.C. Ho, Eﬃcient joint source and sensor localization in closed-form, IEEE Signal Process. Lett. 19 (7) (2012) 399–402.
+[13] K.W. Cheung, H.C. So, Y.T. Chan, Least squares algorithms for time-of-arrival-based mobile location, IEEE Trans. Signal Process. 52 (4) (2004) 1121–1128.
+[14] F.K.W. Chan, H.C. So, J. Zheng, K.W.K. Lui, Best linear unbiased estimator approach for time-of-arrival based localisation, IET Signal Process. 2 (2) (2008) 156–162.
+[15] N.H. Nguyen, K. Do˘gançay, Optimal geometry analysis for multistatic TOA localization, IEEE Trans. Signal Process. 64 (16) (2016) 4180–4193.
+[16] B.J. Hao, Z. Li, J.B. Si, W.Y. Yin, Y.M. Ren, Passive multiple disjoint sources localization using TDOAs and GROAs in the presence of sensor location uncertainties, in: 
+Proceedings of the IEEE Conference on Communications, IEEE Press, Ottawa, June 2012, pp. 47–52.
+[17] M.R. Gholami, R.M. Vagheﬁ, E.G. Ström, RSS-based sensor localization in the presence of unknown channel parameters, IEEE Trans. Signal Process. 61 (15) (2013) 
+3752–3759.
+[18] S. Tomic, M. Beko, R. Dinis, RSS-based localization in wireless sensor networks using convex relaxation: noncooperative and cooperative schemes, IEEE Trans. Veh. 
+Technol. 64 (5) (2015) 2037–2050.
+[19] K.W. Cheung, H.C. So, W.K. Ma, Y.T. Chan, A constrained least squares approach to mobile positioning: algorithms and optimality, EURASIP J. Appl. Signal Process. (2006) 
+1–23.
+[20] K.C. Ho, W. Xu, An accurate algebraic solution for moving source location using TDOA and FDOA measurements, IEEE Trans. Signal Process. 52 (9) (2004) 2453–2463.
+[21] A. Noroozi, A.H Oveis, S.M. Hosseini, M.A. Sebt, Improved algebraic solution for source localization from TDOA and FDOA measurements, IEEE Trans. Wirel. Commun. 
+7 (3) (2018) 352–355.
+[22] H.W. Wei, R. Peng, Q. Wan, Z.X. Chen, S.F. Ye, Multidimensional scaling analysis for passive moving target localization with TDOA and FDOA measurements, IEEE Trans. 
+Signal Process. 58 (3) (2010) 1677–1688.
+[23] G. Wang, Y.M. Li, N. Ansari, A semideﬁnite relaxation method for source localization using TDOA and FDOA measurements, IEEE Trans. Veh. Technol. 62 (2) (2013) 
+853–862.
+[24] H.G. Yu, M.G. Huang, J. Gao, B. Liu, An eﬃcient constrained weighted least squares algorithm for moving source location using TDOA and FDOA measurements, IEEE 
+Trans. Wirel. Commun. 11 (1) (2012) 44–47.
+[25] F.C. Guo, K.C. Ho, A quadratic constraint solution method for TDOA and FDOA localization, in: Proceedings of the IEEE International Conference on Acoustic, Speech and 
+Signal Processing, IEEE Press, Prague, Czech, USA, May 2011, pp. 2588–2591.
+[26] X.M. Qu, L.H. Xie, W.R. Tan, Iterative constrained weighted least squares source localization using TDOA and FDOA measurements, IEEE Trans. Signal Process. 65 (15) 
+(2017) 3990–4003.
+[27] K.C. Ho, X. Lu, L. Kovavisaruch, Source localization using TDOA and FDOA measurements in the presence of receiver location errors: analysis and solution, IEEE Trans. 
+Signal Process. 55 (2) (2007) 684–696.
+[28] X.N. Lu, K.C. Ho, Analysis of the degradation in source location accuracy in the presence of sensor location error, in: Proceedings of the IEEE International Conference on 
+Acoustic, Speech and Signal Processing, IEEE Press, Toulouse, France, USA, May 2006, pp. 14–19.
+[29] X. Sun, J. Li, P. Huang, J. Pang, Total least-squares solution of active target localization using TDOA and FDOA measurements in WSN, in: Proceedings of the IEEE 22nd 
+International Conference on Advanced Information Networking and Applications, IEEE Press, Okinawa, Japan, March 2008, pp. 995–999.
+[30] H. Yu, G. Huang, J. Gao, Constrained total least-squares localization algorithm using time difference of arrival and frequency difference of arrival measurements with 
+sensor location uncertainties, IET Radar Sonar Navig. 6 (9) (2012) 891–899.
+[31] X.N. Lu, K.C. Ho, Taylor-series technique for moving source localization in the presence of sensor location errors, in: Proceedings of the IEEE International Symposium 
+on Circuits and Systems, IEEE Press, Island of Kos, Greece, May 2006, pp. 1075–1078.
+[32] H. Wu, W.M. Su , H. Gu, A novel Taylor series method for source and receiver localization using TDOA and FDOA measurements with uncertain receiver positions, in: 
+Proceedings of the IEEE International Conference on Radar, IEEE Press, Chengdu, China, October 2011, pp. 1037–1044.
+[33] M. Sun, K.C. Ho, An asymptotically eﬃcient estimator for TDOA and FDOA positioning of multiple disjoint sources in the presence of sensor location uncertainties, IEEE 
+Trans. Signal Process. 59 (7) (2011) 3434–3440.
+[34] B.J. Hao, Z. Li, J.B. Si, L. Guan, Joint source localisation and sensor reﬁnement using time differences of arrival and frequency differences of arrival, IET Signal Process. 
+8 (6) (2014) 588–600.
+[35] J.Z. Li, F.C. Guo, W.L. Jiang, Z. Liu, Multiple disjoint sources localization with the use of calibration emitters, in: Proceedings of the IEEE Radar Conference, IEEE Press, 
+Atlanta, USA, May 2012, pp. 34–39.
+[36] S. Stein, Differential delay/Doppler ML estimation with unknown signals, IEEE Trans. Signal Process. 41 (8) (1993) 2717–2719.
+
+
+===== PDF PAGE 27 =====
+D. Wang et al. / Digital Signal Processing 92 (2019) 179–205
+205
+[37] A. Yeredor, E. Angel, Joint TDOA and FDOA estimation: a conditional bound and its use for optimally weighted localization, IEEE Trans. Signal Process. 59 (4) (2011) 
+1612–1623.
+[38] N. Vankayalapati, S. Kay, Q. Ding, TDOA based direct positioning maximum likelihood estimator and the Cramer-Rao bound, IEEE Trans. Aerosp. Electron. Syst. 50 (3) 
+(2014) 1616–1634.
+[39] L.L. Scharf, Statistical Signal Processing, Detection, Estimation and Time Series Analysis, Addison-Wesley, Reading, MA, 1991.
+[40] G.H. Golub, C.F. Van Loan, Matrix Computations, 2nd edn., Johns Hopkins University Press, Baltimore, MD, 1990.
+[41] M. Viberg, B. Ottersten, Sensor array processing based on subspace ﬁtting, IEEE Trans. Signal Process. 39 (5) (1991) 1110–1121.
+[42] M. Viberg, A.L. Swindlehurst, A Bayesian approach to auto-calibration for parametric array signal processing, IEEE Trans. Signal Process. 42 (12) (1994) 3495–3507.
+[43] M. Jansson, A.L. Swindlehurst, B. Ottersten, Weighted subspace ﬁtting for general array error models, IEEE Trans. Signal Process. 46 (9) (1998) 2484–2498.
+[44] D.P. Bertsekas, Nonlinear Programming, 2nd edn., Athena Scientiﬁc, Belmont, MA, 1999.
+[45] D. Wang, R.R. Liu, J.X. Yin, Z.D. Wu, Y.L. Wang, C. Wang, A constrained-total-least-squares method for joint estimation of source and sensor locations: a general framework, 
+Math. Probl. Eng. (2018) 8475693.
+Ding Wang graduated in department of communication engineering from the Zhengzhou Institute of Information Science and Technology, China, in 
+2004. He received the M.S. degree in military communication from the Zhengzhou Institute of Information Science and Technology in 2007. He received 
+the Ph.D. degree in communication and system engineering from the Zhengzhou Institute of Information Science and Technology in 2011. From 2012 
+to 2015, he was an Assistant Professor in the National Digital Switching System Engineering and Technology Research Center (NDSC) and Zhengzhou 
+Institute of Information Science and Technology. Since 2016, he has been an Associate Professor in the same University. His research activities are focused 
+on array signal processing and passive location.
+Jiexin Yin graduated in communication engineering from the Zhengzhou Institute of Information Science and Technology, China, in 2011. She received 
+the M.S. degree in communication and information system from the Zhengzhou Institute of Information Science and Technology in 2014. Since September 
+2014, she has been a doctor candidate in National Digital Switching System Engineering and Technology Research Center (NDSC). Her research activities 
+are focused on array signal processing and passive location.
+Tao Zhang received the Ph.D. degree from the Zhengzhou Institute of Information Science and Technology. From 2014 to 2018, he was an Professor in 
+the National Digital Switching System Engineering and Technology Research Center (NDSC) and Zhengzhou Institute of Information Science and Technol-
+ogy. Since 2019, he has been an Professor in School of Computer Science and Engineering, Changshu Institute of Technology. Her research activities are 
+focused on feature recognition and target location.
+Changgui Jia received the B.E. degree from the National Digital Switching System Engineering and Technology Research Center (NDSC), Zhengzhou, 
+China, in 2016, where he is currently pursuing the M.S. degree in communications and information systems. His research interests include array signal 
+processing and passive localization.
+Fushan Wei received the Ph.D. degree from the Zhengzhou Institute of Information Science and Technology in 2011. From 2012 to 2015, he was an 
+Assistant Professor in State Key Laboratory of Mathematical Engineering and Advanced Computing. Since 2016, he has been an Associate Professor in 
+State Key Laboratory of Mathematical Engineering and Advanced Computing. His research activities are focused on implicit authentication protocols and 
+passive location.

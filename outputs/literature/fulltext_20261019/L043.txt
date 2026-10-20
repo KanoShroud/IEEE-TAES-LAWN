@@ -1,0 +1,2118 @@
+
+===== PDF PAGE 1 =====
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+1489
+Joint Sensor Array Path Planning and Attitude
+Determination for Optimal Emitter Localization
+Pan Li , Jianfeng Li , Member, IEEE, Fuhui Zhou , Senior Member, IEEE,
+Xiaofei Zhang , and Qihui Wu, Senior Member, IEEE
+Abstract— Existing path planning schemes designed for wire-
+less sensor networks generally account for abstract payload
+sensors, rendering them inapplicable to concrete sensor-array-
+based localization systems due to differences in measurement
+models. In this paper, we establish a general framework for path
+planning of a practical sensor array and factor in an oft-neglected
+degree of freedom regarding optimality, i.e., the array’s orien-
+tation/attitude. The optimization problem is formulated based
+on the A-optimality criterion under constraints arising from
+the maximum distance between consecutive waypoints, maximal
+heading change, and forbidden regions. To facilitate semidefinite
+relaxation (SDR), we recast the optimization function into a
+fractional nonhomogeneous quadratic structure and transform
+the constraints into a bilinear form. By applying SDR and
+replacing the bilinear terms with a matrix variable, the problem
+is relaxed into a single-ratio fractional program. By leveraging
+the Charnes-Cooper variable transformation, we transform the
+single-ratio fractional program into a mixed semidefinite/second-
+order cone program (SD/SOCP) that can be solved in polynomial
+time. Finally, we apply the results to angle-of-arrival (AOA) and
+direct localization. Simulation results demonstrate that the pro-
+posed path planning scheme attains near-optimal performance.
+Index
+Terms— Geolocation,
+path
+planning,
+trajectory
+optimization, mixed semidefinite/second-order cone program
+(SD/SOCP), semidefinite relaxation (SDR), AOA localization,
+direct localization, direct position determination (DPD).
+I. INTRODUCTION
+L
+OCALIZATION using wireless sensor networks has
+become a mature discipline and has many civilian and
+military applications, such as radar, sonar, mobile communi-
+cation systems, and personal navigation, to name but a few
+Manuscript received 4 February 2023; revised 23 April 2023 and 15 June
+2023; accepted 23 June 2023. Date of publication 5 July 2023; date of current
+version 13 February 2024. This work was supported in part by the China NSF
+under Grant 61827801, Grant 61971217, Grant 61971218, Grant 61631020,
+and Grant 61601167; in part by the National Key Research and Development
+Project under Grant 2020YFB1807602 and Grant 2020YFB1807604; in part
+by the Jiangsu Planned Projects for Post-Doctoral Research Funds under Grant
+2020Z013; and in part by the China Post-Doctoral Science Foundation under
+Grant 2020M681585. The associate editor coordinating the review of this
+article and approving it for publication was J. Choi. (Corresponding author:
+Jianfeng Li.)
+The authors are with the College of Electronic and Information Engineer-
+ing, Nanjing University of Aeronautics and Astronautics, Nanjing 210016,
+China, and also with the Key Laboratory of Dynamic Cognitive System of
+Electromagnetic Spectrum Space, Ministry of Industry and Information Tech-
+nology, Nanjing University of Aeronautics and Astronautics, Nanjing 211106,
+China (e-mail: nanhang4yuanlipan@nuaa.edu.cn; lijianfeng@nuaa.edu.cn;
+zhoufuhui@ieee.org; zhangxiaofei@nuaa.edu.cn; wuqihui@nuaa.edu.cn).
+Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TWC.2023.3289970.
+Digital Object Identifier 10.1109/TWC.2023.3289970
+[1], [2], [3], [4], [5]. The technique of predicting the emitter
+location by triangulation of bearing lines, a.k.a. angle-of-
+arrival (AOA) localization, has seen a flourishing development
+in the past few decades [6]. Employing an antenna array and
+performing AOA estimation by harnessing the second/fourth-
+order properties of the array outputs is a prevalent way
+to obtain AOA measurements. However, AOA localization
+techniques may discard information in the AOA measurement
+process [7]. The direct localization method, also known as
+direct position determination (DPD), was introduced in the
+seminal works by Weiss [8] as a remedy for this problem. The
+direct localization algorithm estimates the emitter position in
+a fusion center by jointly processing all the array outputs from
+each array. Consequently, the direct localization algorithm can
+prevent potential information loss to some extent since the
+intermediate parameter estimation procedure is circumvented.
+Both empirical and theoretical studies have demonstrated
+the practicality and efficacy of semidefinite relaxation (SDR)
+for addressing NP-hard quadratic problems [9].
+The SDR
+has wide-ranging applications in various engineering and sci-
+ence fields, such as digital communication (e.g., the Boolean
+least-squares problem in code division multiple access [10]
+and the downlink transmit beamforming problems [11]), radar
+(e.g., adaptive radar detection [12] and coded waveform design
+[13]), and speech recognition (e.g., the large-margin parameter
+estimation problem [14]). Mathematical justifications for this
+technique are scattered throughout the literature (e.g., exten-
+sive bibliographies in [9] and the treatise [15]). Moreover,
+numerical results from prior studies confirm its efficacy in
+addressing problems associated with bilinear structures.
+Trajectory optimization has been shown to improve system
+observability and increase localization accuracy. Consequently,
+path planning schemes for mobile payload sensors have
+been extensively studied in a vast amount of literature
+[16], [17], [18], [19], [20], [21], [22], [23]. Both the covariance
+matrix and the Fisher information matrix (FIM) can be used
+as the optimization criterion to assess the uncertainty of the
+localization result. Although conceptually simple, the former
+method can be complex and challenging to execute, primarily
+due to the dense structure of the covariance matrix in most
+circumstances. Consequently, using scalar measures of the
+FIM as the criterion to evaluate uncertainty is the top-priority
+choice in path planning problems. Three leading criteria, i.e.,
+A-optimality (minimize the trace of the inverse of the FIM),
+D-optimality (maximize the determinant of the FIM), and
+1536-1276 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+1490
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+E-optimality (maximize the smallest eigenvalue of the FIM),
+are often used in related literature.
+In [16], the authors proposed an unconstrained path planning
+approach for a single AOA sensor. This paper employs the
+D-optimality criterion as its optimality index while assum-
+ing that the noisy AOA measurements are Gaussian random
+variables with constant variances. This assumption assumes
+that measurement errors remain consistent both near and far
+from the emitter. For the optimal localization of a stationary
+underwater target, an unconstrained path design strategy for a
+single movable sensor that collects range measurements was
+proposed in [17]. The path planning approach for scan-based
+measurements was proposed by Doˇgancay in [18]. Oshman
+and Davidson proposed a constrained path planning scheme
+for an AOA sensor subject to state constraints imposed on
+the trajectory [19]. The optimization criterion and AOA mea-
+surement model employed in this paper are identical to those
+used in [16], and numerical techniques such as differential
+inclusion are used to solve the path design problem. In [20],
+Doˇgancay proposed a local optimal path planning scheme
+for heterogeneous payload sensors (encompassing AOA, time-
+difference-of-arrival (TDOA), and scan-based sensors) under
+physical and geometric path constraints based on the D-
+optimality criterion. The author adopted a more practical
+measurement model in this paper, which assumes that the
+noisy AOA measurements follow a Gaussian distribution with
+variances depending on the distance. In [21], He et al. pro-
+posed an unconstrained robust path planning scheme for a
+single AOA sensor using the greedy gradient descent method
+to mitigate the impact of sensor location errors. The mea-
+surement model and optimization criterion are similar to [20].
+By harnessing the bilinear structure of the FIM, SDR has
+recently been extended in [22] to time-of-arrival (TOA) sensor
+path planning problems. In this paper, Tzoreff and Weiss
+considered constraints like speed limits and no-fly zones while
+using the E-optimality criterion as the performance index.
+The two authors addressed the path design problem for two
+TDOA mobile sensors by utilizing numerical algorithms such
+as the alternating direction method of multipliers (ADMM),
+majorization-minimization (MM) algorithm, and SDR while
+imposing constraints, such as boundaries on the minimum and
+maximum sensor distances, no-fly zones, and maneuvering
+limitations [23].
+In summary, this brief review of the state-of-the-art path
+planning schemes indicates that existing methods exploit a
+general formulation whereby abstract sensors whose mea-
+surements are corrupted by Gaussian noise are used for
+localization. This frequently used framework lacks applica-
+bility in a practical sensor array localization system due to
+its somewhat abstract and misleading assumptions regarding
+the measurement model. Besides, most of the research efforts
+invested in path planning problems only deal with the choice of
+sensor positions. In fact, movable sensors can offer additional
+degrees of freedom regarding optimality, for example, rotation
+[24]. Besides, geometry-constrained path planning schemes
+for AOA sensors may get stuck in a local optimum since
+there are no existing global solvers to the best of the author’s
+knowledge. To alleviate these issues, we propose a path
+planning scheme for an antenna array by leveraging the idea of
+SDR, which is applicable to both AOA and direct localization.
+The key contributions in this paper are as follows.
+• Prior research on path planning has often formulated
+the problem using overly simplified models of AOA
+measurements, such as those based on constant or
+distance-dependent variance. While such models have
+the benefit of being straightforward to optimize, they
+might not be sufficiently accurate to reflect practical
+situations.
+To address this problem, we propose a rig-
+orous formulation of the path planning problem for an
+antenna array with an arbitrary structure under several
+geometric constraints based on a practical FIM derived
+from the raw array outputs. Additionally, unlike current
+path planning schemes that focus primarily on selecting
+waypoint positions, our approach involves considering the
+orientation of the sensor array (i.e., how it rotates) at
+every waypoint to achieve improved performance.
+• The existing constrained AOA path planning scheme has
+no computational complexity guarantees. To address this
+problem, the SDR technique is employed for obtaining
+a near-optimal solution to the proposed optimization
+problem, which does not require an initial point in
+close proximity to the optimum to avoid local con-
+vergence or divergence. Besides, the SDR technique
+constitutes a mixed semidefinite/second-order cone pro-
+gram (SD/SOCP), which can be solved in polynomial
+time. Consequently, the proposed path planning scheme
+has guaranteed computational complexity performance.
+• Because the path planning scheme requires values of the
+signal-to-noise ratio (SNR) and the received signal power
+model parameters, we propose a functioning method
+to estimate these parameters. Past literature considered
+abstract sensors, and these parameter uncertainties are
+usually ignored and assumed as a priori. Specifically,
+we apply the least-squares technique to estimate the
+received signal power model parameters, and the SNR
+is estimated by eigendecomposition. To further enhance
+the reliability, we use the prior knowledge of the signal
+model parameter to constitute a constrained least-square
+problem. We obtain the closed-form solution to this
+problem by restating it as a projection problem onto a
+convex slab.
+Notations: Throughout this paper, symbols for vectors
+are in boldface lower case, while boldface upper case is
+reserved for matrices. Random vectors and matrices are dis-
+played in sans serif. {⋆}T and {⋆}H denote the transpose
+and conjugate transpose, respectively. diag{⋆, ·, . . . , ·} (resp.,
+blkdiag{⋆, ·, . . . , ·}) converts a set of scalars (resp., matrices
+or vectors) into a diagonal matrix (resp., block diagonal
+matrix) with {⋆, ·, . . . , ·} on the diagonal; Tr[⋆], Det[⋆],
+and Rank[⋆] are the trace, determinant, and rank operators,
+respectively; The symbol ⊙denotes element-wise matrix
+multiplication. [⋆]∗represents the conjugate operator; Re{⋆}
+denotes the real part; A(i, j) denotes the (i, j) entry of A,
+while [A]i denotes the ith column; A(i1 : i2, j1 : j2) is a
+submatrix of A, which denotes the entries in i1 : i2 rows and
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+LI et al.: JOINT SENSOR ARRAY PATH PLANNING AND ATTITUDE DETERMINATION
+1491
+Fig. 1.
+Localization geometry.
+j1 : j2 columns; ⋆⪰· is the generalized inequality defined in
+the positive semidefinite cone and indicates that ⋆−· is positive
+semi-definite; 0k,j ∈Rk×j denotes the all-zero matrix; Ik
+represents an identity matrix whose rank is denoted by the
+subscript; If clear from the text, the subscript is omitted to
+shorten the notation. ∥⋆∥stands for the Euclidean norm; The
+superscript {·}⋆denotes the optimal solution; atan2(y, x) is
+the four-quadrant arctangent of y/x; ≜is used for definition.
+II. PROBLEM FORMULATION
+A. Localization Geometry and the Measurement Model
+As illustrated in Fig. 1, this paper considers a 2D path
+planning problem for a moving platform with an M-element
+sensor array, seeking to enhance the localization accuracy
+of a stationary emitter. Additionally, the moving platform is
+equipped with a communication module, which transfers array
+measurements to a central fusion center. After identifying
+solutions for the next waypoint, this center assumes account-
+ability for transmitting waypoint parameters to the platform for
+execution. The unknown Cartesian coordinate of the stationary
+emitter is denoted as s = [sx sy]T. The locations of the sensor
+waypoints, known a priori, are represented as pℓ= [pℓx pℓy]T
+(ℓ∈L ≜{1, 2, . . . , L}). The transmitted signal of the emitter
+is assumed narrowband, which has the form of s(t)ej2πfct with
+s(t) being the envelope and fc being the carrier frequency.
+Due to obstructed channel decays, the antenna array receives a
+time-delayed and scaled-down version of the transmitted signal
+at the ℓth waypoint (i.e., αℓs(t −τℓ)ej2πfc(t−τℓ), where αℓ
+denotes the amplitude and τℓis the signal propagation time).
+The array remains static at the ℓ-th waypoint to collect data.
+By sampling the array outputs with the Nyquist frequency,
+we obtain
+rℓ(k) = aℓsℓk + nℓ(k), (ℓ, k) ∈L × K
+(1)
+where K ≜{1, 2, . . . , K}; K denotes the number of snap-
+shots; rℓ(k) represents the sampled array outputs; sℓk is
+the sampled version of αℓs(t −τℓ)ej2πfc(t−τℓ); nℓ(k) is the
+complex-valued white Gaussian additive noise with nℓ(k) ∼
+CN(0, σ2
+nIM); aℓis the steering (a.k.a. manifold) vector and
+has the following form [25]
+aℓ=
+h
+ejkT
+ℓdℓ1 ejkT
+ℓdℓ2 . . . ejkT
+ℓdℓM
+iT
+(2)
+where kℓ= (2π/λ)(pℓ−s)/∥pℓ−s∥is the wavenumber
+vector, and λ is the signal wavelength; dℓm denotes the local
+position of the mth antenna element w.r.t. the reference at the
+ℓth waypoint, (ℓ, m) ∈L × M, M ≜{1, 2, . . . , M}. The
+Fig. 2.
+An illustrative example of the rotation process.
+AOA at the ℓth waypoint is φℓand (pℓ−s)/∥pℓ−s∥=
+[cos φℓsin φℓ]T.
+We consider two signal models in this paper: 1) The stochas-
+tic signal model, which assumes that the signal is a stationary
+Gaussian process; 2) The deterministic signal model, which
+assumes that the signal has a known waveform.1
+Note that the sensor can rotate and translate from a waypoint
+to a waypoint. Let {edm}m∈M be the reference local positions
+of the array elements and ed1/∥ed1∥= [1 0]T. The relationship
+between the reference local positions {edm}m∈M and the local
+positions at the ℓth waypoint {dℓm}m∈M can be represented
+by a rotation matrix
+dℓm = Qℓedm, (ℓ, m) ∈L × M
+(3)
+where Qℓmust belong to the special orthogonal (SO) group
+SO(2) ≜{Qℓ∈R2×2 : QT
+ℓQℓ= I2, Det[Qℓ] = 1}. Let
+the counterclockwise rotation angle w.r.t. the horizontal axis
+ϑℓbe the array orientation angle. The rotation matrix can be
+represented as
+Qℓ=
+
+cos ϑℓ
+−sin ϑℓ
+sin ϑℓ
+cos ϑℓ
+
+.
+(4)
+For a clear comprehension of the concept of rotation,
+a geometric representation is displayed in Fig. 2, where we
+consider the rotation of a five-element uniform circular array
+(UCA).
+B. Received Signal Power Model
+In this paper, we employ a pervasive and oft-made assump-
+tion used in received signal strength (RSS) localization
+[27], [28] to model the received signal power. The mean path
+loss between the ℓth waypoint and the emitter is given by the
+following log-normal shadowing model (in decibel scale)
+Lℓ= L0 + 10γ log10
+∥pℓ−s∥
+d0
+,
+ℓ∈L
+(5)
+where L0 is the path loss at a reference distance d0; γ is the
+path loss exponent (PLE); Lℓ(dB) = 10 log10(PT /Pℓ), where
+Pℓdenotes the received signal power of the sensor at the ℓth
+waypoint and PT is the transmitting power of the emitter.
+After simple algebra manipulations, we have
+Pℓ= α∥pℓ−s∥−γ, α ≜PT 10−L0
+10 dγ
+0.
+(6)
+1The deterministic signal model implies that the signal is not random and
+{sℓk}(ℓ,k)∈L×K is frozen in all realizations of {rℓ(k)}(ℓ,k)∈L×K [26].
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+1492
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+C. Localization Schemes
+In the abovementioned setting, the localization problem can
+be described as follows: given the outcomes of the measure-
+ments {rℓ(k)}(ℓ,k)∈L×K and the positions of the waypoints
+{pℓ}ℓ∈L find, among all feasible emitter locations, a trust-
+worthy one that meets certain criteria.
+1) AOA Localization Methods: AOA localization methods
+first obtain AOA measurements { ˆφℓ}ℓ∈L from the array out-
+puts {rℓ(k)}(k,ℓ)∈K×L, where φℓ= atan2(pℓy −sy, pℓx −
+sx), using algorithms such as multiple signal classification
+(MUSIC) [29], orthogonal matching pursuit (OMP) [30], and
+minimum variance distortionless response (MVDR) [31]. Then
+the AOAs are used to locate the emitter by means of triangu-
+lation, such as the pseudo-linear estimator (AOA-PLE2) [32],
+the recursive instrumental variable (IV) method [33], and a
+variant of the IV method [34].
+Example: Consider the AOA-PLE method. According to
+the definition of the tangent function tan x = sin x/ cos x,
+we have
+sin ˆφℓ(pℓx −sx) −cos ˆφℓ(pℓy −sy) = 0, ℓ∈L.
+(7)
+By concatenating the L equations, a matrix form for (7) is
+given by
+Bs = b
+B ≜
+
+
+sin ˆφ1
+−cos ˆφ1
+...
+...
+sin ˆφL
+−cos ˆφL
+
+
+(8)
+where
+b
+≜
+[sin ˆφ1p1x −cos ˆφ1p1y
+sin ˆφ2p2x −
+cos ˆφ2p2y . . . sin ˆφLpLx −cos ˆφLpLy]T.
+Performing least-squares estimation, s can be estimated by
+ˆs = (BTB)−1BTb.
+(9)
+2) Direct Localization Methods: Direct localization meth-
+ods obtain the position estimate from the array outputs
+{rℓ(k)}(k,ℓ)∈K×L directly. They jointly process all the array
+output vectors in a fusion center and constitute an optimization
+problem with the emitter position being the variable. The
+direct localization method does not require AOA information
+and consequently avoids potential information loss incurred
+by the AOA estimation. However, direct localization schemes
+constitute intractable problems when we attempt to solve
+them exactly in a numerical or closed-form manner since
+the optimization problems are highly non-convex. Typically,
+the problem is addressed via exhaustive searching, entailing
+high computational costs. A significant body of research
+has focused on direct localization techniques, with numerous
+studies motivated by earlier work in AOA estimation, e.g.,
+the maximum-likelihood (ML)-based method [8], the MVDR-
+based method [35], and the MUSIC-type method [36].
+Example: Consider the MUSIC-type direct localization
+method (we denote it as DPD-MUSIC), which harnesses the
+orthogonal relationship between the noise subspace and the
+2We substitute abbreviation AOA-PLE in place of the pseudo-linear esti-
+mator since “PLE” has been taken up by the path loss exponent.
+steering vector. The covariance matrix of the array output
+vector rℓ(k) can be estimated as
+ˆRℓ= 1
+K
+K
+X
+k=1
+rℓ(k)rH
+ℓ(k), ℓ∈L.
+(10)
+Performing an eigendecomposition of the covariance matrix
+ˆRℓ, we obtain eigenvalues {λℓm}m∈M arranged in descending
+order. The signal subspace is the eigenvector corresponding to
+λℓ1. The noise subspace Uℓn represents a column-structured
+matrix with columns given by the eigenvectors corresponding
+to the M −1 smallest eigenvalues. Then the optimization
+problem can be formulated as
+ˆs = arg max
+s
+1
+PL
+ℓ=1 aH
+ℓ(s)UℓnUH
+ℓnaℓ(s)
+(11)
+which is usually solved by an exhaustive search.
+D. Optimization Criterion and the FIM
+The A-optimality, D-optimality, and E-optimality criteria are
+commonly used in path planning problems [22]. In this paper,
+we select A-optimality, which minimizes the squared position
+error bound (SPEB),3 as the optimization criterion since it is
+in the minimum MSE sense.
+To proceed, we derive a succinct expression for the FIM.
+The localization FIM is given by
+J(p, ϑ) = 2K
+σ2n
+TTRe
+ DHΠ⊥
+AD
+
+⊙X
+	
+T
+(12)
+where p stacks pℓon top of each other; ϑ = [ϑ1 ϑ2 . . . ϑL]T;
+D(i, j)
+=
+∂A(i, j)/∂φj; Π⊥
+A
+=
+I −A(AHA)−1AH
+is a projection matrix that can project a vector onto the
+orthogonal complement of the column space of A; A ≜
+blkdiag{a1, a2, . . . , aL} is the stacked version of aℓ; X =
+Σ for the deterministic case and X
+=
+ΣAHR−1AΣ
+for the stochastic case; Σ
+≜
+diag{P1, P2, . . . , PL} is
+the stacked version of the received signal power; R
+≜
+blkdiag{R1, R2, . . . , RL} represents the stacked covariance
+matrix of the array outputs. T is the Jacobian matrices for
+transformations from φ = [φ1 φ2 . . . φL]T to s. A theoreti-
+cally oriented reader interested in the derivation may refer to
+related literature [7].
+After some calculations, we obtain a closed-form expression
+for the FIM
+J(p, ϑ) =
+L
+X
+ℓ=1
+
+8Kπ2µℓ
+λ2∥pℓ−s∥2 χT
+ℓQℓΥQT
+ℓχℓ
+
+χℓχT
+ℓ
+(13)
+where µℓ=
+MSNR2
+ℓ
+1+MSNRℓfor the stochastic case and µℓ= SNRℓ
+for the deterministic case; SNRℓ≜Pℓ/σ2
+n (signal-to-noise
+ratio); Υ = PM
+m=1 edmedT
+m −
+1
+M
+PM
+m=1 edm
+PM
+m=1 edT
+m; χℓ=
+[−sin φℓcos φℓ]T. We delegate the lengthy supporting proofs
+to Appendix A.
+3For an unbiased estimator, SPEB [37] corresponds to the lower bound on
+mean square error (MSE), i.e., MSE ≥SPEB = Tr[FIM−1]. The inequality
+is derived from a generalized inequality C ⪰FIM−1, where C denotes the
+error covariance matrix of the unbiased estimator.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+LI et al.: JOINT SENSOR ARRAY PATH PLANNING AND ATTITUDE DETERMINATION
+1493
+E. Constraints Imposed on the Motions
+Due to the nonnegligible dynamics of the sensor array, a set
+of geometric constraints is introduced for sensor movements,
+i.e.,
+• Maximum distance bound between consecutive way-
+points: It constitutes a Euclidean ball constraint: ∥pℓ−
+pℓ−1∥≤Vu, where Vu denotes the maximum distance;
+• Maximal heading change: Let us denote the sensor’s prior
+direction as βℓ−1 ≜(pℓ−1 −pℓ−2)/∥pℓ−1 −pℓ−2∥. The
+maximal heading change implies that βT
+ℓ−1(pℓ−pℓ−1) ≥
+cos ϕ∥pℓ−pℓ−1∥, where 0 < ϕ < π/2 denotes the
+maximal turn rate. The constraint is a second-order cone
+constraint.
+• Forbidden region pℓ∈T : The sensor should comply
+with the forbidden region constraint as obstacles, threats,
+and some restricted regions. The forbidden region is com-
+prised of interior/exterior/borderlines of circles/ellipses
+and polyhedral sets in this paper.
+F. The Path Planning Problem
+The path planning problem is stated as: given the history of
+state vectors (i.e., {pj}ℓ−1
+j=1 and {ϑj}ℓ−1
+j=1) and measurements
+up to the waypoint ℓ−1, find an optimal state vector of the
+next waypoint, which minimizes the SPEB. The path planning
+problem can be formulated as
+P : min
+pℓ,ϑℓ
+Tr[J−1
+ℓ(pℓ, ϑℓ)]
+s.t. ∥pℓ−pℓ−1∥≤Vu;
+(14a)
+βT
+ℓ−1(pℓ−pℓ−1) ≥cos ϕ∥pℓ−pℓ−1∥;
+(14b)
+pℓ∈T
+(14c)
+where Jℓ(pℓ, ϑℓ) denotes the FIM at the ℓth waypoint.
+III. PATH PLANNING SCHEMES BASED ON SEMIDEFINITE
+RELAXATION
+A. Preliminary Results
+The proposed problem P is highly nonlinear and does not
+constitute a trivial task to obtain a closed-form formula for its
+solution. Consequently, we resort to numerical techniques for
+tackling this problem. Before introducing a pertinent numerical
+approach for resolving the problem, we establish an inequality
+that can simplify it. Derivation of this key inequality is
+centered on the use of Rayleigh quotients [38].
+Proposition 1: We have the following inequality about
+SPEB4
+Tr[J−1(p, ϑ)] ≥Tr[W−1(p)],
+W(p) ≜
+L
+X
+ℓ=1
+
+8Kπ2µℓ
+λ2∥pℓ−s∥2 λmax[Υ]
+
+χℓχT
+ℓ
+(15)
+and the equality holds when
+QT
+ℓχℓ= ±υ
+(16)
+4The variables in brackets imply that J is related to p and ϑ and W relates
+only to p. The brackets will be omitted in the sequel for notational brevity
+unless ambiguity occurs.
+or, equivalently,
+ϑℓ= F(pℓ) ≜φℓ+ atan2(±υ(1), ±υ(2))
+(17)
+where λmax[·] represents the largest eigenvalue of a matrix;
+υ represents the normalized eigenvector corresponding to the
+largest eigenvalue of Υ.
+Proof: See Appendix B.
+□
+For arbitrary but fixed waypoint positions {pℓ}ℓ∈L, the
+inequality states that SPEB attains its optimum when the
+equality (16) holds at each waypoint. As a by-product of
+the above derivations, we provide several special cases of
+Proposition 1. All of these cases are intuitively plausible with
+elegant theoretical results.
+Lemma 1: For a UCA, SPEB is invariant with the array
+orientation, i.e., Tr[J−1] = Tr[W−1] always holds.
+Proof: Please see Appendix C for more details.
+□
+An intuitive geometric feel for Lemma 1 can be obtained
+in Fig. 2. Lemma 1 implies that the rotation of a UCA cannot
+affect the SPEB due to the central symmetry of the UCA.
+Lemma 2: For a linear array (e.g., the uniform linear array
+(ULA), the linear nested array [39], and the linear co-prime
+array [40]), the optimal array orientation at the ℓth waypoint
+is normal to pℓ−s.
+Proof: See Appendix D.
+□
+Another inequality that can be obtained is
+Tr[J−1
+ℓ(pℓ, ϑℓ)] ≥Tr[W−1
+ℓ(pℓ)],
+Wℓ(pℓ) ≜Jℓ−1 +
+
+8Kπ2µℓ
+λ2∥pℓ−s∥2 λmax[Υ]
+
+χℓχT
+ℓ.
+(18)
+To proceed, we define the following optimization problem
+and examine the relationship between it and the original
+problem P in Proposition 2:
+Q : min
+pℓ
+Tr[W−1
+ℓ(pℓ)]
+s.t. (14a)–(14c).
+(19)
+Proposition 2: Problem Q and P have the identical opti-
+mal value. If p⋆
+ℓsolves Q, then (p⋆
+ℓ, ϑ⋆
+ℓ) solves the original
+problem P, where ϑ⋆
+ℓ= F(p⋆
+ℓ).
+Proof: See Appendix E.
+□
+Therefore, determining the solution to the initial problem is
+equivalent to resolving Q.
+B. Applying the SDR Technique
+In this paper, we propose an SDR-based numerical method
+to solve Q. We first provide an explicit expression for the
+objective function of Q. For notational brevity, let κ =
+λ2/(8Kπ2λmax[Υ]). Applying the matrix inversion lemma
+(see, e.g., Appendix A in [41]), we obtain
+W−1
+ℓ
+= J−1
+ℓ−1 −
+J−1
+ℓ−1χℓχT
+ℓJ−1
+ℓ−1
+κ∥pℓ−s∥2µ−1
+ℓ
++ χT
+ℓJ−1
+ℓ−1χℓ
+.
+(20)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+1494
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+Then the optimization problem Q becomes (dropping the
+constant term Tr[J−1
+ℓ−1])
+Q : min
+pℓ
+κ∥pℓ−s∥2µ−1
+ℓ
++ χT
+ℓJ−1
+ℓ−1χℓ
+χT
+ℓJ−2
+ℓ−1χℓ
+s.t. (14a)–(14c).
+(21)
+Let epℓ= pℓ−s be the local position w.r.t. the local origin
+s and euℓ= epℓ/∥epℓ∥= [cos φℓsin φℓ]T be the unit vector
+of the local position. Note that χℓ= [−sin φℓcos φℓ]T is
+orthogonal to euℓ, then the relationship between χℓand euℓ
+can be represented by a rotation matrix P in the SO(2), i.e.,
+χℓ= Peuℓ, P ≜
+0
+−1
+1
+0
+
+.
+(22)
+Hence, Q is equivalent to
+Q1 : min
+epℓ,euℓ
+κ∥epℓ∥2µ−1
+ℓ
++ euT
+ℓPTJ−1
+ℓ−1Peuℓ
+euT
+ℓPTJ−2
+ℓ−1Peuℓ
+s.t. euℓ= epℓ/∥epℓ∥; (14a)–(14c).
+(23)
+Next, we transform the constraint euℓ= epℓ/∥epℓ∥into a
+tractable form in Proposition 3.
+Proposition 3: The non-convex constraint euℓ= epℓ/∥epℓ∥is
+equivalent to
+(
+∥epℓ∥≤euT
+ℓepℓ
+∥euℓ∥= 1.
+(24)
+Proof: The proof can be found in [22] and is thus omitted
+for the sake of space.
+□
+Note that all the terms in the objective function are quadratic
+(and thus bilinear) except for P(epℓ) ≜κ∥epℓ∥2µ−1
+ℓ, and
+the Euclidean norm constraint (14a) implies that epℓis in
+the vicinity of epℓ−1. To recast the objective function in a
+quadratic/bilinear structure, we apply Taylor-series expansion
+around epℓ−1 and retain the first and second-order terms, i.e.,
+P(epℓ)
+≈P(epℓ−1) + ∂P(epℓ−1)
+∂epT
+ℓ−1
+(epℓ−epℓ−1)
++ 1
+2(epℓ−epℓ−1)T ∂2P(epℓ−1)
+∂epℓ−1∂epT
+ℓ−1
+(epℓ−epℓ−1).
+(25)
+The Taylor-series expansion ameliorates to a great extent
+the tractability of the proposed problem. It approximates
+the optimization function into a nonhomogeneous quadratic
+structure with linear terms that are affine functions of epℓ.
+We can “homogenize” these linear terms by introducing an
+additional variable x0 and a constraint x2
+0 = 1 [15]. Each
+linear term qTpℓcan be rewritten as a quadratic form x0qTpℓ.
+Then the optimization problem has three blocks of variables,
+including euℓ, epℓ, and x0. Let x ≜[euT
+ℓ
+epT
+ℓ
+x0]T, B ≜
+blkdiag{PTJ−2
+ℓ−1P, 03×3}. Besides, we define
+A ≜
+
+
+PTJ−1
+ℓ−1P
+0
+0
+0
+1
+2
+∂2P(epℓ−1)
+∂epℓ−1∂epT
+ℓ−1
+ηT
+3,2
+0
+η3,2
+η3,3
+
+
+η3,3 ≜P(epℓ−1) + 1
+2 epT
+ℓ−1
+∂2P(epℓ−1)
+∂epℓ−1∂epT
+ℓ−1
+epℓ−1
+−∂P(epℓ−1)
+∂epT
+ℓ−1
+epℓ−1
+η3,2 ≜1
+2 epT
+ℓ−1
+∂2P(epℓ−1)
+∂epℓ−1∂epT
+ℓ−1
+−1
+2
+∂P(epℓ−1)
+∂epT
+ℓ−1
+.
+(26)
+Then problem Q1 can be approximated as
+Q2 : min
+x
+xTAx
+xTBx
+s.t. (14a)–(14c), (24), and x2
+0 = 1.
+(27)
+The SDR methodology originates from a promptly verifiable
+equivalence
+X = xxT ⇐⇒X ⪰0, Rank[X] = 1.
+(28)
+For notational convenience, X is partitioned into nine blocks
+X =
+
+
+Xeuℓeuℓ
+Xeuℓepℓ
+Xeuℓx0
+Xepℓeuℓ
+Xepℓepℓ
+Xepℓx0
+Xx0euℓ
+Xx0epℓ
+Xx0x0
+
+
+(29)
+where Xeuℓeuℓ≜X(1 : 2, 1 : 2), Xepℓepℓ≜X(3 : 4, 3 : 4),
+Xx0x0 ≜X(5, 5), and the off-diagonal blocks are defined
+analogously.
+Then problem Q2 is equivalent to
+Q3 : min
+X
+Tr[AX]
+Tr[BX]
+s.t. ∥Xepℓx0∥≤Tr[Xepℓeuℓ];
+∥Xepℓx0 −epℓ−1∥≤βT
+ℓ−1(Xepℓx0 −epℓ−1)
+cos ϕ
+;
+Tr[Xeuℓeuℓ] = 1;
+Tr[Xepℓepℓ] + ∥pℓ−1∥2 −2XT
+epℓx0pℓ−1 ≤V 2
+u ;
+Xepℓx0 ∈T ;
+Xx0x0 = 1;
+X ⪰0;
+Rank[X] = 1.
+(30)
+Dropping the rank-one constraint, we obtain
+Q4 : min
+X
+Tr[AX]
+Tr[BX]
+s.t. Constraints in (30) except Rank[X] = 1
+(31)
+which is a fractional program.
+Next, we resort to Charnes-Cooper variable transformation
+to transform the fractional program into a simple SD/SOCP
+[42]. Let us define a matrix variable Y = sX (s ≥0) such
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+LI et al.: JOINT SENSOR ARRAY PATH PLANNING AND ATTITUDE DETERMINATION
+1495
+that Tr[BY] = 1. Similar to (29), Y is partitioned into nine
+blocks for the sake of simplicity. Hence it follows that
+Q5 : min
+Y,s Tr[AY]
+s.t. Tr[BY] = 1;
+∥Yepℓx0∥≤Tr[Yepℓeuℓ];
+∥Yepℓx0 −epℓ−1s∥≤βT
+ℓ−1(Yepℓx0 −epℓ−1s)
+cos ϕ
+;
+Tr[Yeuℓeuℓ] = s;
+Tr[Yepℓepℓ] + ∥pℓ−1∥2s −2YT
+epℓx0pℓ−1 ≤V 2
+u s;
+Yepℓx0 ∈T ;
+Yx0x0 = s;
+s ≥0;
+Y ⪰0.
+(32)
+Note that problem Q4 is a convex-concave single-ratio
+fractional program. Thus, Q4 and Q5 are equivalent [43].
+If (Y⋆, s⋆) solves problem Q5, X⋆≜Y⋆/s⋆solves problem
+Q4. Then we obtain the solution to the relaxed problem Q4.
+A closer look reveals that Yx0x0 = s and s ≥0 are redun-
+dant in Q5. Taking this factor into account and rearranging
+the constraints yield the final optimization problem
+P : min
+Y
+Tr[AY]
+s.t. Tr[BY] = 1;
+(33a)
+Tr[Yeuℓeuℓ] = Yx0x0;
+(33b)
+Tr[Yepℓepℓ] + ∥pℓ−1∥2Yx0x0
+−2YT
+epℓx0pℓ−1 ≤V 2
+u Yx0x0;
+(33c)
+Yepℓx0 ∈T ;
+(33d)
+Y ⪰0;
+(33e)
+∥Yepℓx0∥≤Tr[Yepℓeuℓ];
+(33f)
+∥Yepℓx0 −epℓ−1Yx0x0∥
+≤βT
+ℓ−1(Yepℓx0 −epℓ−1Yx0x0)
+cos ϕ
+.
+(33g)
+Remark: The forbidden region constraints in this paper
+include interior, exterior, and borderlines of circles, ellipses,
+and polyhedral sets, some of which may be non-convex.
+The exterior of an ellipse (pℓ−s0)TR−1(pℓ−s0)
+≥
+0 can serve as an example, where R is a positive defi-
+nite matrix, and s0 represents the center. By applying the
+SDR technique, it can be relaxed into a linear inequality
+Tr[R−1Yepℓepℓ] −2sT
+0 R−1Yepℓx0 + sT
+0 R−1s0Yx0x0 ≥0. The
+forbidden region constraints considered in this manuscript
+are amenable to similar transformation into linear inequal-
+ity/equality constraints. Consequently, it can be concluded that
+P is a mixed SD/SOCP problem, and we can observe that
+the proposed path planning scheme can be generalized to
+any convex forbidden region constraint and some non-convex
+ones. These non-convex sets exhibit a shared characteristic,
+i.e., convexity in (pℓ, pℓpT
+ℓ).
+C. Obtaining the Final Solution via Randomization
+Recalling that we drop the rank-one constraint, the solution
+to P is not necessarily a rank-one matrix and only an approx-
+imation of the optimal solution. Consequently, we use the
+randomization technique to recover the rank-one solution, and
+an intuitive illustration of this technique can be found in [44].
+Let Y⋆be the solution to P and thus X⋆= Y⋆/Y⋆
+x0x0, the
+randomization technique is performed as follows: generate N
+realizations of ζn ∼N(X⋆, X⋆−X⋆(1 : 5, 5)∗X⋆(1 : 5, 5)T).
+Then, project the sub-vector ζn(3 : 4) onto the feasible set (if
+ζn(3 : 4) is infeasible) by employing the alternating projection
+algorithm set forth in [22], denoted as eζn(3 : 4). Finally, find
+the best one that minimizes the objective function
+p⋆
+ℓ= arg min
+eζn(3:4)
+Tr[W−1
+ℓ(eζn(3 : 4))].
+(34)
+Besides, the corresponding array orientation angle is given
+by ϑ⋆
+ℓ= F(p⋆
+ℓ). Thus, we obtain a near-optimal state vector
+for the next waypoint.
+D. Estimating Unknown Parameters and Summarizing the
+Proposed Path Planning Scheme
+Note that when we implement a computer code to locate
+the minima of P to determine the state vector of the ℓth
+waypoint, the input arguments, which are used to construct
+the objective function and the constraints, are comprised of
+{SNRj}ℓ−1
+j=1, the emitter position s, the number of antennas
+M, received signal model parameters (α and γ), and some
+nuisance parameters (K and λ). Among them, {SNRj}ℓ−1
+j=1, s,
+and received signal model parameters (α and γ) are unknown
+and thus are required to be estimated/updated at each way-
+point. Let ˆsℓ−1 denote the emitter position estimated from the
+history of the ℓ−1 waypoints. The methods for estimating ˆsℓ−1
+are given in Section II-C while the SNR, α, and γ are not.
+Therefore, we have outlined thorough processes for estimating
+these parameters. The covariance matrix of the array output
+vector can be decomposed into Rj = PjajaH
+j + σ2
+nI, and can
+be estimated as
+ˆRj = 1
+K
+K
+X
+k=1
+rj(k)rH
+j (k),
+j = 1, . . . , ℓ−1.
+(35)
+Conducting an eigendecomposition of ˆRj, we obtain eigen-
+values {λjm}m∈M sorted in descending order. Then σ2
+n can
+be estimated by
+ˆσ2
+n =
+1
+(ℓ−1)(M −1)
+ℓ−1
+X
+j=1
+M
+X
+m=2
+λjm.
+(36)
+The unique nontrivial eigenvalue of Rj −σ2
+nI = PjajaH
+j is
+λj1 −σ2
+n = PjaH
+j aj = MPj since ajaH
+j is a rank-one matrix.
+Then the signal power can be estimated as
+ˆPj = λj1 −ˆσ2
+n
+M
+.
+(37)
+By definition, {SNRj}ℓ−1
+j=1 can be estimated as
+ˆ
+SNRj =
+ˆPj
+ˆσ2n
+.
+(38)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+1496
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+Next, we turn to estimate α and γ. The two parameters can
+be estimated from a set of equations
+
+
+
+
+
+ˆP1 = α∥p1 −ˆsℓ−1∥−γ
+. . .
+ˆPℓ−1 = α∥pℓ−1 −ˆsℓ−1∥−γ.
+(39)
+Let ζ
+≜[log α γ]T. Taking the natural logarithm of
+both sides of (39), the two parameters can be estimated by
+a least-square solution of an over-determined linear set of
+equations
+Gζ = h ⇒ˆζ = (GTG)−1GTh
+(40)
+where
+G =
+
+
+1
+−log ∥p1 −ˆsℓ−1∥
+...
+...
+1
+−log ∥pℓ−1 −ˆsℓ−1∥
+
+, h =
+
+
+log ˆP1
+...
+log ˆPℓ−1
+
+. (41)
+To improve the accuracy and robustness of our model
+parameter estimates, we incorporate a priori knowledge about
+PLE. It has been shown in the literature [27] that the PLE is
+empirically between two and four. With the prior knowledge
+of the PLE, the estimation problem can be formulated as
+E : min
+ζ
+∥Gζ −h∥
+s.t. 2 ≤γ ≤4.
+(42)
+Let us define a norm ∥⋆∥G ≜
+p
+⋆T(GTG)⋆in R2.
+Problem E can be restated as to minimize ∥ζ −ζ0∥G (ζ0 ≜
+(GTG)−1GTh) over a convex slab {ζ|2 ≤aTζ ≤4} (a ≜
+[0 1]T) since ∥Gζ−h∥2 = ∥ζ−ζ0∥2
+G+hTG(GTG)−1GTh+
+hTh. Using this observation, the solution to (42) is given by
+(see Section V-A in [45])
+ζ⋆= ζ0 + [(2 −aTζ0)+ −(aTζ0 −4)+](GTG)−1a
+aT(GTG)−1a
+(43)
+where t+ ≜max {0, t}.
+The proposed path planning scheme can be classified into
+two categories: direct localization and AOA localization path
+planning schemes. The raw data of the former are required
+to be stored in the fusion center, while the latter only
+requires the AOA measurements {φj}ℓ−1
+j=1 (for updating s) and
+the eigenvalues of the covariance matrix {{λjm}m∈M}ℓ−1
+j=1
+(for updating α, γ, and {SNRj}ℓ−1
+j=1). Besides, the waypoint
+positions are required to be stored in the two categories.
+We summarize the whole procedure of the proposed schemes
+in Algorithm 1 and Algorithm 2, respectively. We use the
+DPD-MUSIC-based path planning scheme as an example in
+Algorithm 1, which can be readily extended to other direct
+localization approaches.
+IV. COMPUTATIONAL COMPLEXITY
+The overall complexity of our approach at the ℓ-th way-
+point determination hinges on four key steps: namely, (1) the
+resolution of a mixed SD/SOCP problem, (2) the process of
+randomization, (3) the updating of emitter positions, and (4)
+the estimation of log-normal model parameters. Next, we will
+provide an in-depth analysis of these four steps.
+From [46], the worst-case computational complexity for
+solving a mixed SD/SOCP using interior point methods is
+O
+  
+u
+Nsoc
+X
+i=1
+(nsoc
+i
+)2 + u2
+Nsd
+X
+i=1
+(nsd
+i )2 + u
+Nsd
+X
+i=1
+(nsd
+i )3 + u3
+!
+× √µ log(1/ϵ))
+(44)
+where u is the number of variables; Nsoc and Nsd are the
+numbers of second-order cone and semidefinite constraints,
+respectively; nsoc
+i
+and nsd
+i
+are the corresponding dimensions
+of the i-th second-order and positive semidefinite cones,
+respectively; ϵ is the solution precision; µ = PNsd
+i=1 nsd
+i +2Nsoc
+is the barrier parameter.
+We denote the number of the relaxed forbidden region
+constraints as m. The mixed SD/SOCP has u = 5×(5+1)
+2
+=
+15 variables, m + 3 semidefinite constraints of dimension 1
+(corresponding to (33a), (33b), (33c), and the relaxed forbid-
+den constraints (33d)), one semidefinite constraint of dimen-
+sion 5 (corresponding to (33e)), and two second-order cone
+constraints of dimension 3 (corresponding to (33f) and (33g)).
+Consequently, the computational complexity for solving the
+SD/SOCP problem is in the order of O(240m1.5 log(1/ϵ)).
+Next, we analyze the computational complexity of the
+randomization technique. In the worst-case scenario, every
+random generation of ζn(3 : 4) could be infeasible, necessi-
+tating using the algorithm proposed in [22] to obtain a feasible
+solution. As a result, the worst-case computational complexity
+is O(NQ), with N representing the number of randomizations
+and Q signifying the number of iterations.
+The complexity of estimating the emitter position is sub-
+ject to case-by-case analysis and depends on the selected
+localization method. Since the localization scheme is not
+the focus of our paper, we provide the complexity of
+the two localization methods illustrated in Section II-C
+(AOA-PLE and DPD-MUSIC) as an example. The complex-
+ities for the two methods are O((ℓ−1)(KM 2 + 8M +
+2) + M 3) and O
+ (ℓ−1)
+ KM 2 + NGM(M −1)
+
++ M 3
+,
+respectively [47]. NG denotes the number of search grids.
+Estimating the log-normal model parameters’ complexity
+relies on the computation of ζ0, which is of the order O(10(ℓ−
+1)). Our approach’s overall complexity at the ℓ-th waypoint
+determination is the sum of the complexities involved in the
+four steps.
+V. SIMULATION RESULTS
+A. Simulation Setup
+Otherwise specified, the number of samples is K = 256.
+The maximum distance between consecutive waypoints is
+Vu = 100 [m], and the maximum heading change is ϕ = 75◦.
+The sensor array is assumed a ULA or UCA with M =
+10 elements. The ULA is half-wavelength spacing and the
+radius of the UCA is R = λ
+2 (sin π
+M )−1. The PLE is γ = 2.5.
+The reference distance is d0 = 1 [m] and the path loss at d0 is
+L0 = 40 [dB]. The transmitting power is 15 [dBm] and the
+background noise power is σ2
+n = −92 [dBm]. The trajectory
+is initialized based on three measurements at three randomly
+selected waypoints. The proposed method is solved by the
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+LI et al.: JOINT SENSOR ARRAY PATH PLANNING AND ATTITUDE DETERMINATION
+1497
+Algorithm 1 The Path Planning Scheme for Sensor-
+Array-Based Direct Localization
+Input: The noise subspaces {Ujn}ℓ−1
+j=1; the
+eigenvalues {{λjm}m∈M}ℓ−1
+j=1; the waypoint
+positions {pj}ℓ−1
+j=1.
+Output: Optimal congurations of the next waypoint:
+p⋆
+ℓand ϑ⋆
+ℓ.
+1 Estimate the emitter position ˆsℓ−1 using DPD-MUSIC;
+2 Obtain { ˆPj}ℓ−1
+j=1 and ˆσ2
+n: (36) and (37);
+3 Estimate {SNRj}ℓ−1
+j=1, α, and γ from (38) and (43);
+4 Obtain the SDR solution Y⋆to P: equation (33);
+5 Obtain the solution to Q4: X⋆= Y⋆/Y⋆
+x0x0;
+6 Use the randomization technique to recover the
+rank-one solution p⋆
+ℓ;
+7 ϑ⋆
+ℓis given by F(p⋆
+ℓ).
+Algorithm 2 The Path Planning Scheme for Sensor-
+Array-Based AOA Localization
+Input: The AOA measurements {φj}ℓ−1
+j=1; the
+eigenvalues {{λjm}m∈M}ℓ−1
+j=1; the waypoint
+positions {pj}ℓ−1
+j=1.
+Output: Optimal congurations of the next waypoint:
+p⋆
+ℓand ϑ⋆
+ℓ.
+1 Estimate the emitter position ˆsℓ−1 using AOA
+localization methods;
+2 Step 2 to 7 in Algorithm 1
+Matlab toolbox CVX, and the solver is SDPT3. We use N =
+50 realizations to recover the rank-one solution. We consider
+four sets of the forbidden region constraint. The first is a
+polyhedron T1 and is defined as
+T1(pℓ) = {pℓ|A1pℓ≥b1}, A1 =
+
+1
+1
+1
+0
+
+, b1 = 02×1.
+(45)
+The second is the intersection of a polyhedron and the
+exterior of an ellipse
+T2(pℓ)={pℓ|A2pℓ≥b2} ∩{pℓ|(pℓ−c)TP−1
+2 (pℓ−c) ≥1}
+where
+A2 =
+
+
+0
+1
+1
+1
+1
+0
+
+, b2 =
+
+
+−150
+−100
+−100
+
+,
+P2 =
+ 20812
+−10125
+−10125
+22500
+
+, c =
+1500
+400
+
+.
+(46)
+The third is the exterior of an ellipse
+T3(pℓ) = {pℓ|pT
+ℓP−1
+3 pℓ≥1},
+P3 =
+4.5325
+2.2050
+2.2050
+4.9000
+
+× 105.
+(47)
+The fourth is the intersection of a halfspace and a circle
+T4(pℓ) = {pℓ|pℓx ≥200} ∩{pℓ|pT
+ℓpℓ≥7002}.
+(48)
+B. Comparison With Some Benchmark Solvers
+For comparable purposes, we first compare the proposed
+path planning scheme with some benchmark design schemes,
+including the logarithmic barrier function method and the
+exhaustive search. The logarithmic barrier function method
+is proposed in [20], which uses interior point methods to
+solve a non-convex problem. Consequently, this solver only
+guarantees a local optimal solution, and the performance of
+this solver strongly hinges on the choice of the initial point
+(in our simulations, pℓis initialized to pℓ−1 since pℓ−1 is
+obviously an interior point). The second method is intuitively
+simple. To obtain the optimal solution to the original problem,
+we randomly generate one million feasible points and select
+the best one that optimizes the objective function. Since we
+searched extensively, the outcome produced by this algorithm
+can be deemed a global optimum. The UCA’s array orien-
+tation was selected at random. The line segment joining the
+array and the emitter is perpendicular to the array baseline
+of the ULA.
+As can be observed in Fig. 3, the proposed path planning
+method performs similarly to the exhaustive search. When we
+repeat the randomization N = 50 times (marked by green
+squares), the outcome generated from our proposed method
+exhibits a close similarity to the optimal trajectory derived
+from an exhaustive search. The logarithmic barrier function
+method (marked by red hexagrams) can not approach the
+optimal solution due to the entrapment in a local minimum.
+In Fig. 3(c) and Fig. 3(d), we provide the SPEB performance
+of different design schemes. The initial waypoints of Fig. 3(a)
+are [2810 400]T, [2750 125]T, and [2650 0]T [m]. The initial
+waypoints of Fig. 3(b) are [1050 1950]T, [1100 1920]T, and
+[1120 1880]T [m]. It is shown that the SPEB performance of
+the proposed scheme under a small number of randomizations
+(i.e., N = 5 and marked by blue diamonds) is still approach-
+ing the optimal. Our experimental findings demonstrate the
+effectiveness of the proposed path planning scheme, which
+achieves near-optimal performance.
+C. Path Planning for An Asymmetric Array
+To establish our claim that the proposed scheme can be
+applied to arbitrary array structures, we consider an asym-
+metric L-shaped array, whose structure is shown in Fig. 4(a).
+The initial waypoints are [1410 1280]T, [1350 1320]T, and
+[1250 1400]T [m]. In this case, Υ can be computed as
+Υ =
+6
+X
+m=1
+edmedT
+m −1
+6
+6
+X
+m=1
+edm
+6
+X
+m=1
+edT
+m
+=
+λ
+2
+2 
+−0.8944
+−0.4472
+−0.4472
+0.8944
+T 
+2
+9.5
+
+×
+−0.8944
+−0.4472
+−0.4472
+0.8944
+
+.
+(49)
+The largest eigenvalue of Υ is 9.5, and the corresponding
+eigenvector is υ = [−0.4472 0.8944]T. Then the optimal
+array orientation can be computed as ϑ⋆
+ℓ
+=
+F(p⋆
+ℓ)
+=
+−26.5651◦/153.4349◦+ φ⋆
+ℓ.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 10 =====
+1498
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+Fig. 3.
+Comparison with different path planning schemes that use different numerical solvers to address the original problem.
+Fig. 4.
+(a) The L-shaped array under consideration (with half-wavelength spacing); (b) Trajectories of a L-shaped array and the forbidden region is T1. The
+trajectories are designed in the context of a deterministic signal model with no parameter uncertainty. The maximum distance between consecutive waypoints
+is 400 [m].
+As illustrated in Fig. 4, the trajectory of the L-shaped
+array approaches the optimal. In TABLE I, we provide the
+corresponding array orientations of the array at seven way-
+points, and we select −26.5651◦+φ⋆
+ℓas an example. Rotating
+the L-shaped array 180 degrees (i.e., 153.4349◦+ φ⋆
+ℓ) will
+yield another configuration of the optimal array orientation.
+It is shown that the trajectory and orientation obtained by the
+proposed method attain the optimal ones.
+D. Path Planning With Parameter Uncertainty
+Finally, we analyze the performance of the proposed path
+planning scheme in the presence of parameter uncertainty,
+which originates from the estimation of the emitter position,
+SNR, and the received signal power parameters. We first
+compare the SPEB performance using different schemes to
+estimate the log-normal model parameter, as shown in Fig. 5.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 11 =====
+LI et al.: JOINT SENSOR ARRAY PATH PLANNING AND ATTITUDE DETERMINATION
+1499
+TABLE I
+THE CORRESPONDING ARRAY ORIENTATION ANGLES OF FIG. 4(B) AT DIFFERENT WAYPOINTS IN DEGREES
+Fig. 5.
+Trajectory comparison of a ULA using different schemes to estimate the log-normal model parameter, the emitter position is estimated by the
+AOA-PLE method at each waypoint. The ideal trajectory is designed in the context of a deterministic signal model, and the forbidden region is T3.
+Fig. 6.
+Trajectories with parameter uncertainty: (a) Single trajectory realizations for a UCA and the forbidden region is T4. The trajectories for AOA-PLE
+and DPD-MUSIC are designed in the context of a stochastic signal model and parameter uncertainty stemming from the estimation of the emitter location,
+SNR, α, and the PLE γ. The averaged SNR varies from -12.8 [dB] to -4.12 [dB] as waypoint updates. The ideal trajectory is designed in the context of no
+parameter uncertainty; (b) The corresponding RMSE/SPEB performance of (a).
+The initial waypoints are [1300 850]T, [1350 750]T, and
+[1400 650]T [m]. In simulations, it was found that constrained
+least-squares produce better SPEB performance, whereas the
+unconstrained counterpart deviates from the optimal during
+waypoint updates. This simulation agrees with the intuition
+that more information yields better results.
+Next, we provide the root mean square error (RMSE) perfor-
+mance of the proposed method, as shown in Fig. 6. The initial
+waypoints are [1000 1200]T, [1080 1180]T, and [1120 1130]T
+[m]. The DPD-MUSIC algorithm exhibits good performance
+and approaches the SPEB. The AOA-PLE method exhibits
+poor performance in such low SNR scenarios, primarily caused
+by the outliers in AOA estimation [48], [49].
+VI. CONCLUSION AND FUTURE WORK
+In this paper, we consider the path planning problem for a
+single sensor array under several geometric constraints, and the
+array orientation/attitude is considered. The problem is formu-
+lated based on the A-optimality criterion and is addressed by
+the SDR method. The problem is recast as a typical mixed
+SD/SOCP problem and can be solved in polynomial time.
+Simulation results demonstrate that the proposed path planning
+scheme has near-optimal localization performance even in a
+low number of randomizations. We will consider the robust
+counterpart of the proposed problem to alleviate the impact of
+sensor location errors in our future work.
+APPENDIX A
+In this appendix, we compute closed-form expressions for
+the deterministic and stochastic FIMs. We first compute the
+common term DHΠ⊥
+AD of the two FIMs. Recalling that the
+projection matrix has the form of Π⊥
+A = I −A(AHA)−1AH,
+DHΠ⊥
+AD can be rewritten as
+DHΠ⊥
+AD = DHD −DHA(AHA)−1AHD.
+(A.1)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 12 =====
+1500
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+Now we compute DHD, DHA, and AHA. Note that for
+arbitrary (p, q) ∈L × L, we have
+[D]H
+p [D]q =
+ ∂ap
+∂φp
+H  ∂ap
+∂φp
+
+δp,q
+=
+2π
+λ
+2 M
+X
+m=1
+χT
+pQpedmedT
+mQT
+pχp
+!
+δp,q (A.2)
+[D]H
+p [A]q =
+ ∂ap
+∂φp
+H
+apδp,q
+= −j
+2π
+λ
+
+χT
+pQp
+M
+X
+m=1
+edmδp,q
+(A.3)
+[A]H
+p [A]q = aH
+p apδp,q = Mδp,q
+(A.4)
+where χℓ= [−sin φℓcos φℓ]T. δp,q denotes the Dirac delta
+δp,q =
+(
+1,
+p = q
+0,
+otherwise.
+(A.5)
+Then we obtain
+DHΠ⊥
+AD =
+2π
+λ
+2
+× diag{χT
+1 Q1ΥQT
+1 χ1, . . . , χT
+LQLΥQT
+LχL}
+Υ ≜
+M
+X
+m=1
+edmedT
+m −1
+M
+M
+X
+m=1
+edm
+M
+X
+m=1
+edT
+m.
+(A.6)
+In the following, we will compute the FIMs for the two
+signal models respectively.
+A. The Received Signal Is Stochastic
+In this case, computing ΣAHR−1AΣ is the major obstacle.
+To establish the formulae to calculate this term, we first
+decompose the covariance matrix R into [1]
+R = AΣAH + σ2
+nILM.
+(A.7)
+The inverse of R can be computed as
+R−1 = −1
+σ2n
+A(σ2
+nIL + MΣ)−1ΣAH + 1
+σ2n
+ILM.
+(A.8)
+Straightforward calculations yield
+ΣAHR−1AΣ = σ2
+ndiag
+
+MSNR2
+1
+1 + MSNR1
+, . . . ,
+MSNR2
+L
+1 + MSNRL
+
+,
+SNRℓ≜Pℓ
+σ2n
+.
+(A.9)
+The Jacobian matrix can be computed as
+T = ∂φ
+∂sT = −
+
+1
+∥p1 −s∥χ1 . . .
+1
+∥pL −s∥χL
+T
+.
+(A.10)
+Pre-multiplying and post-multiplying the Jacobian matrix,
+we have
+J = 2K
+σ2n
+TTRe
+ DHΠ⊥
+AD
+
+⊙(ΣAHR−1AΣ)∗	
+T
+=
+L
+X
+ℓ=1
+
+8Kπ2MSNR2
+ℓ
+λ2(1 + MSNRℓ)∥pℓ−s∥2 χT
+ℓQℓΥQT
+ℓχℓ
+
+χℓχT
+ℓ.
+(A.11)
+B. The Received Signal Is Deterministic
+By similar reasoning, we obtain the deterministic FIM
+J = 2K
+σ2n
+TTRe
+ DHΠ⊥
+AD
+
+⊙Σ∗	
+T
+=
+L
+X
+ℓ=1
+ 8Kπ2SNRℓ
+λ2∥pℓ−s∥2 χT
+ℓQℓΥQT
+ℓχℓ
+
+χℓχT
+ℓ.
+(A.12)
+APPENDIX B
+According
+to
+the
+Rayleigh
+quotients,
+we
+have
+χT
+ℓQℓΥQT
+ℓχℓ
+≤
+(χT
+ℓQℓQT
+ℓχℓ)λmax[Υ]
+=
+λmax[Υ].
+Then we can readily verify that
+J ⪯W.
+(B.1)
+Since both J and W are positive semidefinite and the
+generalized inequality (B.1) holds, it follows that
+J−1 −W−1 = W−1(W −J)J−1 ⪰0.
+(B.2)
+It is clear that the generalized inequality (B.2) is a sufficient
+condition for the desired conclusion.
+APPENDIX C
+To complete the proof, it suffices to prove that Υ is
+proportional to the identity matrix (i.e., Υ = cI, where c is a
+constant). Thus χT
+ℓQℓΥQT
+ℓχℓ= c.
+The local positions {edm}m∈M of the UCA elements are
+given by [25]
+edm = R
+
+cos 2πm
+M
+sin 2πm
+M
+T
+(C.1)
+where R denotes the radius of the UCA and M ≥3.
+Note that {ej 2πm
+M }m∈M are the roots of the polynomial
+aMxM + aM−1xM−1 + . . . + a1x + a0 = 0 of degree M,
+where aM = 1, a0 = −1, and a1 = a2 = . . . aM−1 = 0 (i.e.,
+xM −1 = 0). Based on the Vieta theorem [50], we have
+M
+X
+m=1
+ej 2πm
+M
+= −aM−1
+aM
+= 0,
+X
+1≤m1<m2≤M
+ej 2πm1
+M ej 2πm2
+M
+= aM−2
+aM
+= 0.
+(C.2)
+Consequently, we have
+S1 ≜
+M
+X
+m=1
+cos 2πm
+M
+= 0, S2 ≜
+M
+X
+m=1
+sin 2πm
+M
+= 0
+S3 ≜
+X
+1≤m1<m2≤M
+cos
+2πm1
+M
++ 2πm2
+M
+
+= 0
+S4 ≜
+X
+1≤m1<m2≤M
+sin
+2πm1
+M
++ 2πm2
+M
+
+= 0.
+(C.3)
+Let S5 ≜
+M
+P
+m=1
+cos2 2πm
+M , S6 ≜
+M
+P
+m=1
+sin2 2πm
+M , and S7 ≜
+M
+P
+m=1
+cos 2πm
+M sin 2πm
+M . With the above formulas, we can derive
+S5 −S6 = S2
+1 −S2
+2 −2S3 = 0, S7 = S1 ∗S2 −S4 = 0.
+(C.4)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 13 =====
+LI et al.: JOINT SENSOR ARRAY PATH PLANNING AND ATTITUDE DETERMINATION
+1501
+Since S5 + S6 = M, we have S5 = S6 = M/2. We now
+have all the necessary components to calculate Υ
+Υ(1, 1) =
+
+S5 −1
+M S2
+1
+
+R2 = 1
+2MR2,
+Υ(2, 2) =
+
+S6 −1
+M S2
+2
+
+R2 = 1
+2MR2,
+Υ(2, 1) = Υ(1, 2) =
+
+S7 −1
+M S1 ∗S2
+
+R2 = 0.
+(C.5)
+Then we have Υ = 1
+2MR2I, which finishes the proof.
+APPENDIX D
+Since the array is linear, the reference positions {edm}m∈M
+belong to the column space of [1 0]T. Consequently, Υ has
+the form of c[1 0]T[1 0], where c is a positive constant. The
+unique nontrivial eigenvalue of Υ is c, and the corresponding
+eigenvector is [1 0]T. Substituting υ = [1 0]T into (16) yields
+QT
+ℓχℓ= ±[1 0]T ⇒ϑℓ= φℓ± π
+2
+(D.1)
+where k is an odd natural number. The array baseline is
+parallel to [cos ϑℓsin ϑℓ]T. Since [cos ϑℓsin ϑℓ]T(pℓ−s) =
+∥pℓ−s∥[cos ϑℓsin ϑℓ]T[cos φℓsin φℓ] = 0 due to (D.1),
+we complete the proof.
+APPENDIX E
+Since
+p⋆
+ℓ
+solves
+P,
+we
+have
+Tr[J−1
+ℓ(pℓ, ϑℓ)]
+≥
+Tr[W−1
+ℓ(pℓ)] ≥Tr[W−1
+ℓ(p⋆
+ℓ)]. Consequently, problem Q
+and P have the identical optimal value Tr[W−1
+ℓ(p⋆
+ℓ)] and
+the equality holds when (pℓ, ϑℓ) = (p⋆
+ℓ, ϑ⋆
+ℓ).
+REFERENCES
+[1] J. Li, Y. He, X. Zhang, and Q. Wu, “Simultaneous localization of
+multiple unknown emitters based on UAV monitoring big data,” IEEE
+Trans. Ind. Informat., vol. 17, no. 9, pp. 6303–6313, Sep. 2021.
+[2] H. Wymeersch, G. Seco-Granados, G. Destino, D. Dardari, and
+F. Tufvesson, “5G mmWave positioning for vehicular networks,” IEEE
+Wireless Commun., vol. 24, no. 6, pp. 80–86, Dec. 2017.
+[3] M. Koivisto et al., “Joint device positioning and clock synchronization
+in 5G ultra-dense networks,” IEEE Trans. Wireless Commun., vol. 16,
+no. 5, pp. 2866–2881, May 2017.
+[4] X. Gan, C. Huang, Z. Yang, C. Zhong, and Z. Zhang, “Near-field
+localization for holographic RIS assisted mmWave systems,” IEEE
+Commun. Lett., vol. 27, no. 1, pp. 140–144, Jan. 2023.
+[5] C. Huang et al., “Holographic MIMO surfaces for 6G wireless networks:
+Opportunities, challenges, and trends,” IEEE Wireless Commun., vol. 27,
+no. 5, pp. 118–125, Oct. 2020.
+[6] Y. Wang and K. C. Ho, “An asymptotically efficient estimator in closed-
+form for 3-D AOA localization using a sensor network,” IEEE Trans.
+Wireless Commun., vol. 14, no. 12, pp. 6524–6535, Dec. 2015.
+[7] H. Zhao, N. Zhang, and Y. Shen, “Beamspace direct localization for
+large-scale antenna array systems,” IEEE Trans. Signal Process., vol. 68,
+pp. 3529–3544, 2020.
+[8] A. J. Weiss, “Direct position determination of narrowband radio fre-
+quency transmitters,” IEEE Signal Process. Lett., vol. 11, no. 5,
+pp. 513–516, May 2004.
+[9] Z.-Q. Luo, W.-K. Ma, A. So, Y. Ye, and S. Zhang, “Semidefinite
+relaxation of quadratic optimization problems,” IEEE Signal Process.
+Mag., vol. 27, no. 3, pp. 20–34, May 2010.
+[10] W.-K. Ma, T. N. Davidson, K. Max Wong, Z.-Q. Luo, and P.-C. Ching,
+“Quasi-maximum-likelihood multiuser detection using semi-definite
+relaxation with application to synchronous CDMA,” IEEE Trans. Signal
+Process., vol. 50, no. 4, pp. 912–922, Apr. 2002.
+[11] E. Karipidis, N. D. Sidiropoulos, and Z.-Q. Luo, “Quality of service
+and max-min fair transmit beamforming to multiple cochannel multicast
+groups,” IEEE Trans. Signal Process., vol. 56, no. 3, pp. 1268–1279,
+Mar. 2008.
+[12] O. Besson, “Adaptive detection with bounded steering vectors mismatch
+angle,” IEEE Trans. Signal Process., vol. 55, no. 4, pp. 1560–1564,
+Apr. 2007.
+[13] A. De Maio, S. De Nicola, Y. Huang, S. Zhang, and A. Farina, “Code
+design to optimize radar detection performance under accuracy and
+similarity constraints,” IEEE Trans. Signal Process., vol. 56, no. 11,
+pp. 5618–5629, Nov. 2008.
+[14] H. Jiang, X. Li, and C. Liu, “Large margin hidden Markov models for
+speech recognition,” IEEE Trans. Audio, Speech Lang. Process., vol. 14,
+no. 5, pp. 1584–1595, Sep. 2006.
+[15] Z.-Q. Luo and T.-H. Chang, “SDP relaxation of homogeneous quadratic
+optimization: Approximation bounds and applications,” in Convex Opti-
+mization in Signal Processing and Communications, D. P. Palomar and
+Y. Eldar, Eds. Cambridge, U.K.: Cambridge Univ. Press, 2010, ch. 4.
+[16] S. E. Hammel, P. T. Liu, E. J. Hilliard, and K. F. Gong, “Optimal
+observer motion for localization with bearing measurements,” Comput.
+Math. Appl., vol. 18, nos. 1–3, pp. 171–180, 1989.
+[17] D. Moreno-Salinas, A. M. Pascoal, and J. Aranda, “Underwater target
+positioning with a single acoustic sensor,” IFAC Proc. Volumes, vol. 46,
+no. 33, pp. 233–238, 2013.
+[18] K. Doganay, “Online optimization of receiver trajectories for scan-based
+emitter localization,” IEEE Trans. Aerosp. Electron. Syst., vol. 43, no. 3,
+pp. 1117–1125, Jul. 2007.
+[19] Y. Oshman and P. Davidson, “Optimization of observer trajectories for
+bearings-only target localization,” IEEE Trans. Aerosp. Electron. Syst.,
+vol. 35, no. 3, pp. 892–902, Jul. 1999.
+[20] K. Dogancay, “UAV path planning for passive emitter localization,”
+IEEE Trans. Aerosp. Electron. Syst., vol. 48, no. 2, pp. 1150–1166,
+Apr. 2012.
+[21] L. He, P. Gong, X. Zhang, and Z. Wang, “The bearing-only target
+localization via the single UAV: Asymptotically unbiased closed-form
+solution and path planning,” IEEE Access, vol. 7, pp. 153592–153604,
+2019.
+[22] E. Tzoreff and A. J. Weiss, “Single sensor path design for best emitter
+localization via convex optimization,” IEEE Trans. Wireless Commun.,
+vol. 16, no. 2, pp. 939–951, Feb. 2017.
+[23] E. Tzoreff and A. J. Weiss, “Path design for best emitter location using
+two mobile sensors,” IEEE Trans. Signal Process., vol. 65, no. 19,
+pp. 5249–5261, Oct. 2017.
+[24] P. Li, J. Li, P. Ma, and X. Zhang, “Array orientation adjustments subject
+to optimal direct position determination performance,” IEEE Signal
+Process. Lett., vol. 29, pp. 115–119, 2022.
+[25] M. Oispuu and U. Nickel, “Direct detection and position determination
+of multiple sources with intermittent emission,” Signal Process., vol. 90,
+no. 12, pp. 3056–3064, Dec. 2010.
+[26] P. Stoica and A. Nehorai, “Performance study of conditional and uncon-
+ditional direction-of-arrival estimation,” IEEE Trans. Acoust., Speech,
+Signal Process., vol. 38, no. 10, pp. 1783–1795, Oct. 1990.
+[27] N. Patwari, J. N. Ash, S. Kyperountas, A. O. Hero, R. L. Moses, and
+N. S. Correal, “Locating the nodes: Cooperative localization in wireless
+sensor networks,” IEEE Signal Process. Mag., vol. 22, no. 4, pp. 54–69,
+Jul. 2005.
+[28] S. Tomic, M. Beko, and R. Dinis, “RSS-based localization in wireless
+sensor networks using convex relaxation: Noncooperative and coopera-
+tive schemes,” IEEE Trans. Veh. Technol., vol. 64, no. 5, pp. 2037–2050,
+May 2015.
+[29] P. Stoica and A. Nehorai, “MUSIC, maximum likelihood, and Cramér-
+Rao bound,” IEEE Trans. Acoust., Speech, Signal Process., vol. 37, no. 5,
+pp. 720–741, May 1989.
+[30] J. Lee, G. Gil, and Y. H. Lee, “Channel estimation via orthogonal
+matching pursuit for hybrid MIMO systems in millimeter wave com-
+munications,” IEEE Trans. Commun., vol. 64, no. 6, pp. 2370–2386,
+Jun. 2016.
+[31] D. W. Rieken and D. R. Fuhrmann, “Generalizing MUSIC and MVDR
+for multiple noncoherent arrays,” IEEE Trans. Signal Process., vol. 52,
+no. 9, pp. 2396–2406, Sep. 2004.
+[32] A. G. Lingren and K. F. Gong, “Position and velocity estimation via
+bearing observations,” IEEE Trans. Aerosp. Electron. Syst., vol. AES-14,
+no. 4, pp. 564–577, Jul. 1978.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 14 =====
+1502
+IEEE TRANSACTIONS ON WIRELESS COMMUNICATIONS, VOL. 23, NO. 2, FEBRUARY 2024
+[33] Y. T. Chan and S. W. Rudnicki, “Bearings-only and Doppler-bearing
+tracking using instrumental variables,” IEEE Trans. Aerosp. Electron.
+Syst., vol. 28, no. 4, pp. 1076–1083, Oct. 1992.
+[34] K. Dogancay, “Bias compensation for the bearings-only pseudolinear
+target track estimator,” IEEE Trans. Signal Process., vol. 54, no. 1,
+pp. 59–68, Jan. 2006.
+[35] T. Tirer and A. J. Weiss, “High resolution direct position determination
+of radio frequency sources,” IEEE Signal Process. Lett., vol. 23, no. 2,
+pp. 192–196, Feb. 2016.
+[36] B. Demissie, M. Oispuu, and E. Ruthotto, “Localization of multiple
+sources with a moving array using subspace data fusion,” Proc. 11th
+Int. Conf. Inf. Fusion, 2018, pp. 1–7.
+[37] Y. Shen and M. Z. Win, “Fundamental limits of wideband localization—
+Part I: A general framework,” IEEE Trans. Inf. Theory, vol. 56, no. 10,
+pp. 4956–4980, Oct. 2010.
+[38] J. R. Magnus and H. Neudecker, Matrix Differential Calculus With
+Applications in Statistics and Econometrics. Hoboken, NJ, USA: Wiley,
+1988.
+[39] P. Pal and P. P. Vaidyanathan, “Nested arrays: A novel approach to
+array processing with enhanced degrees of freedom,” IEEE Trans. Signal
+Process., vol. 58, no. 8, pp. 4167–4181, Aug. 2010.
+[40] P. P. Vaidyanathan and P. Pal, “Sparse sensing with co-prime samplers
+and arrays,” IEEE Trans. Signal Process., vol. 59, no. 2, pp. 573–586,
+Feb. 2011.
+[41] S. Liu, S. P. Chepuri, M. Fardad, E. Masazade, G. Leus, and
+P. K. Varshney, “Sensor selection for estimation with correlated mea-
+surement noise,” IEEE Trans. Signal Process., vol. 64, no. 13,
+pp. 3509–3522, Jul. 2016.
+[42] A. De Maio, Y. Huang, D. P. Palomar, S. Zhang, and A. Farina,
+“Fractional QCQP with applications in ML steering direction estimation
+for radar detection,” IEEE Trans. Signal Process., vol. 59, no. 1,
+pp. 172–185, Jan. 2011.
+[43] K. Shen and W. Yu, “Fractional programming for communication
+systems—Part I: Power control and beamforming,” IEEE Trans. Signal
+Process., vol. 66, no. 10, pp. 2616–2630, May 2018.
+[44] B. Steingrimsson, Z.-Q. Luo, and K. M. Wong, “Soft quasi-maximum-
+likelihood detection for multiple-antenna wireless channels,” IEEE
+Trans. Signal Process., vol. 51, no. 11, pp. 2710–2719, Nov. 2003.
+[45] N. Gaffke and R. Mathar, “A cyclic projection algorithm via duality,”
+Metrika, vol. 36, pp. 29–54, Dec. 1989.
+[46] G. Wang and K. C. Ho, “Convex relaxation methods for unified near-
+field and far-field TDOA-based localization,” IEEE Trans. Wireless
+Commun., vol. 18, no. 4, pp. 2346–2360, Apr. 2019.
+[47] J. Li, P. Li, P. Li, L. Tang, X. Zhang, and Q. Wu, “Self-position
+awareness based on cascade direct localization over multiple source
+data,” IEEE Trans. Intell. Transp. Syst., early access, May 2, 2022, doi:
+10.1109/TITS.2022.3170465.
+[48] A. Amar and A. J. Weiss, “Localization of narrowband radio emitters
+based on Doppler frequency shifts,” IEEE Trans. Signal Process.,
+vol. 56, no. 11, pp. 5500–5508, Nov. 2008.
+[49] W. Zeng, H. C. So, and L. Huang, “ℓp-MUSIC: Robust direction-of-
+arrival estimator for impulsive noise environments,” IEEE Trans. Signal
+Process., vol. 61, no. 17, pp. 4296–4308, Sep. 2013.
+[50] X. Wu, “On zeros of polynomial and vector solutions of associated
+polynomial system from vieta theorem,” Appl. Numer. Math., vol. 44,
+no. 3, pp. 415–423, Feb. 2003.
+Pan Li received the B.S. degree in information
+engineering from the Nanjing University of Aero-
+nautics and Astronautics, Nanjing, China, in 2020,
+where he is currently pursuing the Ph.D. degree
+in communication and information systems. His
+research interests include array signal processing,
+source localization, and convex optimization.
+Jianfeng Li (Member, IEEE) received the B.S.
+degree in electronic information science and tech-
+nology and the Ph.D. degree in communication and
+information systems from the Nanjing University of
+Aeronautics and Astronautics, Nanjing, China, in
+2010 and 2015, respectively. From 2015 to 2018,
+he was with the College of Computer and Informa-
+tion, Hohai University. Since 2018, he has been an
+Associate Professor with the College of Electronic
+and Information Engineering, Nanjing University of
+Aeronautics and Astronautics. His research interests
+include array signal processing and source localization.
+Fuhui Zhou (Senior Member, IEEE) received the
+Ph.D. degree from Xidian University, Xi’an, China,
+in 2016. He is currently a Full Professor with the
+College of Electronic and Information Engineering,
+Nanjing University of Aeronautics and Astronautics.
+He was a Senior Research Fellow with Utah State
+University. He has published more than 100 articles,
+including IEEE JOURNAL ON SELECTED AREAS
+IN COMMUNICATIONS, IEEE TRANSACTIONS ON
+WIRELESS COMMUNICATIONS, IEEE TRANSAC-
+TIONS ON COMMUNICATIONS, IEEE WIRELESS
+COMMUNICATIONS, IEEE NETWORK, and IEEE GLOBECOM. His research
+interests include cognitive radio, edge computing, machine learning, and
+resource allocation. He received the Young Elite Scientist Award of China.
+He has served as a Technical Program Committee (TPC) Member for
+many international conferences, such as IEEE GLOBECOM and IEEE ICC.
+He serves as the Co-Chair for IEEE ICC 2019 and IEEE GLOBECOM
+2019 workshop on “Advanced Mobile Edge/Fog Computing for 5G Mobile
+Networks and Beyond.” He also serves as an Editor for IEEE TRANSACTIONS
+ON COMMUNICATIONS, IEEE SYSTEMS JOURNAL, IEEE WIRELESS COM-
+MUNICATIONS LETTERS, IEEE ACCESS, and Physical Communications.
+Xiaofei Zhang received the M.S. degree in elec-
+trical engineering from Wuhan University, Wuhan,
+China, in 2001, and the Ph.D. degree in commu-
+nication and information systems from the Nanjing
+University of Aeronautics and Astronautics, Nan-
+jing, China, in 2005. Currently, he is a Professor
+with the College of Electronic and Information
+Engineering, Nanjing University of Aeronautics and
+Astronautics. His research interests include array
+signal processing, communication signal processing,
+and multi-dimension systems.
+Qihui Wu (Senior Member, IEEE) received the
+B.S. degree in communications engineering and the
+M.S. and Ph.D. degrees in communications and
+information systems from the Institute of Com-
+munications Engineering, Nanjing, China, in 1994,
+1997, and 2000, respectively. From 2003 to 2005,
+he was a Post-Doctoral Research Associate with
+Southeast University, Nanjing. From 2005 to 2007,
+he was an Associate Professor with the College
+of Communications Engineering, PLA University of
+Science and Technology, Nanjing, where he was a
+Full Professor, from 2008 to 2016. Since May 2016, he has been a Full
+Professor with the College of Electronic and Information Engineering, Nanjing
+University of Aeronautics and Astronautics, Nanjing. From March 2011 to
+September 2011, he was an Advanced Visiting Scholar with the Stevens
+Institute of Technology, Hoboken, NJ, USA. His current research interests
+include wireless communications and statistical signal processing, with an
+emphasis on system design of software defined radio, cognitive radio, and
+smart radio.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:19:17 UTC from IEEE Xplore.  Restrictions apply. 

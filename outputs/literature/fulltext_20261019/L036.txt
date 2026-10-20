@@ -1,0 +1,1350 @@
+
+===== PDF PAGE 1 =====
+4532
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+TDOA Source Localization in the Presence
+of Synchronization Clock Bias and Sensor
+Position Errors
+Yue Wang, Student Member, IEEE, and K. C. Ho, Fellow, IEEE
+Abstract—TDOA positioning requires the sensors to be syn-
+chronized when sampling the signals to locate an emitting source.
+It also demands the sensor positions to be accurate. Achieving
+synchronization may not be feasible when the sensors are widely
+separated or are many, and precise sensor positions are often not
+available in practice. This paper investigates TDOA localization
+using a set of imperfect sensors, where timing synchronization
+offsets and random position errors exist among different sensor
+groups. The degradation in localization accuracy caused by syn-
+chronization offsets and position errors is examined through the
+Cramér–Rao lower bound (CRLB) analysis under Gaussian noise.
+A novel method in obtaining sequentially algebraic solutions of
+the source location, the sensor positions, and the synchronization
+offsets is developed. Sequential estimation simpliﬁes the local-
+ization task and offers complexity reduction. The performance
+of the proposed estimates is shown to reach the CRLB accuracy
+analytically using small noise analysis, although they are estimated
+sequentially and not jointly. Simulations support and corroborate
+the theoretical developments.
+Index Terms—Algebraic solution, clock bias, localization, sensor
+position uncertainty, TDOA.
+I. INTRODUCTION
+T
+IME Difference of Arrival (TDOA) positioning is perhaps
+one of the widely used techniques for the localization of
+a signal source [1]–[4]. Unlike Time of Arrival (TOA) posi-
+tioning, it does not require time stamp of the source signal and is
+suitable for passive localization. It also achieves better localiza-
+tion accuracy than other measurements such as Angle of Arrival
+(AoA) and Received Signal Strength (RSS) in general [5], [6].
+TDOA localization requires the sensors to be synchronized
+in sampling the received signals. When the sensors are close to
+each other, it is relatively simple to perform synchronous sam-
+pling through the use of a single hardware with multichannel
+acquisition capabilities. If the sensors are far away, achieving
+synchronization will not be easy. Synchronizing the receivers
+is known to be challenging in sensor networks due to a large
+number of sensor nodes and their non-ideal clocks [7]–[12].
+Without synchronous sampling, time offsets occur in TDOAs
+and they can degrade the localization accuracy considerably.
+Manuscript received December 15, 2012; revised April 15, 2013; accepted
+June 21, 2013. Date of publication July 04, 2013; date of current version August
+19, 2013. The associate editor coordinating the review of this manuscript and
+approving it for publication was Prof. Jean Pierre Delmas.
+The authors are with the Electrical and Computer Engineering Department,
+University of Missouri, Columbia, MO 65211 USA (e-mail: yw67d@mail.mis-
+souri.edu; hod@missouri.edu).
+Digital Object Identiﬁer 10.1109/TSP.2013.2271750
+Another challenge for TDOA localization is that the localiza-
+tion performance is highly sensitive to the accuracy of sensor
+positions. A small deviation of the sensor positions from the
+actual could lead to a large amount of decrease in localization
+performance [14], [20]. This is particularly obvious for locating
+a distant source away from the sensors. Previous investigations
+on the effect of sensor position errors assume the uncertainties
+are completely random where no deterministic relationship ex-
+ists among the errors from different sensors. In practice, nearby
+sensors could be partially connected to each other physically,
+such as in microphone array, and their position errors are re-
+lated to each other. As a result, the degrees of freedom in sensor
+position errors reduce and the performance damage from inac-
+curate sensor positions could be less. This paper establishes a
+fundamental investigation of the effect of timing synchroniza-
+tion offsets and dependent sensor position errors on the TDOA
+localization performance.
+The localization scenario to be investigated consists of a
+number of partially synchronized sensors that are used to locate
+an emitting signal source through TDOA measurements. The
+sensors are separated into many groups, they are synchronized
+within each group and synchronization timing offsets occur
+among different groups. The sensor positions are not known
+precisely. Nevertheless, deterministic relationships exist among
+the sensor position errors.
+The study begins with the CRLB investigation to examine
+the effect of synchronization timing offsets on the source local-
+ization accuracy. The analysis indicates the performance degra-
+dation is not affected by the amounts of the timing offsets, but
+rather depends on the number of timing offsets. Furthermore,
+the presence of clock offsets is equivalent to modifying the in-
+verse of the TDOA covariance matrix through orthogonal pro-
+jection.
+The paper proceeds next to derive an estimator that is com-
+putationally efﬁcient and in closed-form for determining the
+source position, the reﬁned sensor positions and the synchro-
+nization offsets. Instead of jointly estimating the three together
+that could be complicated and computationally demanding, the
+proposed estimator obtains ﬁrst the source location, the sensor
+positions next and ﬁnally the timing offsets. Although the un-
+knowns are estimated sequentially, we will show the interesting
+result that all three unknowns attain the CRLB accuracy, as long
+as the measurement noise and sensor position errors are not sig-
+niﬁcant so that the nonlinear noise effect is negligible.
+We would like to differentiate our studies here with the re-
+lated works found in literature. The closed-form solutions in [1]
+1053-587X © 2013 IEEE
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 2 =====
+WANG AND HO: TDOA SOURCE LOCALIZATION
+4533
+and [14] are for sensors that are perfectly synchronized. The pre-
+vious works [15], [16] proposed the use of the delta TDOA mea-
+surements to handle the synchronization timing offset problem
+for source localization in sensor networks. The sensor positions
+are assumed accurate and the solution is iterative. Our investi-
+gations consider both synchronization offsets and sensor posi-
+tion uncertainties, and non-iterative sequential solution is pro-
+posed to the problem. The joint synchronization and localization
+methods presented in [7], [10] take into account the beacon po-
+sition errors when estimating the source location. They perform
+joint estimation and not sequential, and are not able to reach the
+CRLB performance. The recent work [17] has proposed an al-
+gorithm that jointly estimating the source location and the mea-
+surement clock bias in TOA localization. The method developed
+is iterative and it works for a single clock bias that is common
+to all TOA measurements. Lately, [18] has developed a method
+that jointly estimates the emitter locations and the sensor node
+clock offsets. The algorithm is iterative and assumes the sensor
+node positions are exactly known.
+The contributions in the paper include:
+• The CRLB study for the source location in the presence of
+sensor clock and position errors;
+• An algebraic closed-form estimator for the source location
+estimate without requiring joint estimation with the clock
+offsets and sensor positions;
+• A solution of the sensor positions based on the source lo-
+cation estimate;
+• An estimator of the clock offsets using the obtained source
+and sensor locations;
+• Small noise analysis of the three proposed solutions in
+reaching the CRLB accuracy under Gaussian noise.
+The following section formulates the problem for investiga-
+tion. Section III evaluates the CRLB of the estimation problem
+and provides the interpretation of the effect of clock offsets.
+Section IV proposes an algebraic closed-form estimator for the
+source location. Section V validates analytically the source lo-
+cation estimate is efﬁcient in achieving the CRLB performance.
+Section VI develops the closed-form estimator for the sensor
+positions that is based on the source position estimate and con-
+ﬁrms its optimum accuracy in reaching the CRLB. Section VII
+provides the algebraic solution of the timing offsets and cor-
+roborates its optimum performance. Section VIII presents the
+simulation results and Section IX is the conclusions.
+II. PROBLEM FORMULATION
+The localization system consists of
+sensors and they are
+separated into
+groups. Group ,
+, has
+sensors, where
+and
+. Within each
+group, the received signals at the sensors are sampled synchro-
+nously with respect to a common local clock. However, the
+clocks from different sensor groups are not the same and clock
+offsets exist among them. The sensors could be partially con-
+nected with each other and have position uncertainties.
+The localization system is used to determine the position of a
+point source. A processing center gathers the sampled data from
+the sensors, computes the TDOAs of the signals at different re-
+ceivers and estimates the source location. To achieve the best
+TDOA and localization accuracy in the Maximum Likelihood
+sense, it is necessary to process jointly the sensor data to obtain
+a set of
+-1 TDOAs that are with respect to a common sensor,
+say sensor 1 [20]. The TDOAs are denoted by
+.
+Let us denote the unknown position of the source in the Carte-
+sian coordinates as the length
+column vector
+and that of
+sensor
+as
+. The value
+is the dimension of localization.
+Also, let the clock offset of group
+with respect to group 1 be
+,
+, where
+is zero. The TDOAs, after multi-
+plied with the signal propagation speed , are modeled as
+(1)
+where
+,
+(2)
+is the true value,
+is the Euclidean norm and
+is the
+additive noise. In vector form,
+(3)
+where
+is the TDOA vector after mul-
+tiplied with ,
+is the true vector, and
+the
+matrix
+is
+...
+(4)
+is the clock bias vector and it is modeled
+as deterministic.
+is the noise vector
+which is zero-mean Gaussian [19, pp. 246-248] with covariance
+matrix
+.
+The sensor positions are not known exactly. The available
+position of sensor
+is expressed as
+(5)
+where
+is the
+position perturbation vector that is modeled
+as zero-mean Gaussian [20], [21] with covariance matrix
+.
+is the degrees of freedom in position errors.
+is a
+matrix
+that relates the position error of
+with the perturbation vector
+, and
+is the length of
+. Each row of
+is normalized to
+unity norm. In the study here,
+is assumed to be known be-
+cause it can be determined from the partial sensor connections.
+The model (5) describes the translational and the rotational un-
+certainties as explained in Appendix A.
+To elaborate the sensor model (5) a little, let us consider the
+case where the relative sensor positions within each group are
+known exactly and independent translation uncertainties occur
+among different sensor groups. Then
+will be a length
+vector. The matrices
+,
+, for
+group
+will be the same, with columns
+to
+forming an identity matrix and the rest of the elements equal to
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 3 =====
+4534
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+zeros. An example of coupled errors within a sensor group is that
+each sensor group is a subarray with the sensor elements well
+controlled in their relative positions, such as a circular subarray.
+In such a case, all sensors within the group will encounter the
+same translational position and rotational angle errors.
+The collection of the sensor positions gives
+(6)
+where
+,
+and
+and it is known.
+The positioning problem is to ﬁnd an estimate of
+,
+and
+as accurate as possible, using the measurements
+and available
+sensor positions
+. The proposed algorithm to solve the posi-
+tioning problem is intended for the situation where the number
+of TDOA measurements
+is no more than the number of
+unknowns
+, where
+,
+and
+are the
+lengths of
+,
+and
+. If
+, the noise
+power of sensor position perturbation must be less than that of
+the range difference measurements in order to obtain reasonable
+results. Please refer to the end of Section IV for further elabo-
+ration of this case.
+III. CRLB
+The
+parameter
+vector
+for
+the
+CRLB
+derivation
+is
+. The measurement noise vector
+and the position perturbation vector
+are both Gaussian and
+independent of each other. The logarithm of the joint density
+function of
+and
+parameterized on
+is
+(7)
+where
+is a constant independent of . The parameters
+and
+are deterministic and
+is random. The lower bound on the
+covariance matrix of , often called the hybrid CRLB [23], is
+(8)
+Note that
+is a function of
+and also a function of
+when
+expressing
+in (2) as
+. After carrying out the deriva-
+tives and with some approximations in the expectation over
+[23] give
+(9)
+(10)
+where we have used the
+symbol to denote partial derivative:
+(11)
+The partial derivatives are obtained using (2) and (5),
+(12)
+(13)
+and
+(14)
+is the unit vector from
+to
+.
+Grouping the lower right 2
+2 block of (9) together and ap-
+plying the block matrix inversion formula [22] give
+(15)
+is the CRLB of a source position estimate when the sensor
+position errors and the clock offsets are absent. The second term
+on the right of (15) increases the CRLB when they are present.
+By arranging the matrix blocks in (9) properly, the CRLB
+inverses for the sensor position perturbation vector
+and the
+clock offset vector
+are
+(16)
+and
+(17)
+We can observe the matrix blocks of (10) and the partial
+derivatives (12)–(13) are independent of the clock offset vector
+. Hence the values of the clock offsets do not affect the CRLBs.
+However, the sensor groupings and the number of clock offsets
+change the CRLBs through the matrix
+.
+We can gain some insights on the effects of sensor clock off-
+sets and position uncertainties on the source localization accu-
+racy by expressing (15) in a different form. Appendix B shows
+that
+(18)
+where
+(19)
+(20)
+There will be no sensor position errors if
+tends to zero. In
+such a case, the second term of (18) vanishes and (18) has the
+same form as
+deﬁned in (10) which is the CRLB inverse
+without sensor clock offset and position errors. The equivalent
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 4 =====
+WANG AND HO: TDOA SOURCE LOCALIZATION
+4535
+effect of clock offsets is by increasing the measurement noise
+covariance matrix through projecting its square root inverse to
+the orthogonal subspace spanned by the columns of
+,
+where
+is the square root inverse such that
+. This can be seen by rewriting (19) as
+.
+Equation (18) becomes the extended CRLB expression in
+[14] in terms of
+if the clock offset is absent by setting
+to
+zero. When both sensor clock offsets and position uncertainties
+are present, the effects of them combine but not in an additive
+fashion.
+IV. ALGEBRAIC SOLUTION OF THE SOURCE LOCATION
+This section develops a computationally efﬁcient solution for
+that can achieve the CRLB accuracy without requiring the
+estimation of the clock offsets and sensor positions
+and
+.
+We shall use a linear transformation to eliminate
+in the data
+measurements. The inaccuracy of
+will be treated as additive
+noise.
+Let
+be an
+block diagonal matrix given
+by
+(21)
+where
+(22)
+is an
+identity matrix. For
+(23)
+and
+is an
+vector of unity. It is straightforward to
+verify that
+(24)
+where
+is a
+matrix of zero.
+Pre-multiplication of (3) by
+gives the linearly transformed
+measurement vector
+(25)
+and
+is eliminated. We shall use
+to obtain the closed-form
+solution estimate of
+.
+After performing the matrix-vector multiplication,
+is
+equal to
+(26)
+where
+.
+The effect of
+is now clear that it converts the TDOAs of the
+th group to be with respect to one of its elements. Since the
+sensors within a group are synchronized, the clock bias, which
+occurs if the TDOAs are with respect to the ﬁrst sensor in the
+ﬁrst group, is effectively eliminated.
+We proceed next to derive the algebraic solution through the
+multi-stage formulation ﬁrst introduced in [1]. The algorithm
+is different from the previous solutions [1], [14] because of the
+presence of multiple sensor groups and the deterministic depen-
+dency of sensor position uncertainties.
+The processing in the ﬁrst stage solves the source position
+by introducing
+extra unknowns. Since the length of
+is
+, we require
+. This condition is
+valid when
+is large or when the number of groups
+. The second stage incorporates the values of the
+auxiliary variables from stage 1 to improve the source location
+accuracy. The ﬁnal stage remaps the solution in stage 2 to the
+source location estimate.
+1) Stage 1: Let us consider the ﬁrst sensor group. We start
+with the relationship
+, where
+.
+Taking square of both sides and expanding give
+(27)
+Expressing
+as
+and
+, we have
+(28)
+where the second-order terms of
+and
+have been ignored.
+is with respect to
+which is not known. Rewriting
+as
+yields
+(29)
+In (29),
+and
+. Hence
+(28) becomes
+(30)
+For the
+group,
+, considering that the refer-
+ence for TDOA is with respect to the sensor
+in the
+transformed measurement vector
+, we have for
+,
+(31)
+Putting (30) and (31) together gives the vector form
+(32)
+On the left side, the
+matrix
+and the
+matrix
+are shown in (33) and (34) at the bottom
+of the next page. On the right side, the
+vector
+and
+matrix
+are shown in (35) and (36) at
+the bottom of the next page. The unknown vector to be found is
+(37)
+where
+are auxiliary variables whose purpose
+is to make (32) linear for ease to obtain a solution. The number
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 5 =====
+4536
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+of auxiliary variables is
+here, which is different from the tra-
+ditional two-stage TDOA method [1], [14] that has only one.
+In (32),
+and
+are known. Minimizing the weighted
+square norm of
+yields the solution
+(38)
+The weighting matrix is chosen to minimize the variance of
+[22] and it is equal to
+(39)
+In (39) we made the approximation that the noise in
+is rel-
+atively small enough to be neglected when taking expectation.
+Note that
+and
+contains the true source location that is
+not known. We shall set
+to an identity matrix to obtain an
+initial solution using (38), from which
+can be approximated
+to obtain the stage 1 solution. The error due to approximating
+is insigniﬁcant [14].
+The covariance matrix of
+, from the theory of weighted
+least-square (WLS) minimization [22], is
+(40)
+The approximation comes from the fact that (40) is under the
+condition where the noise in
+is relatively small.
+2) Stage 2: The purpose of Stage 2 is to improve the source
+position estimate by exploring the relationships between the
+source position and the auxiliary variables. The unknown vector
+to be found in Stage 2 is
+(41)
+where
+represents the element-by-element multiplication. The
+ﬁrst
+elements of
+can be expressed in terms of
+as
+(42)
+(33)
+...
+...
+...
+(34)
+...
+...
+...
+(35)
+...
+...
+...
+...
+...
+...
+...
+...
+...
+(36)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 6 =====
+WANG AND HO: TDOA SOURCE LOCALIZATION
+4537
+since
+and the
+second order noise term
+has been
+ignored.
+Recall that
+, where
+. Thus, squaring both sides
+and ignoring
+give
+(43)
+where
+and
+have been used.
+Collecting the error terms on one side, we have from (42) and
+(43) the matrix equation
+(44)
+The
+matrix
+is
+...
+...
+...
+...
+(45)
+The
+vector
+and
+matrix
+are
+...
+...
+(46)
+The WLS solution to (44) is
+(47)
+and the weighting matrix
+is chosen as
+(48)
+where (40) has been used and the noise in
+is assumed to be
+relatively small so that it is considered constant when applying
+the expectation. For implementation purpose the true value
+in
+will be replaced by the stage 1 solution
+.
+Finally, the source position estimate
+is obtained from
+as
+(49)
+(50)
+The square root is taken element-wise and
+is the sign
+operation.
+According to (49), squaring the elements on both sides and
+taking differential give
+(51)
+where
+(52)
+Thus, the covariance matrix of the ﬁnal source position estimate
+is related to that of
+by
+(53)
+where from the WLS theory,
+(54)
+The proposed source location solution here is intended for the
+situation where the number of TDOA measurements is less than
+the number of total unknowns, i.e.,
+,
+where the performance is limited by the sensor position errors
+when we have very accurate TDOA measurements. If
+, there are more measurements than
+unknowns and the performance is limited by the TDOA noise. In
+such a case, the proposed algorithm can yield good results only
+when the TDOA measurements noise power is larger than the
+sensor position perturbation noise power. Otherwise, the effect
+of ignoring the second order terms of
+becomes signiﬁcant in
+(28) relative to the measurement noise and our formulation is
+not appropriate.
+V. PERFORMANCE ANALYSIS
+We would like to compare
+(53) with the CRLB (18).
+The CRLB is the performance bound for an unbiased estimator
+[22]. The localization problem is non-linear and bias occurs in
+the solution estimate. It is only sensible to compare the per-
+formance with the CRLB under small noise condition so that
+the bias is negligible relative to variance. Even for the Max-
+imum Likelihood Estimator (MLE), it can reach CRLB per-
+formance only over small error region in non-linear estimation
+[23]. Hence we consider here small noise analysis in which the
+following two conditions are satisﬁed:
+(C1):
+.
+(C2):
+.
+The ﬁrst condition means the measurement noise relative to
+the source range is small enough to be neglected. The second
+condition assumes the sensor position error is also small rela-
+tive to the target range. These two small noise conditions are
+commonly used in localization literature [14], [20].
+Under the above two conditions, Appendix C shows that
+is equal to
+(55)
+where
+(56)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 7 =====
+4538
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+and
+is given in (21). For simplicity let
+be
+, where
+is such that
+. Then
+(57)
+where
+(58)
+is the projection matrix of the subspace spanned by the columns
+of
+. The dimension of the subspace is
+, since
+is
+of size
+. Let us also deﬁne
+as
+,
+which has a size of
+. We have from (24),
+(59)
+Hence the columns of
+and
+are orthogonal to each other.
+In addition, their columns together span the entire space of di-
+mension
+. Hence
+(60)
+where
+is the projection matrix onto the column space of
+.
+Putting (60) into (57) and comparing with (19) yield
+(61)
+Using (61) in (55) shows that it is equal to the right side of (18)
+and hence
+(62)
+We can conclude that under the small noise conditions (C1) and
+(C2), the proposed solution yields the CRLB performance.
+VI. REFINEMENT OF SENSOR POSITIONS
+We would like to obtain an estimate of the random realization
+of
+, based on the TDOA measurements
+and the prior knowl-
+edge of
+that it is zero mean Gaussian with covariance matrix
+.
+The transformed measurement equation that is free of clock
+offset is given by (31). It is now interpreted to be having
+as
+the unknown, where
+is replaced by the solution estimate (49).
+The matrix equation to ﬁnd
+is
+(63)
+is deﬁned in (33),
+and
+are deﬁned in (35)–(36).
+and
+are (37) and (34) with
+replaced by the estimate
+(49). Note that in
+,
+is
+.
+In addition to (63), we shall use the approach from [24] to
+incorporate the prior knowledge about the density function of
+to obtain its solution. The resulting estimate of
+is
+(64)
+where
+is an
+vector and
+is an
+matrix equal to
+(65)
+and
+is a zero column vector of length
+. The weighting ma-
+trix
+is
+(66)
+Although we simply replace the true source position
+with
+its estimate (49) to obtain
+, by following the analysis in [25]
+with
+as the measurements, it can be shown that the estimate
+of
+in (64) reaches the CRLB accuracy when the small noise
+conditions (C1) and (C2) are satisﬁed.
+VII. ESTIMATION OF CLOCK OFFSET
+It is beneﬁcial in some applications to estimate the clock off-
+sets so that we can correct them to improve performance for
+subsequent localizations. We shall determine the clock offsets
+using the data vector
+together with the estimates of
+and
+.
+It is direct to obtain an estimator of
+that maximizes the
+likelihood function (7) if
+is known. Since
+is not known,
+we shall replace it by the reconstructed value using (2), with
+substituted by
+in (49) and
+by
+, where
+is given
+by (64). Let us denote the resulted vector be
+. Then the
+solution of
+from (7) is
+(67)
+Evaluating the accuracy of the estimate (67) and comparing with
+the CRLB is not straightforward, due to the fact that
+is ob-
+tained using the source location and sensor position estimates.
+Nevertheless, the analysis given in Appendix D shows the in-
+teresting result that (67) is able to achieve the CRLB accuracy
+under the small noise conditions (C1) and (C2), although we
+simply replace the true values of
+and
+by their estimates.
+VIII. SIMULATION
+We next perform simulation to evaluate the proposed algo-
+rithm and validate the theoretical developments. We consider
+3D localization (
+=3). The number of sensors
+is 12 and
+their positions are tabulated in Table I. They are used to locate a
+source whose actual position is
+m through the
+TDOA measurements, where the time reference is with respect
+to the signal arrival time at
+. The covariance matrix for
+is
+, where
+and
+unless stated
+otherwise. The TDOA covariance matrix is equal to
+,
+and
+has unity in the diagonal and 0.5 in all other elements
+[20]. The number of ensemble runs is 20,000. The results are
+shown with the values taken logarithm of base 10.
+The sensors are separated into 4 sets as shown in Table I,
+where the sensors within each set are close to each other. We
+shall contrast the performance for the cases of one to four
+groups. The one-array case contains all sensors. The two-group
+case uses the ﬁrst three sets as the ﬁrst group and the fourth
+set as the second group. In the three-group case, the groups are
+formed by the ﬁrst set, the second and third sets together, and
+the fourth set. The four-group case considers each individual
+set as a group. The clock-offset values are generated randomly
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 8 =====
+WANG AND HO: TDOA SOURCE LOCALIZATION
+4539
+TABLE I
+TRUE SENSOR POSITIONS IN THE UNIT OF METERS
+Fig. 1. Source localization accuracy with different sensor groupings when
+increases,
+.
+in uniform distribution within the range from 0 to 100 m in each
+ensemble run, for the purpose to validate that the performance
+is independent of the clock offset values.
+Fig. 1 compares the CRLB of the source location estimates
+obtained from the four sensor group cases as the TDOA noise
+power increases. As expected, the performance degrades as the
+number of groups increases, because the number of clock-off-
+sets is increased proportionally. When the measurement noise
+level is small, the performance is dominated by the sensor po-
+sition noise. The source location accuracy decreases as
+in-
+creases.
+Also shown in Fig. 1 are the mean-square error (mse) values
+of the source location estimates obtained from the algebraic
+closed-form estimator presented in Section IV. The simulation
+results match very well with the CRLB when the measurement
+noise power is not larger than
+. The performance de-
+viates from the CRLB earlier when we have more clock offsets
+among the sensors.
+Fig. 2 gives the source localization accuracy when
+in-
+creases while keeping
+at
+. The performance is dom-
+inated by measurement noise power when
+is small. The ob-
+servations are similar to those from Fig. 1. In particular, the es-
+timates of the proposed estimators closely follow the CRLB ex-
+cept when the sensor position noise power is above unity.
+Fig. 3 illustrates the estimation accuracy of sensor position
+uncertainty vector
+using the proposed algorithm presented in
+Section VI. The results match very well with the CRLB. The
+accuracy reduces as the number of groups increases when
+is
+small. The estimation is less sensitive to the number of clock
+Fig. 2. Source localization accuracy with different sensor groupings when
+increases,
+.
+Fig. 3. Estimation accuracy of sensor position perturbation vector with dif-
+ferent sensor groupings when
+increases,
+.
+offsets as
+becomes large and is limited by the prior knowl-
+edge of
+.
+Fig. 4 validates the asymptotic efﬁciency of the proposed es-
+timator in Section VII for obtaining the clock offset estimate .
+The estimation accuracy follows very closely with the CRLB,
+although the clock offsets are obtained based on the source lo-
+cation and sensor position estimates.
+The effect in the degrees of freedom for the sensor position
+errors is illustrated in Fig. 5 for the 4 sensor groups case. The
+smaller the degrees of freedom, the better will be the estimation
+accuracy of the source location when the measurement noise
+power is small. The measurement noise dominates performance
+if it is large and the effect of sensor position error is less signif-
+icant.
+Fig. 6 demonstrates the advantage of using the estimated
+and
+to improve the localization accuracy of a subsequent
+source at
+m. In each ensemble run, we ﬁrst
+estimate the original source, the sensor position perturbation
+vector and the clock offset vector sequentially. The sensor
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 9 =====
+4540
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+Fig. 4. Estimation accuracy of clock offsets with different sensor groupings
+when
+increases,
+.
+Fig. 5. Source localization accuracy with different degrees of freedom in
+sensor position uncertainties when
+increases for the 4 sensor groups case,
+.
+positions are corrected and the clock offsets are removed based
+on the estimates before the localization of the subsequent target.
+The number of groups is four in this case and
+. Fig. 6
+shows that ﬁrst, by making use of the reﬁned sensor positions
+with the new covariance from (17) and running the proposed
+algorithm in Section IV without correcting the clock offset, a
+8.7 dB improvement in localization accuracy is observed when
+the TDOA noise level is low. However, the improvement is
+insiginﬁcant at large TDOA noise level. Second, using the re-
+ﬁned sensor positions and correcting the TDOA measurements
+by removing the clock offsets estimated from the ﬁrst source,
+further improvements are obtained by applying the algorithm
+from Section IV with the matrix
+set to identity (no clock
+bias is assumed in the TDOA measurements), this is especially
+obvious at higher TDOA noise levels before the threshold
+effect occurs.
+The last set of simulation is to validate the performance of
+the proposed algorithm using 100 randomly generated localiza-
+tion geometries. Each geometry has 16 sensors, and they are
+Fig. 6. Source localization accuracy of the subsequent target,
+.
+Fig. 7. Source localization accuracy of the proposed method from 100 random
+geometries when
+increases, 4 sensor groups of 4, 5, 3, 4 sensors and
+.
+separated into 4 groups of 4, 5, 3 and 4 sensors. The x, y, z coor-
+dinates of the sensor and source positions are created indepen-
+dently from a uniform distribution random number generator
+and each coordinate has a value between 0 to 500 m. The clock
+offset vector
+is also generated randomly with uniform distri-
+bution between
+to 100 m in each geometry. The length
+of the perturbation vector
+for the sensor positions is 12. At a
+given geometry, 20,000 ensemble runs were performed and the
+results given are the average of the 100 geometries.
+Fig. 7 illustrates the accuracy of source location estimate as
+the measurement noise power increases. The performance of
+the proposed algorithm follows very well with the CRLB. We
+also implemented the MLE through Gauss-Newton iterations,
+where the initial guess is set to be true values plus independent
+Gaussian noises with variances slightly larger than the CRLBs
+of the individual unknowns. The MLE jointly estimates the
+source location, sensor positions and the clock offsets together.
+We are not able to show the MLE results in Fig. 7 because it
+does not converge in 86 geometries. This is clearly shown in
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 10 =====
+WANG AND HO: TDOA SOURCE LOCALIZATION
+4541
+Fig. 8. Illustration of the divergence of the MLE using Gauss-Newton imple-
+mentation, 4 sensor groups of 4, 5, 3, 4 sensors and
+.
+Fig. 9. Estimation accuracy of sensor position perturbation vector from 100
+random geometries when
+increases, 4 sensor groups of 4, 5, 3, 4 sensors and
+.
+Fig. 8 where we plot the mse of the source location estimates
+from different random geometries, with the measurement
+noise power set to
+. We arranged the geometries with
+increasing amounts of deviations from the CRLB for ease of
+illustration. This simulation indicates the advantage of the
+proposed closed-form solution versus iterative solution. We
+expect the MLE solution will reach the CRLB performance if
+it is implemented by other approach such as grid search rather
+than gradient based iterations.
+Figs. 9 and 10 provide the estimation performance of the
+sensor positions and the clock offsets. The proposed sequential
+method provides very good estimates that meet the CRLBs, be-
+fore the noise level becomes too large that the non-linear effect
+dominates performance.
+IX. CONCLUSION
+This paper investigates the problem of source localization in
+the presence of sensor clock offsets and position errors, where
+the clock offset is common for some sensors and deterministic
+Fig. 10. Estimation accuracy of clock offsets from 100 random geometries
+when
+increases, 4 sensor groups of 4, 5, 3, 4 sensors and
+.
+relationships are present for sensor positions. We ﬁnd that the
+CRLB of the source position depends on the number of clock
+offsets and does not depend on the actual clock offset values. In
+addition, the effect of clock offsets is equivalent to increasing
+the TDOA covariance matrix through an orthogonal projection
+of its square root inverse. A sequential estimation method is de-
+veloped that obtains the source position ﬁrst, the sensor posi-
+tions next and ﬁnally the clock offset parameters. The proposed
+estimator is algebraic and yields closed-form solution. Although
+the estimation is sequential, the performance is shown in theory
+and by simulations to reach the CRLB accuracy for all three sets
+of parameters, before the nonlinear effect occurs when the noise
+level becomes large.
+APPENDIX A
+We use 3D scenario (K=3) for illustration. When the posi-
+tion of sensor
+has translational error, then
+in (5) will be the
+translational error vector and
+will have an identity matrix
+block and zeros in other elements. For the sensors within the
+same group having the same translational error, their
+ma-
+trices will be identical.
+If the position of sensor
+is subject to rotational uncertainty
+represented by the Euler angles
+in “x-convention”
+[26], we have the relationship
+(68)
+where
+is the rotation matrix
+(69)
+When the rotation angle errors
+are small,
+(70)
+and
+(71)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 11 =====
+4542
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+so that
+can be approximated as
+(72)
+where the product terms of the angles are ignored be-
+cause they are relatively small. Let
+and
+. Putting (72) into (68) and re-arranging give
+(73)
+Relating (73) with (5) indicates that
+is the Euler angle vector
+and
+is formed by the coordinates of the erroneous sensor
+position. When the sensors within the same group are subject
+to the same rotation angle errors, they will have the same
+but
+different
+. Simulations have validated (73) is a good approx-
+imation for the rotational sensor position errors when the errors
+in the rotation angles are not signiﬁcant.
+In the situation if both translation and rotation errors are
+present,
+will contain both errors stacked together, and the
+non-zero block of
+composes of an identity matrix and the
+matrix on the second line of (73).
+APPENDIX B
+Let
+(74)
+and after substituting (10) and in terms of
+deﬁned in (19),
+(75)
+In terms of
+, the use of block matrix inversion formula [22]
+yields
+(76)
+Direct matrix and vector multiplication gives
+(77)
+Upon using (10),
+(78)
+(79)
+Thus, substituting (77) and using (78)–(79) reduces (15) to (18).
+APPENDIX C
+Substituting (54), (48) and (39) into (53), we have
+(80)
+where
+(81)
+and
+(82)
+From (45), the use of block matrix inversion formula [22] and
+(37) gives (83), shown at the bottom of the page. After per-
+forming direct matrix multiplications, the entry of
+corre-
+sponding to the th element of group
+is
+(84)
+Under condition (C1),
+(85)
+...
+...
+(83)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 12 =====
+WANG AND HO: TDOA SOURCE LOCALIZATION
+4543
+Under condition (C2), for
+(86)
+and
+(87)
+Thus
+(88)
+Consequently, it is easy to see that when comparing with (12),
+(89)
+From (33) and (34), the entry of
+corresponding to the th
+element of group
+is
+(90)
+Using (85) and (86),
+(91)
+Applying (86)–(87),
+(92)
+Making use of (86)–(87) again in the ﬁrst term of
+, we have
+(93)
+Direct comparison with (13) gives immediately
+(94)
+The use of matrix inversion lemma yields
+(95)
+Putting (89), (94) and (95) into (80) and using the deﬁnition of
+in (56), we have
+given in (55).
+APPENDIX D
+For convenience purpose, let us collect the proposed esti-
+mates of
+and
+as
+. Since
+achieves the
+CRLB accuracy, from the CRLB theorem [22] the estimation
+error
+satisﬁes
+(96)
+where
+is deﬁned in (7) and
+represents the error of an
+efﬁcient estimate of
+. Using the notation in (9),
+(97)
+Grouping the upper left 2
+2 block together and using the block
+matrix inversion lemma, we have from (96),
+(98)
+where
+(99)
+is the covariance matrix of
+. Equation (97) is the FIM whose
+inverse in the lower right block is
+(100)
+We are now ready to derive the covariance of
+from (67).
+Using ﬁrst order linear approximation by expanding
+at
+the true value
+,
+(101)
+where
+(102)
+After substituting (3), the estimation error of
+becomes
+(103)
+where
+as deﬁned in (10). Multiplying
+by
+its transpose and taking expectation yield
+(104)
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
+
+
+===== PDF PAGE 13 =====
+4544
+IEEE TRANSACTIONS ON SIGNAL PROCESSING, VOL. 61, NO. 18, SEPTEMBER 15, 2013
+Let us consider the expectation
+. Putting in (98)
+gives
+(105)
+Hence
+(106)
+where the notation in (10) has been used. As a result, the last two
+terms in (104) vanish. After substituting (102), (104) reduces to
+(100) and thus
+(107)
+REFERENCES
+[1] Y. T. Chan and K. C. Ho, “A simple and efﬁcient estimator for hyper-
+bolic location,” IEEE Trans. Signal Process., vol. 42, pp. 1905–1915,
+Aug. 1994.
+[2] D. Carevic, “Automatic estimation of multiple target positions and ve-
+locities using passive TDOA measurements of transients,” IEEE Trans.
+Signal Process., vol. 55, pp. 424–436, Feb. 2007.
+[3] R. K. Martin, J. S. Velotta, and J. F. Raquet, “Bandwidth efﬁcient co-
+operative TDOA computation for multicarrier signals of opportunity,”
+IEEE Trans. Signal Process., vol. 57, pp. 2311–2322, Jun. 2009.
+[4] R. K. Martin, Y. Chunpeng, H. H. Fan, and C. Rondeau, “Algorithms
+and bounds for distributed TDOA-based positioning using OFDM sig-
+nals,” IEEE Trans. Signal Process., vol. 59, pp. 1255–1268, Mar. 2011.
+[5] S. Gezici, T. Zhi, G. B. Giannakis, H. Kobayashi, A. F. Molisch, H.
+V. Poor, and Z. Sahinoglu, “Localization via ultra-wideband radios: a
+look at positioning aspects for future sensor networks,” IEEE Signal
+Process. Mag., vol. 22, pp. 70–84, Jul. 2005.
+[6] Y. Qi, H. Kobayashi, and H. Suda, “Analysis of wireless geolocation
+in a non-line-of-sight environment,” IEEE Trans. Wireless Commun.,
+vol. 5, pp. 672–681, Mar. 2006.
+[7] J. Zheng and Y.-C. Wu, “Joint time synchronization and localization
+of an unknown node in wireless sensor networks,” IEEE Trans. Signal
+Process., vol. 58, pp. 1309–1320, Mar. 2010.
+[8] B. Liu, H. Chen, Z. Zhong, and H. V. Poor, “Asymmetrical round
+trip based synchronization-free localization in large-scale under-
+water sensor networks,” IEEE Trans. Wireless Commun., vol. 9, pp.
+3532–3542, Nov. 2010.
+[9] M. Leng and Y.-C. Wu, “On clock synchronization algorithms for
+wireless sensor networks under unknown delay,” IEEE Trans. Veh.
+Technol., vol. 59, pp. 182–190, Jan. 2010.
+[10] J. Zheng and Y.-C. Wu, “Closed-form solution for joint localization
+and time synchronization in wireless sensor networks,” in Proc. IEEE
+Int. Conf. Commun. (ICC), Cape Town, South Africa, May 2010, pp.
+1–5.
+[11] Y.-C. Wu, Q. Chaudhari, and E. Serpedin, “Clock synchronization of
+wireless sensor networks,” IEEE Signal Process. Mag., vol. 28, pp.
+124–138, Jan. 2011.
+[12] Y. Wang, X. Ma, and G. Leus, “Robust time-based localization for
+asynchronous networks,” IEEE Trans. Signal Process., vol. 59, pp.
+4397–4410, Sep. 2011.
+[13] Y. Rockah and P. Schultheiss, “Array shape calibration using sources
+in unknown locations—part II: near-ﬁeld sources and estimator imple-
+mentation,” IEEE Trans. Acoust., Speech, Signal Process., vol. 35, pp.
+724–735, Jun. 1987.
+[14] K. C. Ho, X. Lu, and L. Kovavisaruch, “Source localization using
+TDOA and FDOA measurements in the presence of receiver location
+errors: analysis and solution,” IEEE Trans. Signal Process., vol. 55, pp.
+684–696, Feb. 2007.
+[15] H. H. Fan and C. Yan, “Asynchronous differential TDOA for sensor
+self-localization,” in Proc. IEEE Int. Conf. Acoust., Speech, Signal
+Process., Honolulu, HI, USA, Apr. 2007, pp. II-1109–II-1112.
+[16] C. Yan and H. H. Fan, “Asynchronous differential TDOA for non-GPS
+navigation using signals of opportunity,” in Proc. IEEE Int. Conf.
+Acoust., Speech, Signal Process., Las Vegas, NV, USA, Mar. 2008,
+pp. 5312–5315.
+[17] A. J. Weiss and J. S. Picard, “Network localization with biased range
+measurements,” IEEE Trans. Wireless Commun., vol. 7, pp. 298–304,
+Jan. 2008.
+[18] O. Jean and A. J. Weiss, “Convex joint emitter localization and passive
+sensor network synchronization,” in Proc. IEEE 7th SAM Workshop,
+Hoboken, NJ, USA, Jul. 2012, pp. 201–204.
+[19] G. C. Carter, “Coherence and time delay estimation,” Proc. IEEE, vol.
+75, pp. 236–255, Feb. 1987.
+[20] Y. Rockah and P. M. Schultheiss, “Array shape calibration using
+sources in unknown locations—Part II: Near-ﬁeld sources and esti-
+mator implementation,” IEEE Trans. Acoust., Speech, Signal Process.,
+vol. 35, pp. 724–735, Jun. 1987.
+[21] A. Arafa and G. G. Messier, “A Gaussian model for dead-reckoning
+mobile sensor position error,” in Proc. IEEE Veh. Technol. Conf. (VTC),
+Ottawa, ON, Canada, Sep. 6–9, 2010, pp. 1–5.
+[22] S. M. Kay, Fundamentals of Statistical Signal Processing, Estimation
+Theory.
+Upper Saddle River, NJ, USA: Prentice-Hall, 1993.
+[23] H. L. Van Trees and K. L. Bell, Bayesian Bounds for Parameter Estima-
+tion and Nonlinear Filtering/Tracking.
+New York, NY, USA: IEEE
+Press/Wiley, 2007.
+[24] H. W. Sorenson, Parameter Estimation: Principles and Problems.
+New York, NY, USA: Marcel Dekker, 1980.
+[25] M. Sun and K. C. Ho, “Reﬁning inaccurate sensor positions using target
+at unknown location,” Signal Process., vol. 92, pp. 2097–2104, Sep.
+2012.
+[26] H. Goldstein, C. P. Poole, and J. L. Safko, Classical Mechanics, 3rd
+ed.
+Reading, MA, USA: Addison-Wesley, 2000.
+Yue Wang (S’13) received the B.S. degree in Elec-
+trical Engineering and Automation from the Beijing
+Institute of Technology, China, in 2009, and M.S. de-
+gree in Electrical and Computer Engineering from the
+University of Missouri in 2011.
+She is currently working towards the Ph.D. degree
+with the Department of Electrical and Computer En-
+gineering, University of Missouri, Columbia, USA.
+Her current research interests include source local-
+ization and sensor array processing.
+K. C. Ho (M’91–SM’00–F’09) was born in Hong
+Kong. He received the B.Sc. degree with First Class
+Honors in Electronics in 1988 and the Ph.D. degree
+in Electronic Engineering in 1991, both from the Chi-
+nese University of Hong Kong.
+He was a research associate in the Royal Military
+College of Canada from 1991 to 1994. He joined the
+Bell-Northern Research, Montreal, Canada in 1995
+as a member of scientiﬁc staff. He was a faculty
+member in the Department of Electrical Engineering
+at the University of Saskatchewan, Saskatoon,
+Canada from September 1996 to August 1997. Since September 1997, he has
+been with the University of Missouri and he is currently a Professor in the
+Electrical and Computer Engineering Department. His research interests are
+in sensor array processing, source localization, subsurface object detection,
+wireless communications, and the development of efﬁcient signal processing
+algorithms for various applications. He is the Associate Rapporteur of ITU-T
+Q16/SG16: Speech enhancement functions in signal processing network
+equipment and was the Rapporteur of ITU-T Q15/SG16: Voice Gateway Signal
+Processing Functions and Circuit Multiplication Equipment/Systems during
+2009–2012. He is the Editor of the ITU-T Standard Recommendations G.160:
+Voice Enhancement Devices and G.168: Digital Network Echo Cancellers.
+Dr. Ho is the Chair of the Sensor Array and Multichannel Technical Com-
+mittee in the IEEE Signal Processing Society. He was an Associate Editor of the
+IEEE Transactions on Signal Processing from 2003 to 2006 and from 2009 to
+2013, and the IEEE Signal Processing Letters from 2004 to 2008. He received
+the Junior Faculty Research Award in 2003 and the Senior Faculty Research
+Award in 2009 from the College of Engineering at the University of Missouri.
+He is an inventor of 20 patents in the United States, Europe, Asia and Canada
+on geolocation and signal processing for wireless communications.
+Authorized licensed use limited to: XIDIAN UNIVERSITY. Downloaded on October 19,2026 at 14:07:06 UTC from IEEE Xplore.  Restrictions apply. 
